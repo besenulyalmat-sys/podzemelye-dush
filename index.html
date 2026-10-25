@@ -66,6 +66,31 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-o
 .sizes button[aria-pressed="true"]{border-color:#E8C77C;box-shadow:0 0 0 2px rgba(232,199,124,.35);background:rgba(232,199,124,.12)}
 .sizes button:disabled{opacity:1;cursor:default}
 .sizes button:disabled:not([aria-pressed="true"]){opacity:.4}
+#talk{position:fixed;right:10px;bottom:calc(var(--dockh,240px) + 10px);z-index:30;display:grid;gap:8px}
+.talkbtn{width:46px;height:46px;border-radius:50%;border:1px solid rgba(243,221,160,.45);background:rgba(20,14,40,.85);color:#fff;font-size:1.35rem;display:grid;place-items:center;box-shadow:0 4px 14px rgba(0,0,0,.5);position:relative;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.talkbtn[aria-expanded="true"]{background:rgba(232,199,124,.3);border-color:#E8C77C}
+#chatDot{position:absolute;top:4px;right:4px;width:10px;height:10px;border-radius:50%;background:#FF7E9A;box-shadow:0 0 6px #FF7E9A}
+#reactRing{position:absolute;right:-1px;top:-1px;width:48px;height:48px;pointer-events:none}
+#reactRing button{position:absolute;left:4px;top:4px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(243,221,160,.4);background:rgba(20,14,40,.92);font-size:1.3rem;display:grid;place-items:center;opacity:0;transform:translate(0,0) scale(.4);transition:transform .22s cubic-bezier(.3,1.5,.6,1),opacity .15s;pointer-events:none}
+#reactRing.on button{opacity:1;pointer-events:auto}
+#chatbox{position:fixed;left:10px;right:66px;bottom:calc(var(--dockh,240px) + 10px);z-index:36;max-width:440px;background:rgba(20,14,40,.95);border:1px solid rgba(243,221,160,.35);border-radius:18px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.6);color:#EFE7D6;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#chatHist{max-height:28vh;overflow-y:auto;display:grid;gap:4px;font-size:.88rem;margin-bottom:8px}
+#chatHist:empty{display:none}
+#chatHist b{color:var(--pc,#F3DDA0)}
+.quick{display:flex;gap:6px;overflow-x:auto;margin-bottom:8px;scrollbar-width:none}
+.quick button{flex:none;border:1px solid #3B3060;background:#251D42;color:#EFE7D6;border-radius:999px;padding:6px 10px;font:inherit;font-size:.85rem}
+.chatrow{display:flex;gap:8px}
+.chatrow input{flex:1;min-width:0;background:#1A1430;border:1px solid #3B3060;border-radius:12px;color:#EFE7D6;padding:10px 12px;font:inherit;font-size:1rem}
+.chatrow .pbtn{min-width:0;padding:0 16px}
+.saybub{position:fixed;z-index:35;pointer-events:none;transform:translate(-50%,-100%);background:#FFF7E6;color:#2A2140;border:2px solid var(--pc,#E8C77C);border-radius:14px;padding:6px 10px;font-size:.9rem;max-width:min(70vw,260px);box-shadow:0 6px 18px rgba(0,0,0,.45);animation:sayin .25s ease-out, sayout .4s ease-in forwards var(--dur,3.6s)}
+.saybub::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-7px;border:7px solid transparent;border-top-color:var(--pc,#E8C77C);border-bottom:0}
+.saybub b{display:block;font-size:.72rem;color:#5E5378}
+.saybub.emo{background:none;border:0;box-shadow:none;font-size:2.4rem;padding:0;animation:emoup 2.4s ease-out forwards}
+.saybub.emo::after{display:none}
+@keyframes sayin{from{opacity:0;transform:translate(-50%,-80%) scale(.8)}}
+@keyframes sayout{to{opacity:0;transform:translate(-50%,-120%)}}
+@keyframes emoup{0%{opacity:0;transform:translate(-50%,-60%) scale(.5)}15%{opacity:1;transform:translate(-50%,-100%) scale(1.25)}25%{transform:translate(-50%,-100%) scale(1)}100%{opacity:0;transform:translate(-50%,-260%) scale(1)}}
+.token .tsay{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);font-size:1.6rem;pointer-events:none;animation:emoup 2.4s ease-out forwards;white-space:nowrap}
 .namebox{display:grid;gap:6px;text-align:left}
 .namebox span{color:#C9BFE3;font-size:.88rem}
 .namebox input{background:rgba(30,22,56,.85);border:1px solid rgba(217,182,107,.5);border-radius:14px;color:#EFE7D6;padding:14px;font:inherit;font-size:1.05rem;width:100%}
@@ -261,11 +286,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-o
 .fight .side .num{font-size:1.6rem;font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;color:var(--gold2)}
 .fight .x{font-family:"Cormorant Garamond",Georgia,serif;font-size:1.8rem;color:var(--ember)}
 .fight .res{margin-top:12px;font-size:1.15rem;font-weight:700}
-.sumov{position:fixed;inset:0;z-index:45;background:rgba(6,4,14,.92);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;color:#EFE7D6;pointer-events:auto;text-align:center}
+.sumov{position:fixed;inset:0;z-index:45;background:rgba(6,4,14,.97);display:none;flex-direction:column;align-items:center;justify-content:flex-start;gap:12px;padding:calc(16px + env(safe-area-inset-top,0px)) 20px 0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;color:#EFE7D6;pointer-events:auto;text-align:center}
 .sumov.on{display:flex}
 .spark{width:22px;height:22px;border-radius:50%;background:var(--rc);box-shadow:0 0 30px 10px var(--rc),0 0 90px 30px var(--rc);animation:fall 1.1s cubic-bezier(.5,0,.7,1) forwards}
 @keyframes fall{from{transform:translateY(-55vh) scale(.4)}to{transform:translateY(0) scale(1.4)}}
-.flip{width:min(62vw,250px);aspect-ratio:2/3;perspective:900px}
+.sumov>:first-child{margin-top:auto}
+.sumov>:last-child{margin-bottom:auto}
+.sumov .pbtn{position:sticky;bottom:0;margin-bottom:calc(14px + env(safe-area-inset-bottom,0px));flex:none;box-shadow:0 -12px 24px rgba(6,4,14,.95)}
+.sumov .abl2{max-width:36ch;display:grid;gap:6px;text-align:left}
+.sumov .abl2 p{font-size:.88rem;max-width:none}
+.flip{width:min(62vw,250px,30vh);aspect-ratio:2/3;perspective:900px;flex:none}
 .flip .in{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:flipin .8s .1s ease forwards;transform:rotateY(180deg)}
 @keyframes flipin{to{transform:rotateY(0)}}
 .flip .fr,.flip .bk{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
@@ -347,12 +377,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-o
   <section id="lobby" class="screen sheetpage">
     <div class="sp-in">
       <h2 class="disp">Комната</h2>
-      <p>Отправь друзьям ссылку или код. Начать может создатель комнаты, когда соберётся хотя бы двое.</p>
+      <p>Отправь друзьям ссылку или код. Начать может создатель комнаты, когда соберётся хотя бы двое. Свободные места можно занять ботами.</p>
       <div class="code disp" id="lobbyCode">—</div>
       <div class="qrbox" id="qrbox" hidden><div class="qr" id="qr"></div><small>Друзья могут просто навести камеру телефона</small></div>
       <div class="row" style="margin-bottom:12px"><button class="sbtn" id="copyLink">Отправить ссылку-приглашение</button></div>
       <div class="seat"><span class="dot" style="background:#FFC960"></span><input id="myName" maxlength="16" placeholder="Твоё имя" aria-label="Твоё имя" autocomplete="nickname"><button class="tog" id="saveName">Готово</button></div>
       <div id="lobbyList"></div>
+      <div class="row" style="margin:8px 0 14px"><button class="sbtn" id="addBot" hidden>Добавить бота</button></div>
       <h3 class="sizeh">Длина подземелья</h3>
       <div class="sizes" id="sizeLobby"></div>
       <div class="row" style="margin-top:14px"><button class="sbtn" id="lobbyLeave">Выйти</button><button class="pbtn" id="lobbyStart">Начать игру</button></div>
@@ -384,6 +415,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-o
 <div id="stage"></div>
 <div id="ov"></div>
 <div class="sumov" id="sumov"></div>
+<div id="talk" hidden>
+  <div id="reactRing" aria-hidden="true"></div>
+  <button class="talkbtn" id="bReact" aria-label="Реакции">😊</button>
+  <button class="talkbtn" id="bChat" aria-label="Чат">💬<i id="chatDot" hidden></i></button>
+</div>
+<div id="chatbox" hidden>
+  <div id="chatHist"></div>
+  <div class="quick" id="chatQuick"></div>
+  <div class="chatrow"><input id="chatIn" maxlength="80" placeholder="Написать всем…" enterkeyhint="send" autocomplete="off"><button class="pbtn" id="chatSend">➤</button></div>
+</div>
 <div class="win" id="win"></div>
 <div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -463,7 +504,7 @@ const EVENTS = [
 ];
 const PCOLORS = ['#FFC960', '#7FD4FF', '#FF7E9A', '#9BE38F'];
 const START_SOULS = 160, HAND = 4;
-const GAME_VER = 7;
+const GAME_VER = 9;
 // Размер поля задаётся партией: 200, 350 или 500 плит. DK — множитель дальности способностей.
 const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' } };
 let COLS = 10, CELLS = 500, ROWS = 50, ZROWS = 10, DK = 1.5;
@@ -1061,10 +1102,10 @@ function resolveBattle(s, p, rnd) {
   if (r.win) { reward = 30 + power * 4; if (s.event === 'bloodmoon') reward = Math.round(reward * 1.5); p.souls += reward; recruit = true; }
   else if (!r.tie) { lost = Math.min(30, p.souls); p.souls -= lost; }
   fx(s, { t: 'battle', p: p.id, foe, foePow: power, foeRoll: r.b, myPow: r.myPow, myRoll: r.a, auto: !!r.auto, win: r.win, tie: !!r.tie, reward, lost, recruit });
-  log(s, p.name + (r.win ? ' побеждает ' + HEROES[foe].name + ' и забирает его душу.' : r.tie ? ' расходится вничью с ' + HEROES[foe].name + '.' : ' проигрывает ' + HEROES[foe].name + ', и душа обрушивает силу на всех.'));
+  log(s, p.name + (r.win ? ' побеждает ' + HEROES[foe].name + ' и забирает его душу.' : r.tie ? ' расходится вничью с ' + HEROES[foe].name + '.' : ' проигрывает ' + HEROES[foe].name + ', и душа обрушивает силу на него.'));
   if (!r.win && !r.tie) {
     fx(s, { t: 'wildAll', foe, msg: WILD[foe].msg, p: p.id });
-    alive(s).forEach(q => applyWild(s, q, foe, rnd));
+    applyWild(s, p, foe, rnd); // сила души бьёт только по тому, кто начал бой
   }
   if (recruit) {
     if (p.hand.length < HAND) { p.hand.push(newHero(foe)); fx(s, { t: 'recruit', p: p.id, hero: foe }); }
@@ -1247,7 +1288,13 @@ function act(state, action, rnd) {
       moveTo(s, p, p.pos + (rev ? -steps : steps), rev ? 'back' : 'walk');
       land(s, p, rnd);
     } else return null;
-  } else if (s.phase === 'battle' && t === 'battle') { resolveBattle(s, p, rnd); }
+  } else if (s.phase === 'battle' && t === 'battle') {
+    if (action.pass) { // отказ от боя: душа уходит, без потерь
+      const foe = s.pending.foe; s.pending = null; s.phase = 'roll';
+      fx(s, { t: 'battlePass', p: p.id, foe }); log(s, p.name + ' проходит мимо, и ' + HEROES[foe].name + ' остаётся в подземелье.');
+      afterLand(s, p);
+    } else resolveBattle(s, p, rnd);
+  }
   else if (s.phase === 'pvp' && t === 'pvp') {
     if (action.target) {
       const q = s.players.find(x => x.id === action.target && s.pending.targets.includes(x.id)); if (!q) return null;
@@ -1277,7 +1324,10 @@ function act(state, action, rnd) {
 function botAction(s) {
   setBoard(s.size);
   const p = activeP(s);
-  if (s.phase === 'battle') return { by: p.id, type: 'battle' };
+  if (s.phase === 'battle') { // бот сражается, если шансы не слишком плохие
+    const my = p.st.strike ? 99 : handPower(p);
+    return { by: p.id, type: 'battle', pass: my + 1 < s.pending.power };
+  }
   if (s.phase === 'pvp') { const q = s.players.find(x => x.id === s.pending.targets[0]); return { by: p.id, type: 'pvp', target: handPower(p) > handPower(q) ? q.id : null }; }
   if (s.phase === 'altar') return { by: p.id, type: 'altar', yes: p.souls >= s.pending.cost + 20 };
   if (s.phase === 'replace') {
@@ -1491,7 +1541,7 @@ const TICON = { treasure: '💎', trap: '🗡', battle: '⚔️', altar: '🔮',
 const TINFO = {
   start: 'Вход в подземелье.', finish: 'Звёздные врата. Дошедшие сюда занимают места.', empty: 'Тихая плита, ничего не происходит.',
   treasure: 'Сокровище: очки душ.', trap: 'Засада: случайная душа нападает и сразу применяет свою силу против тебя.',
-  battle: 'Бой с душой подземелья. Победа приносит очки и саму душу в руку. Поражение стоит 30 очков, а сила души бьёт по всем игрокам.', altar: 'Алтарь: призыв за полцены.',
+  battle: 'Бой с душой подземелья. Победа приносит очки и саму душу в руку. Можно сразиться или пройти мимо. Поражение стоит 30 очков, и сила души бьёт по тебе.', altar: 'Алтарь: призыв за полцены.',
   portal: 'Портал: поднимает вверх по подземелью.', collapse: 'Обвал: сбрасывает вниз.', shrine: 'Святилище цвета: усиливает героя этого цвета в руке.'
 };
 function cellCenter(i) { const r = rowOf(i), c = colOf(i); return { x: c * MAP.cs + MAP.cs / 2, y: MAP.top + (ROWS - 1 - r) * MAP.cs + MAP.cs / 2 }; }
@@ -1627,7 +1677,7 @@ function afterPlayback() {
   if (s.status === 'over') { showResults(); return; }
   const a = activeP(s);
   focusCell(G.disp[a.id] ?? a.pos);
-  if (G.mode === 'local' && a.bot) { clearTimeout(G.botT); G.botT = setTimeout(botStep, 450); return; }
+  if (a.bot && (G.mode === 'local' || (G.mode === 'online' && NET.isHost))) { clearTimeout(G.botT); G.botT = setTimeout(botStep, 450); return; }
   if (canControl()) {
     const key = s.round + ':' + s.turn;
     if (s.phase === 'roll' && G.lastTurnKey !== key) {
@@ -1715,9 +1765,10 @@ async function showSummon(e, s) {
   if (H.great) { shake(); ring(cpt, '#FF8AD8', 300, 8, 70); setTimeout(() => ring(cpt, '#8FE3FF', 240, 6, 60), 200); setTimeout(() => ring(cpt, '#FFC960', 180, 4, 50), 400); }
   ov.appendChild(h('h4', null, H.name));
   ov.appendChild(h('p', null, clsLabel(H) + '. ' + H.title + '. Сила ' + H.pw + ', ' + COLORS[H.col].name + ' цвет.'));
-  H.ab.forEach(a => ov.appendChild(h('p', { style: 'font-size:.9rem' }, a.name + ': ' + abDesc(a))));
-  if (s.phase === 'replace' && s.pending && s.pending.newHero === e.hero) ov.appendChild(h('p', { style: 'color:#F3DDA0' }, 'Рука полна: дальше выберешь, кого отпустить.'));
-  await new Promise(res => { const b = h('button', { class: 'pbtn', style: 'min-width:180px;margin-top:6px' }, 'Дальше'); b.addEventListener('click', res); ov.appendChild(b); setTimeout(() => b.focus(), 50); });
+  const full = s.phase === 'replace' && s.pending && s.pending.newHero === e.hero;
+  const abl = h('div', { class: 'abl2' }); H.ab.forEach(a => abl.appendChild(h('p', null, h('b', null, a.name + ': '), abDesc(a)))); ov.appendChild(abl);
+  if (full) ov.appendChild(h('p', { style: 'color:#F3DDA0' }, 'Рука полна: дальше выберешь, кого отпустить.'));
+  await new Promise(res => { const b = h('button', { class: 'pbtn', style: 'min-width:180px;margin-top:6px' }, full ? 'Выбрать, кого отпустить' : 'Дальше'); b.addEventListener('click', res); ov.appendChild(b); setTimeout(() => b.focus(), 50); });
   ov.classList.remove('on'); ov.innerHTML = '';
 }
 async function castCard(heroKey, abName, who, copy, face) {
@@ -1870,7 +1921,7 @@ async function playFx(e, s) {
       const p = P(e.p); const k = leaderOf(p);
       const L = fightSide(k ? IMG[k].av : null, p.name, e.myPow, e.myRoll, p.color, e.auto);
       const R = fightSide(IMG[e.foe].av, HEROES[e.foe].name, e.foePow, e.foeRoll, heroColor(e.foe));
-      const txt = e.win ? 'Победа! +' + e.reward + ' очков и душа ' + HEROES[e.foe].name : e.tie ? 'Ничья, душа уходит' : 'Поражение: −' + e.lost + ' очков, и душа бьёт по всем';
+      const txt = e.win ? 'Победа! +' + e.reward + ' очков и душа ' + HEROES[e.foe].name : e.tie ? 'Ничья, душа уходит' : 'Поражение: −' + e.lost + ' очков, и душа бьёт по тебе';
       await showFight(L, R, txt, e.win ? true : e.tie ? null : false);
       break;
     }
@@ -1881,7 +1932,8 @@ async function playFx(e, s) {
       SFX.trap(); shake(); await castCard(k, 'Засада!', HEROES[k].name + ' нападает на ' + P(e.p).name);
       motifFx(pt, col, HEROES[k].motif, 30); abilitySound(k, HEROES[k].ab[0]); await sleep(400); break;
     }
-    case 'wildAll': { const col = heroColor(e.foe); flash(col + '55'); banner(e.foe, HEROES[e.foe].name + ' ' + e.msg, 'Сила души бьёт по всем игрокам', col); abilitySound(e.foe, HEROES[e.foe].ab[0]); await sleep(700); break; }
+    case 'wildAll': { const col = heroColor(e.foe); flash(col + '55'); banner(e.foe, HEROES[e.foe].name + ' ' + e.msg, 'Сила души бьёт по игроку ' + P(e.p).name, col); abilitySound(e.foe, HEROES[e.foe].ab[0]); await sleep(700); break; }
+    case 'battlePass': { const col = heroColor(e.foe); banner(e.foe, P(e.p).name + ' проходит мимо', HEROES[e.foe].name + ' остаётся в подземелье', col); await sleep(900); break; }
     case 'wildHit': { const col = heroColor(e.foe); const pt = screenOfP(e.p); motifFx(pt, col, HEROES[e.foe].motif, 24); ring(pt, col, 60, 4); await sleep(450); break; }
     case 'recruit': { SFX.summon(heroTier(e.hero)); const col = heroColor(e.hero); banner(e.hero, HEROES[e.hero].name + ' присоединяется', e.full ? 'Рука полна: выбери, кого отпустить' : 'Душа побеждена и забрана', col); burst(screenOfP(e.p), [col, '#FFFFFF'], 36, 6, { shape: 'star' }); await sleep(1100); break; }
     case 'status': floatAt(e.p, e.msg, '#C9BFE3'); await sleep(450); break;
@@ -1943,7 +1995,7 @@ function renderDock() {
   const strip = $('strip'); strip.innerHTML = '';
   s.order.forEach(i => {
     const p = s.players[i]; const pos = G.disp[p.id] ?? p.pos; const pct = Math.round(pos / (CELLS - 1) * 100);
-    strip.appendChild(h('div', { class: 'pchip' + (p.id === a.id && s.status === 'playing' ? ' act' : ''), style: '--pc:' + p.color },
+    strip.appendChild(h('div', { class: 'pchip' + (p.id === a.id && s.status === 'playing' ? ' act' : ''), style: '--pc:' + p.color, 'data-pid': p.id },
       avatarEl(p), h('div', null, h('b', null, p.name + (G.mode === 'online' && p.id === NET.myId ? ' (ты)' : '')),
         h('div', { style: 'font-size:.72rem;opacity:.85' }, p.place ? '🏁 ' + p.place + ' место' : '◈ ' + p.souls + ', клетка ' + (pos + 1) + (p.st.skip ? ', пропуск' : '')),
         h('div', { class: 'bar' }, h('i', { style: 'width:' + pct + '%' })))));
@@ -1974,7 +2026,7 @@ function renderDock() {
   $('soulsN').textContent = v.souls;
   const ex = $('extra'); ex.innerHTML = '';
   if (rollPhase === false && ctl && ['battle', 'pvp', 'altar', 'replace'].includes(s.phase)) ex.appendChild(h('button', { class: 'abtn', id: 'hostskip', onclick: openPhasePrompt }, 'Сделать выбор'));
-  if (G.mode === 'online' && NET.isHost && s.status === 'playing' && a.id !== NET.myId && !G.playing && !G.busy)
+  if (G.mode === 'online' && NET.isHost && s.status === 'playing' && a.id !== NET.myId && !a.bot && !G.playing && !G.busy)
     ex.appendChild(h('button', { class: 'abtn alt', id: 'hostskip', onclick: () => confirmBox('Пропустить ход?', 'Если ' + a.name + ' не отвечает, можно пропустить его ход.', 'Пропустить', () => doAct({ type: 'forceSkip', by: NET.myId })) }, 'Пропустить ход игрока ' + a.name));
   setDockVar();
 }
@@ -2054,7 +2106,7 @@ function openPhasePrompt() {
   const s = G.s; if (!canControl()) return; const p = activeP(s);
   if (s.phase === 'battle') {
     const k = s.pending.foe; const H = HEROES[k];
-    yesNo('Бой: ' + H.name, H.name + ' преграждает путь. Его сила ' + s.pending.power + ', сила твоей руки ' + handPower(p) + '. К силе каждого добавится кубик. Победишь — получишь очки и эту душу. Проиграешь — потеряешь 30 очков, а душа ' + WILD[k].msg + ' и ударит так по всем игрокам.' + (p.st.strike ? ' У тебя готов «Один удар».' : ''), 'Сражаться', null, () => doAct({ type: 'battle' }), null, IMG[k].card, heroColor(k));
+    yesNo('Бой: ' + H.name, H.name + ' преграждает путь. Его сила ' + s.pending.power + ', сила твоей руки ' + handPower(p) + '. К силе каждого добавится кубик. Победишь — получишь очки и эту душу. Проиграешь — потеряешь 30 очков, а душа ' + WILD[k].msg + ' и ударит так по тебе. Можно и пройти мимо: тогда ничего не потеряешь, но и душу не получишь.' + (p.st.strike ? ' У тебя готов «Один удар».' : ''), 'Сражаться', 'Пройти мимо', () => doAct({ type: 'battle' }), () => doAct({ type: 'battle', pass: true }), IMG[k].card, heroColor(k));
   } else if (s.phase === 'pvp') {
     const q = s.players.find(x => x.id === s.pending.targets[0]);
     yesNo('Соперник рядом', 'На твоей клетке ' + q.name + '. Вызвать на бой? Твоя сила ' + handPower(p) + ' против ' + handPower(q) + '. Проигравший отдаёт до 50 очков и отступает на 2.', 'Вызвать', 'Пройти мимо', () => doAct({ type: 'pvp', target: q.id }), () => doAct({ type: 'pvp', target: null }));
@@ -2073,7 +2125,7 @@ function showRules() {
   const c = h('div', null,
     h('p', null, 'Поле — змейка из ' + CELLS + ' клеток снизу вверх. Бросаешь два кубика, фишка идёт сама. Кто дошёл до звёздных врат, занимает место. Игра идёт, пока на поле не останется один игрок: он проигрывает.'),
     h('p', null, 'Герои призываются за очки душ, в руке до ' + HAND + ' карт. Пока герой в руке, его сила помогает в боях. Нажми на карту, чтобы применить одну из её способностей: после этого герой сгорит.'),
-    h('p', null, 'Клетки: 💎 сокровище, 🗡 засада (случайная душа сразу бьёт своей силой), ⚔️ бой с душой (победа — душа твоя, поражение — её сила бьёт по всем), 🔮 алтарь, цветной круг — святилище. Нажми на клетку, чтобы узнать подробнее.'),
+    h('p', null, 'Клетки: 💎 сокровище, 🗡 засада (случайная душа сразу бьёт своей силой), ⚔️ бой с душой (можно сразиться или пройти мимо; победа — душа твоя, поражение — её сила бьёт по тебе), 🔮 алтарь, цветной круг — святилище. Нажми на клетку, чтобы узнать подробнее.'),
     h('p', null, 'Созвездия: если в руке 2 разных знака зодиака, загорается Малое созвездие (+1 к силе знаков), 3 знака — Созвездие (+2 и 10 очков за ход), 4 знака — Великий зодиак (+3, 20 очков за ход и +1 к броску). Рыбы — двойная карта: переверни её, чтобы выбрать способность ледяной или алой стороны.'),
     h('p', null, 'Очки душ даются за шаги, сокровища и победы. Отстающим за шаг даётся вдвое больше, а сильно отставший получает +2 к броску. На длинном поле дальность способностей больше: числа в описаниях уже пересчитаны.'),
     h('p', null, 'Души бывают разных классов. Известные души носят имена, их знают многие. Твари подземелья — местные стайные существа: слабые души, попав в этот мир, становятся их сородичами, и твари охотятся на новичков, поэтому в боях и засадах они нападают чаще. У безымянных душ имя неизвестно, о них знают только по способностям.'),
@@ -2115,6 +2167,7 @@ function showResults() {
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
   if (id === 'game' || id === 'lobby') wakeOn(); else wakeOff();
+  if (typeof talkVisible === 'function') talkVisible(id === 'game' && G.mode === 'online');
   if (id === 'home' && typeof renderResume === 'function') renderResume();
 }
 // Экран не гаснет, пока идёт партия: иначе у создателя комнаты оборвётся связь
@@ -2122,7 +2175,7 @@ let WAKE = null;
 async function wakeOn() { try { if ('wakeLock' in navigator && !WAKE && document.visibilityState === 'visible') { WAKE = await navigator.wakeLock.request('screen'); WAKE.addEventListener('release', () => { WAKE = null; }); } } catch (e) { WAKE = null; } }
 function wakeOff() { try { if (WAKE) WAKE.release(); } catch (e) { } WAKE = null; }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ($('game').classList.contains('on') || $('lobby').classList.contains('on'))) wakeOn(); });
-function resetGameView() { G.aura = {}; G.s = null; G.queue = []; G.qseq = 0; G.disp = {}; G.playing = false; G.busy = false; MAP.key = null; clearTimeout(G.botT); closeModal(); $('win').classList.remove('on'); }
+function resetGameView() { CHAT.hist = []; $('chatDot').hidden = true; G.aura = {}; G.s = null; G.queue = []; G.qseq = 0; G.disp = {}; G.playing = false; G.busy = false; MAP.key = null; clearTimeout(G.botT); closeModal(); $('win').classList.remove('on'); }
 // ---- сохранение партии: на одном устройстве и у создателя комнаты ----
 function saveGame(ns) {
   if (G.mode !== 'local' && !(G.mode === 'online' && NET.isHost)) return;
@@ -2293,7 +2346,7 @@ async function resumeHost(sv) {
   if (!peer) { renderResume(); toast('Не удалось снова открыть комнату. Подожди минуту и попробуй ещё раз.'); return; }
   resetGameView(); hostAttach(peer, sv.code);
   const st = sv.s; st.fx = []; st.seq = (st.seq || 0) + 1;
-  NET.state = st; NET.lobby = { hostId: NET.myId, players: st.players.map(p => ({ id: p.id, name: p.name })), size: st.size };
+  NET.state = st; NET.lobby = { hostId: NET.myId, players: st.players.map(p => ({ id: p.id, name: p.name, bot: !!p.bot })), size: st.size };
   G.mode = 'online'; show('game'); enqueue(st);
   toast('Комната ' + sv.code + ' снова открыта. Друзья могут вернуться по той же ссылке или коду.');
 }
@@ -2311,6 +2364,7 @@ function hostOnData(conn, d) {
       return;
     }
     if (!NET.lobby.players.some(p => p.id === pid)) {
+      if (NET.lobby.players.length >= 4) { const bi = NET.lobby.players.map(p => !!p.bot).lastIndexOf(true); if (bi >= 0) NET.lobby.players.splice(bi, 1); }
       if (NET.lobby.players.length >= 4) { conn.send({ t: 'err', msg: 'Комната заполнена: максимум 4 игрока.', fatal: true }); setTimeout(() => conn.close(), 300); return; }
       NET.lobby.players.push({ id: pid, name: uniqueName(name, pid, NET.lobby.players) });
       SFX.chime();
@@ -2318,6 +2372,7 @@ function hostOnData(conn, d) {
     broadcastLobby();
   } else if (d.t === 'name' && conn.pid && !NET.state) {
     const p = NET.lobby.players.find(x => x.id === conn.pid); const nm = cleanName(d.name); if (p && nm) { p.name = uniqueName(nm, p.id, NET.lobby.players); broadcastLobby(); }
+  } else if (d.t === 'say' && conn.pid && NET.state) { hostSay(conn.pid, d);
   } else if (d.t === 'act' && conn.pid && NET.state) {
     const a = Object.assign({}, d.a || {}, { by: conn.pid });
     if (a.type === 'forceSkip') return;
@@ -2333,7 +2388,7 @@ function hostOnClose(conn) {
   else if (NET.state) toast(playerName(pid) + ' отключился. Если он не вернётся, пропусти его ход.');
 }
 function hostStart(players) {
-  NET.state = newGame(players.map(p => ({ id: p.id, name: p.name })), { hostId: NET.myId, seq: NET.state ? NET.state.seq : 0, size: NET.state ? NET.state.size : NET.lobby.size });
+  NET.state = newGame(players.map(p => ({ id: p.id, name: p.name, bot: !!p.bot })), { hostId: NET.myId, seq: NET.state ? NET.state.seq : 0, size: NET.state ? NET.state.size : NET.lobby.size });
   broadcast({ t: 'state', s: NET.state });
   show('game'); enqueue(NET.state);
 }
@@ -2367,6 +2422,7 @@ function guestOnData(d) {
     clearTimeout(NET.busyT); G.busy = false; toast(d.msg || 'Ошибка');
     if (d.fatal) { const c = NET.code; leaveGame(); $('joinCode').value = c || ''; return; }
     renderDock(); afterPlayback();
+  } else if (d.t === 'say') { showSay(d);
   } else if (d.t === 'closed') { toast('Создатель закрыл комнату.'); leaveGame(); clearInvite(); }
 }
 
@@ -2376,11 +2432,75 @@ function renderLobby(d) {
   const mine = d.players.find(p => p.id === NET.myId);
   if (document.activeElement !== $('myName')) $('myName').value = mine ? mine.name : myDefaultName();
   const list = $('lobbyList'); list.innerHTML = '';
-  d.players.forEach((p, i) => list.appendChild(h('div', { class: 'seat' }, h('span', { class: 'dot', style: 'background:' + PCOLORS[i] }), h('span', { style: 'flex:1' }, p.name + (p.id === NET.myId ? ' (ты)' : '')), p.id === d.hostId ? h('span', { class: 'tog' }, 'Создатель') : null)));
   const host = d.hostId === NET.myId;
+  d.players.forEach((p, i) => list.appendChild(h('div', { class: 'seat' }, h('span', { class: 'dot', style: 'background:' + PCOLORS[i] }), h('span', { style: 'flex:1' }, p.name + (p.id === NET.myId ? ' (ты)' : '')),
+    p.id === d.hostId ? h('span', { class: 'tog' }, 'Создатель') : p.bot ? h('span', { class: 'tog', 'aria-pressed': 'true' }, 'Бот') : null,
+    p.bot && host ? h('button', { class: 'rm', 'aria-label': 'Убрать бота', onclick: () => { NET.lobby.players = NET.lobby.players.filter(x => x.id !== p.id); SFX.click(); broadcastLobby(); } }, '×') : null)));
+  $('addBot').hidden = !host; $('addBot').disabled = d.players.length >= 4;
   sizePicker($('sizeLobby'), d.size || 500, host ? n => { NET.lobby.size = n; store.set('size', n); SFX.click(); broadcastLobby(); } : null);
   $('lobbyStart').hidden = !host; $('lobbyStart').disabled = d.players.length < 2;
-  $('lobbyNote').textContent = host ? (d.players.length < 2 ? 'Ждём хотя бы одного друга. Отправь ему ссылку или код комнаты.' : 'Можно начинать.') : 'Ждём, пока создатель комнаты начнёт игру.';
+  $('lobbyNote').textContent = host ? (d.players.length < 2 ? 'Ждём хотя бы одного друга или добавь бота.' : 'Можно начинать. Друзья могут подключиться, пока есть свободные места.') : 'Ждём, пока создатель комнаты начнёт игру.';
+}
+const BOT_NAMES = ['Бот Ночи', 'Бот Тумана', 'Бот Звезды', 'Бот Пепла', 'Бот Луны'];
+$('addBot').onclick = () => {
+  if (!NET.isHost || !NET.lobby || NET.lobby.players.length >= 4) return;
+  const nm = BOT_NAMES.find(n => !NET.lobby.players.some(p => p.name === n)) || 'Бот';
+  NET.lobby.players.push({ id: 'bot-' + Math.random().toString(36).slice(2, 8), name: nm, bot: true }); SFX.click(); broadcastLobby();
+};
+// ---- реакции и чат (игра по сети) ----
+const EMOJI = ['😂', '😮', '😡', '😭', '👍', '🔥', '💀', '❤️'];
+const QUICK = ['Удачи!', 'Ха-ха', 'Ну ты даёшь', 'Не честно!', 'Отличный ход', 'Мой ход?'];
+const CHAT = { hist: [], last: {} };
+function talkVisible(on) { $('talk').hidden = !on; if (!on) { closeTalk(); } }
+function closeTalk() { $('reactRing').classList.remove('on'); $('bReact').setAttribute('aria-expanded', 'false'); $('chatbox').hidden = true; $('bChat').setAttribute('aria-expanded', 'false'); }
+(function buildTalk() {
+  const ring = $('reactRing'); const R0 = 60, CX = -70, CY = -78;
+  EMOJI.forEach((e, i) => { // круг реакций слева над кнопкой
+    const ang = -Math.PI / 2 + i / EMOJI.length * Math.PI * 2; const x = CX + Math.cos(ang) * R0, y = CY + Math.sin(ang) * R0;
+    const b = h('button', { 'aria-label': e, onclick: () => { sayOut('react', e); closeTalk(); } }, e);
+    b.dataset.x = x; b.dataset.y = y; ring.appendChild(b);
+  });
+  QUICK.forEach(q => $('chatQuick').appendChild(h('button', { onclick: () => { sayOut('chat', q); } }, q)));
+})();
+$('bReact').onclick = () => {
+  const on = !$('reactRing').classList.contains('on'); closeTalk(); if (!on) return; SFX.click();
+  $('reactRing').classList.add('on'); $('bReact').setAttribute('aria-expanded', 'true');
+  [...$('reactRing').children].forEach((b, i) => { b.style.transitionDelay = (i * 25) + 'ms'; b.style.transform = 'translate(' + b.dataset.x + 'px,' + b.dataset.y + 'px) scale(1)'; });
+};
+$('bChat').onclick = () => {
+  const open = $('chatbox').hidden; closeTalk(); if (!open) return; SFX.click();
+  $('chatbox').hidden = false; $('bChat').setAttribute('aria-expanded', 'true'); $('chatDot').hidden = true; renderChat();
+  setTimeout(() => $('chatIn').focus(), 50);
+};
+document.addEventListener('pointerdown', e => { if (!e.target.closest('#talk,#chatbox')) closeTalk(); });
+$('chatSend').onclick = () => { const v = $('chatIn').value.trim(); if (!v) return; sayOut('chat', v); $('chatIn').value = ''; };
+$('chatIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('chatSend').click(); } });
+function sayOut(kind, v) {
+  const msg = { t: 'say', kind, v: String(v).slice(0, 80) };
+  if (NET.isHost) hostSay(NET.myId, msg); else if (!sendHost(msg)) toast('Нет связи с создателем комнаты.');
+}
+function hostSay(pid, d) {
+  const now = Date.now(); if (now - (CHAT.last[pid] || 0) < 700) return; CHAT.last[pid] = now;
+  let v = String(d.v || '').replace(/\s+/g, ' ').trim().slice(0, 80); if (!v) return;
+  if (d.kind === 'react' && !EMOJI.includes(v)) return;
+  const m = { t: 'say', pid, kind: d.kind === 'react' ? 'react' : 'chat', v };
+  broadcast(m); showSay(m);
+}
+function showSay(m) {
+  const s = G.s; if (!s) return; const p = s.players.find(x => x.id === m.pid); if (!p) return;
+  const chip = document.querySelector('#strip .pchip[data-pid="' + m.pid + '"]');
+  const r = chip ? chip.getBoundingClientRect() : { left: innerWidth / 2, width: 0, top: innerHeight / 2 };
+  const b = h('div', { class: 'saybub' + (m.kind === 'react' ? ' emo' : ''), style: '--pc:' + p.color + ';left:' + Math.max(40, Math.min(innerWidth - 40, r.left + r.width / 2)) + 'px;top:' + (r.top - 6) + 'px;--dur:' + (m.kind === 'chat' ? Math.min(6, 2.6 + m.v.length / 25) : 2) + 's' },
+    m.kind === 'chat' ? h('b', null, p.name) : null, m.v);
+  document.body.appendChild(b); setTimeout(() => b.remove(), m.kind === 'chat' ? 7000 : 2600);
+  const tk = MAP.toks[m.pid]; if (tk && m.kind === 'react') { const e = h('span', { class: 'tsay' }, m.v); tk.appendChild(e); setTimeout(() => e.remove(), 2500); }
+  if (m.kind === 'chat') { CHAT.hist.push({ p: p.name, c: p.color, v: m.v }); if (CHAT.hist.length > 30) CHAT.hist.shift(); if ($('chatbox').hidden) { if (m.pid !== NET.myId) $('chatDot').hidden = false; } else renderChat(); }
+  if (m.pid !== NET.myId) { try { SFX.click(); } catch (e) { } }
+}
+function renderChat() {
+  const box = $('chatHist'); box.innerHTML = '';
+  CHAT.hist.forEach(x => box.appendChild(h('div', { style: '--pc:' + x.c }, h('b', null, x.p + ': '), x.v)));
+  box.scrollTop = box.scrollHeight;
 }
 function pushName(quiet) {
   const nm = saveNick($('myName').value); if (!nm || !NET.lobby) return;
