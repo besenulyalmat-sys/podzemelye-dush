@@ -377,6 +377,38 @@ button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
   #chatbox{left:auto;right:462px;bottom:18px;width:380px}
   #feed{left:18px;right:auto;bottom:18px;width:400px}
 }
+#bReact,#reactRing{display:none!important}
+.emorow{display:flex;justify-content:space-between;gap:4px;margin-bottom:8px}
+.emorow button{flex:1;max-width:46px;aspect-ratio:1;border-radius:12px;border:1px solid #3B3060;background:#251D42;font-size:1.35rem;display:grid;place-items:center;padding:0}
+.emorow button:active{transform:scale(.9)}
+.pst{font-size:.72rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pchip b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pchip > div{min-width:0}
+.hcard .nm{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.quake{animation:quake 1.6s cubic-bezier(.36,.07,.19,.97)}
+@keyframes quake{0%,100%{transform:none}5%{transform:translate(-9px,4px) rotate(-.6deg)}10%{transform:translate(8px,-6px) rotate(.5deg)}15%{transform:translate(-10px,-3px)}20%{transform:translate(9px,5px) rotate(.4deg)}30%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px) rotate(-.3deg)}50%{transform:translate(-5px,2px)}60%{transform:translate(4px,-2px)}75%{transform:translate(-2px,1px)}88%{transform:translate(1px,0)}}
+@media (max-width:979px),(max-height:559px){
+  #topbar{padding:8px 8px 18px;gap:6px;background:linear-gradient(180deg,rgba(14,10,26,.9) 55%,rgba(14,10,26,0))}
+  #topbar .chip{padding:6px 10px;font-size:.8rem}
+  #topbar .chip.icon{width:34px;height:34px;padding:0;display:grid;place-items:center;font-size:.95rem}
+  #evchip{max-width:46vw}
+  #dock{padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))}
+  #strip{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px;overflow:hidden;padding-bottom:4px}
+  .pchip{min-width:0;padding:3px 6px 3px 3px;border-radius:10px}
+  .pchip .bar{width:100%}
+  #who{font-size:1.08rem;margin:2px 2px 6px}
+  #hand{gap:6px}
+  .hcard,.hslot{aspect-ratio:3/4}
+  .hcard img{object-position:50% 18%}
+  .hcard .nm{font-size:.64rem;padding:10px 3px 4px}
+  .hcard .pw{font-size:.68rem}
+  #bar{margin-top:6px}
+  .dicebtn{width:62px;height:62px;border-radius:18px;font-size:1.6rem}
+  .sumbtn{padding:7px 6px;font-size:.84rem}
+  #soulsBox b{font-size:1.2rem}
+  .talkbtn{width:40px;height:40px;font-size:1.15rem;opacity:.9}
+  .fitem{font-size:.82rem;padding:7px 9px}
+}
 </style>
 </head>
 <body>
@@ -463,9 +495,10 @@ button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 <div id="talk" hidden>
   <div id="reactRing" aria-hidden="true"></div>
   <button class="talkbtn" id="bReact" aria-label="Реакции">😊</button>
-  <button class="talkbtn" id="bChat" aria-label="Чат">💬<i id="chatDot" hidden></i></button>
+  <button class="talkbtn" id="bChat" aria-label="Реакции и чат">💬<i id="chatDot" hidden></i></button>
 </div>
 <div id="chatbox" hidden>
+  <div class="emorow" id="chatEmo"></div>
   <div id="chatHist"></div>
   <div class="quick" id="chatQuick"></div>
   <div class="chatrow"><input id="chatIn" maxlength="80" placeholder="Написать всем…" enterkeyhint="send" autocomplete="off"><button class="pbtn" id="chatSend">➤</button></div>
@@ -1317,7 +1350,7 @@ function endTurn(s) {
 // ---------- Summon ----------
 function summonTo(s, p, rnd, viaAltar) {
   const k = weightedHero(rnd, true);
-  if (p.hand.length < HAND) { p.hand.push(newHero(k)); fx(s, { t: 'summon', p: p.id, hero: k }); log(s, p.name + ' призывает ' + HEROES[k].name + (HEROES[k].great ? ' — Великую душу!' : '.')); return true; }
+  if (p.hand.length < HAND) { p.hand.push(newHero(k)); fx(s, { t: 'summon', p: p.id, hero: k }); log(s, p.name + (HEROES[k].great ? ' призывает Великую душу!' : ' призывает душу.')); return true; }
   fx(s, { t: 'summon', p: p.id, hero: k });
   s.pending = { newHero: k, back: s.phase, viaAltar: !!viaAltar }; s.phase = 'replace';
   return false;
@@ -1647,6 +1680,7 @@ function beam(a, b, color, w = 4, life = 34) { if (!a || !b) return; FX.beams.pu
 function pillar(pt, color) { if (!pt) return; for (let i = 0; i < (RM ? 10 : 60); i++) part({ x: pt.x + (Math.random() - 0.5) * 50, y: pt.y + Math.random() * 30, vx: (Math.random() - 0.5) * 0.4, vy: -3 - Math.random() * 6, drag: 0.99, color, size: 1.5 + Math.random() * 3, life: 50 + Math.random() * 30, shape: Math.random() < 0.3 ? 'star' : 'dot' }); }
 function feathers(pt, color, n = 30, wide) { if (!pt) return; for (let i = 0; i < (RM ? 6 : n); i++) part({ x: wide ? Math.random() * innerWidth : pt.x, y: wide ? Math.random() * innerHeight : pt.y, vx: (Math.random() - 0.3) * 8, vy: (Math.random() - 0.6) * 5, drag: 0.97, g: 0.05, color, size: 2 + Math.random() * 2.5, life: 60 + Math.random() * 40, shape: 'feather', vr: (Math.random() - 0.5) * 0.3 }); }
 function flash(color) { if (RM) return; const f = h('div', { class: 'flash', style: 'background:' + color }); document.body.appendChild(f); setTimeout(() => f.remove(), 650); }
+function quake() { if (RM) return; const g = $('game'); g.classList.remove('quake'); void g.offsetWidth; g.classList.add('quake'); setTimeout(() => g.classList.remove('quake'), 1700); }
 function shake() { if (RM) return; const g = $('game'); g.classList.remove('shake'); void g.offsetWidth; g.classList.add('shake'); }
 
 
@@ -1798,6 +1832,18 @@ function canControl() {
 }
 function isMine(p) { return G.mode === 'local' ? !p.bot : p.id === NET.myId; }
 function enqueue(ns) { if (!ns || (ns.seq || 0) <= G.qseq) return; G.qseq = ns.seq; saveGame(ns); G.queue.push(ns); if (!G.playing) runQueue(); }
+const HEADS = new Set(['ability', 'summon', 'battle', 'ambush', 'duel', 'trap', 'treasure', 'battlePass', 'finish', 'skip', 'dice', 'shuffle', 'orbit']);
+function involvesMe(e) { const me = meId(); if (!me) return true; return [e.p, e.target, e.from, e.a, e.b, e.to, e.by].includes(me); }
+function markMine(ns) { // событие «моё», если я в нём участвую или задет его последствиями
+  let head = null;
+  for (const e of ns.fx || []) {
+    e._me = involvesMe(e);
+    if (e.t === 'move' && e.kind === 'walk') continue;
+    if (HEADS.has(e.t)) { head = e; continue; }
+    if (head && e._me) head._me = true;
+    if (head && head._me) e._me = e._me || false;
+  }
+}
 async function runQueue() {
   G.playing = true; renderDock();
   while (G.queue.length) {
@@ -1809,7 +1855,7 @@ async function runQueue() {
     }
     G.s = ns; renderTokens(); renderDock();
     const skip = G.queue.length > 2;
-    try { feedState(ns); } catch (err) { console.error(err); }
+    try { markMine(ns); feedState(ns); } catch (err) { console.error(err); }
     if (!skip) for (const e of ns.fx || []) { try { await playFx(e, ns); } catch (err) { console.error(err); } }
     ns.players.forEach(p => G.disp[p.id] = p.pos);
     renderTokens(); renderMarks(); renderDock();
@@ -1836,10 +1882,10 @@ function feedState(ns) {
   const isMe = id => id && id === me; const V = (id, a, b) => isMe(id) ? 'Ты ' + b : N(id) + ' ' + a;
   const hn = k => HEROES[k] ? HEROES[k].name : k;
   const items = []; let g = null;
-  const start = (head, col, actor) => { g = { head, col, mine: isMe(actor), eff: new Map() }; items.push(g); };
+  const start = (head, col, actor) => { g = { head, col, actor, mine: isMe(actor), eff: new Map() }; items.push(g); };
   const add = (id, frag) => { if (!g || !id) return; if (!g.eff.has(id)) g.eff.set(id, []); const a = g.eff.get(id); if (!a.includes(frag)) a.push(frag); if (isMe(id)) g.mine = true; };
   const solo = (txt, col, id) => { items.push({ head: txt, col, mine: isMe(id), eff: new Map() }); g = null; };
-  const dist = path => path && path.length > 1 ? Math.abs(path[path.length - 1] - path[0]) : 0;
+  const dist = path => path ? path.length : 0;
   const cells = n => n + ' ' + cellWord(n, true);
   for (const e of ns.fx || []) {
     const col = e.p && P(e.p) ? P(e.p).color : '#D9B66B';
@@ -1850,7 +1896,7 @@ function feedState(ns) {
         start(V(e.p, e.copy ? 'повторяет' : 'применяет', e.copy ? 'повторяешь' : 'применяешь') + ' «' + (ab ? ab.name : 'способность') + '»' + (H ? ' (' + H.name + ')' : '') + tgt, col, e.p);
         if (isMe(e.target)) g.mine = true; break;
       }
-      case 'summon': start(V(e.p, 'призывает', 'призываешь') + ' ' + hn(e.hero), col, e.p); break;
+      case 'summon': g = null; break;
       case 'battle': start(V(e.p, 'сражается', 'сражаешься') + ' с ' + hn(e.foe) + ': ' + (e.win ? 'победа, +' + e.reward + ' и душа в руку' : e.tie ? 'ничья' : 'поражение, −' + e.lost), col, e.p); break;
       case 'battlePass': solo(V(e.p, 'проходит', 'проходишь') + ' мимо: ' + hn(e.foe) + ' остаётся в подземелье', col, e.p); break;
       case 'ambush': start('Засада! ' + hn(e.foe) + ' нападает на ' + (isMe(e.p) ? 'тебя' : N(e.p)), col, e.p); break;
@@ -1878,8 +1924,11 @@ function feedState(ns) {
     }
   }
   items.forEach(it => {
-    const lines = [...it.eff.entries()].map(([id, fr]) => ({ mine: isMe(id), txt: (isMe(id) ? 'По тебе: ' : N(id) + ': ') + fr.join(', ') }));
-    pushFeed(it.head, lines, it.col, it.mine);
+    if (me && !it.mine) return; // чужие дела между другими игроками не показываем
+    const mineAct = isMe(it.actor);
+    const lines = [...it.eff.entries()].filter(([id]) => !me || mineAct || isMe(id))
+      .map(([id, fr]) => ({ mine: isMe(id), txt: (isMe(id) ? (mineAct ? 'Тебе: ' : 'По тебе: ') : N(id) + ': ') + fr.join(', ') }));
+    pushFeed(it.head, lines, it.col, it.mine && !mineAct);
   });
 }
 function pushFeed(head, lines, col, mine) {
@@ -1967,11 +2016,15 @@ async function showFight(L, R, text, good) {
 }
 async function showSummon(e, s) {
   const p = s.players.find(x => x.id === e.p); const H = HEROES[e.hero]; const rc = H.great ? '#FF8AD8' : heroColor(e.hero); const tier = heroTier(e.hero);
-  if (!isMine(p)) {
-    SFX.summon(tier); burst(screenOfP(p.id), rc, 30, 5);
-    banner(e.hero, p.name + ' призывает ' + H.name, H.great ? 'Великая душа!' : H.cls === 'nameless' ? 'Безымянная душа: имя неизвестно' : H.cls === 'beast' ? 'Тварь подземелья: ' + H.title.toLowerCase() : H.title, rc);
-    if (H.great) { shake(); flash('rgba(255,138,216,.35)'); }
-    await sleep(H.great ? 1800 : 1200); return;
+  if (!isMine(p) && meId()) { // кого именно призвали, другим знать не нужно
+    const pt = screenOfP(p.id);
+    if (H.great) {
+      dimmer(); quake(); SFX.trap(); SFX.summon(6); setTimeout(() => { try { SFX.trap(); } catch (e) { } }, 650);
+      flash('rgba(255,138,216,.45)'); ring(pt, '#FF8AD8', 320, 10, 80); burst(pt, ['#FF8AD8', '#8FE3FF', '#FFC960'], 70, 9);
+      banner(null, 'Подземелье содрогается', p.name + ' призывает Великую душу', '#FF8AD8');
+      await sleep(500); flash('rgba(143,227,255,.3)'); shake(); await sleep(600); flash('rgba(255,201,96,.3)'); shake(); await sleep(900); return;
+    }
+    SFX.summon(3); burst(pt, p.color, 18, 4); floatAt(p.id, 'призыв души', '#C9BFE3'); await sleep(500); return;
   }
   const ov = $('sumov'); ov.innerHTML = ''; ov.style.setProperty('--rc', rc); ov.classList.add('on');
   ov.appendChild(h('div', { class: 'spark' })); SFX.charge();
@@ -2137,6 +2190,7 @@ async function playFx(e, s) {
     }
     case 'shrine': { const c = COLORS[e.color].hex; SFX.chime(); ring(screenOfP(e.p), c, 90, 5); burst(screenOfP(e.p), c, 24, 4, { shape: 'star' }); floatAt(e.p, e.hero ? HEROES[e.hero].name + ' +1' : '+20', c); await sleep(800); break; }
     case 'battle': {
+      if (e._me === false) { floatAt(e.p, e.win ? '⚔ победа' : e.tie ? '⚔ ничья' : '⚔ поражение', '#F3DDA0'); await sleep(500); break; }
       const p = P(e.p); const k = leaderOf(p);
       const L = fightSide(k ? IMG[k].av : null, p.name, e.myPow, e.myRoll, p.color, e.auto);
       const R = fightSide(IMG[e.foe].av, HEROES[e.foe].name, e.foePow, e.foeRoll, heroColor(e.foe));
@@ -2144,30 +2198,36 @@ async function playFx(e, s) {
       await showFight(L, R, txt, e.win ? true : e.tie ? null : false);
       break;
     }
-    case 'wild': { const c = heroColor(e.foe); banner(e.foe, HEROES[e.foe].name + ' ' + e.msg, P(e.p).name, c); burst(screenOfP(e.p), c, 30, 6); (SFX.ab[HEROES[e.foe].ab[0].id] || SFX.hit)(); await sleep(900); break; }
+    case 'wild': { if (e._me === false) { burst(screenOfP(e.p), heroColor(e.foe), 16, 4); await sleep(300); break; } const c = heroColor(e.foe); banner(e.foe, HEROES[e.foe].name + ' ' + e.msg, P(e.p).name, c); burst(screenOfP(e.p), c, 30, 6); (SFX.ab[HEROES[e.foe].ab[0].id] || SFX.hit)(); await sleep(900); break; }
     case 'lose': floatAt(e.p, '−' + e.amount, '#FF8A96'); await sleep(450); break;
     case 'ambush': {
       const k = e.foe; const col = heroColor(k); const pt = screenOfP(e.p);
+      if (e._me === false) { motifFx(pt, col, HEROES[k].motif, 20); await sleep(400); break; }
       SFX.trap(); shake(); await castCard(k, 'Засада!', HEROES[k].name + ' нападает на ' + P(e.p).name);
       motifFx(pt, col, HEROES[k].motif, 30); abilitySound(k, HEROES[k].ab[0]); await sleep(400); break;
     }
-    case 'wildAll': { const col = heroColor(e.foe); flash(col + '55'); banner(e.foe, HEROES[e.foe].name + ' ' + e.msg, 'Сила души бьёт по игроку ' + P(e.p).name, col); abilitySound(e.foe, HEROES[e.foe].ab[0]); await sleep(700); break; }
-    case 'battlePass': { const col = heroColor(e.foe); banner(e.foe, P(e.p).name + ' проходит мимо', HEROES[e.foe].name + ' остаётся в подземелье', col); await sleep(900); break; }
+    case 'wildAll': { if (e._me === false) break; const col = heroColor(e.foe); flash(col + '55'); banner(e.foe, HEROES[e.foe].name + ' ' + e.msg, 'Сила души бьёт по игроку ' + P(e.p).name, col); abilitySound(e.foe, HEROES[e.foe].ab[0]); await sleep(700); break; }
+    case 'battlePass': { if (e._me === false) break; const col = heroColor(e.foe); banner(e.foe, P(e.p).name + ' проходит мимо', HEROES[e.foe].name + ' остаётся в подземелье', col); await sleep(900); break; }
     case 'wildHit': { const col = heroColor(e.foe); const pt = screenOfP(e.p); motifFx(pt, col, HEROES[e.foe].motif, 24); ring(pt, col, 60, 4); await sleep(450); break; }
-    case 'recruit': { SFX.summon(heroTier(e.hero)); const col = heroColor(e.hero); banner(e.hero, HEROES[e.hero].name + ' присоединяется', e.full ? 'Рука полна: выбери, кого отпустить' : 'Душа побеждена и забрана', col); burst(screenOfP(e.p), [col, '#FFFFFF'], 36, 6, { shape: 'star' }); await sleep(1100); break; }
+    case 'recruit': { if (e._me === false) break; SFX.summon(heroTier(e.hero)); const col = heroColor(e.hero); banner(e.hero, HEROES[e.hero].name + ' присоединяется', e.full ? 'Рука полна: выбери, кого отпустить' : 'Душа побеждена и забрана', col); burst(screenOfP(e.p), [col, '#FFFFFF'], 36, 6, { shape: 'star' }); await sleep(1100); break; }
     case 'status': floatAt(e.p, e.msg, '#C9BFE3'); await sleep(450); break;
     case 'auraTick': floatAt(e.p, '✦ +' + e.amount, '#F3DDA0'); spiral(screenOfP(e.p), ['#F3DDA0', '#FFFFFF'], 16); await sleep(500); break;
-    case 'takeHero': { const col = heroColor(e.hero); beam(screenOfP(e.from), screenOfP(e.p), col, 4, 30); banner(e.hero, HEROES[e.hero].name + ' вырван из руки', P(e.from).name + ' → ' + P(e.p).name, col); await sleep(1100); break; }
+    case 'takeHero': { if (e._me === false) { beam(screenOfP(e.from), screenOfP(e.p), '#C9B0FF', 3, 20); await sleep(300); break; } const col = heroColor(e.hero); beam(screenOfP(e.from), screenOfP(e.p), col, 4, 30); banner(e.hero, HEROES[e.hero].name + ' вырван из руки', P(e.from).name + ' → ' + P(e.p).name, col); await sleep(1100); break; }
     case 'shuffle': SFX.ab.swap(); banner('marrek', 'Карты перетасованы', 'Руки всех игроков перемешаны', '#E5484D'); await sleep(1200); break;
     case 'orbit': { for (const m of e.moves) { const a = screenOfP(m.p); G.disp[m.p] = m.to; renderTokens(); const b = screenOfP(m.p); beam(a, b, '#C9B0FF', 3, 30); } SFX.ab.gravity(); await sleep(900); break; }
     case 'poisonTick': floatAt(e.p, '−' + e.amount + ' (яд)', '#7BE0A4'); motifFx(screenOfP(e.p), '#3FBF7F', 'smoke', 14); await sleep(600); break;
     case 'equalize': floatAt(e.a, '⚖', '#C9B0FF'); floatAt(e.b, '⚖', '#C9B0FF'); await sleep(600); break;
-    case 'heroSwap': banner(e.ga, 'Обмен героями', P(e.a).name + ' забирает ' + HEROES[e.ga].name + ', ' + P(e.b).name + ' получает ' + HEROES[e.gb].name, '#3FBF7F'); await sleep(1300); break;
+    case 'heroSwap': if (e._me === false) break; banner(e.ga, 'Обмен героями', P(e.a).name + ' забирает ' + HEROES[e.ga].name + ', ' + P(e.b).name + ' получает ' + HEROES[e.gb].name, '#3FBF7F'); await sleep(1300); break;
     case 'gain': SFX.coin(); floatAt(e.p, '+' + e.amount, '#8FE3FF'); burst(screenOfP(e.p), '#8FE3FF', 14, 3); await sleep(500); break;
     case 'guard': SFX.glass(); { const pt = screenOfP(e.p); ring(pt, e.kind === 'stone' ? '#C08A4E' : '#7FB8FF', 80, 6); burst(pt, e.kind === 'stone' ? ['#C08A4E', '#F3DDA0'] : ['#C8E2FF', '#7FB8FF'], 28, 6, { shape: 'star' }); } floatAt(e.p, e.kind === 'stone' ? 'Камень выдержал' : 'Щит!', '#C8E2FF'); await sleep(700); break;
-    case 'mirror': { SFX.ab.mirror(); const a = screenOfP(e.p), b = screenOfP(e.to); ring(a, '#E6ECF5', 70, 5); beam(a, b, '#E6ECF5', 4, 30); banner('mirazh', 'Зеркало отражает удар', P(e.p).name, '#C9D1E0'); await sleep(1000); break; }
+    case 'mirror': { if (e._me === false) { beam(screenOfP(e.p), screenOfP(e.to), '#E6ECF5', 3, 20); await sleep(300); break; } SFX.ab.mirror(); const a = screenOfP(e.p), b = screenOfP(e.to); ring(a, '#E6ECF5', 70, 5); beam(a, b, '#E6ECF5', 4, 30); banner('mirazh', 'Зеркало отражает удар', P(e.p).name, '#C9D1E0'); await sleep(1000); break; }
     case 'ability': {
       const p = P(e.p); const H = HEROES[e.hero]; const ab = H.ab.find(x => x.id === e.ab); const t = e.target ? P(e.target) : null;
+      if (e._me === false) { // чужое дело: только короткий эффект на поле
+        const c = screenOfP(p.id), tp = t ? screenOfP(t.id) : null; const all = s.players.filter(q => q.id !== p.id && !q.place).map(q => screenOfP(q.id));
+        if (ABV[e.ab]) ABV[e.ab](c, tp, all); else genericFx(e.hero, ab, c, tp, all);
+        await sleep(450); break;
+      }
       await castCard(e.hero, ab.name, p.name + (t && t.id !== p.id ? ' против ' + t.name : ''), e.copy, ab.face);
       if (t) focusCell(G.disp[t.id] ?? t.pos); else focusCell(G.disp[p.id] ?? p.pos);
       await sleep(250);
@@ -2179,6 +2239,7 @@ async function playFx(e, s) {
       await sleep(850); break;
     }
     case 'duel': {
+      if (e._me === false) { floatAt(e.a, '⚔', '#F3DDA0'); floatAt(e.b, '⚔', '#F3DDA0'); await sleep(500); break; }
       const a = P(e.a), b = P(e.b); const ka = e.pvp ? leaderOf(a) : 'kaisei', kb = leaderOf(b);
       const L = fightSide(ka ? IMG[ka].av : null, a.name, e.ap, e.ar, a.color, e.auto), R = fightSide(kb ? IMG[kb].av : null, b.name, e.bp, e.br, b.color);
       const W = e.win ? a : b; const txt = e.tie ? 'Ничья' : W.name + ' побеждает' + (e.amt ? ' и забирает ' + e.amt : '') + (e.guarded ? ', но щит спас проигравшего' : '');
@@ -2186,8 +2247,8 @@ async function playFx(e, s) {
     }
     case 'steal': floatAt(e.from, '−' + e.amount, '#FF8A96'); floatAt(e.p, '+' + e.amount, '#8FE3FF'); SFX.coin(); await sleep(600); break;
     case 'swap': { const a = screenOfP(e.a), b = screenOfP(e.b); beam(a, b, '#C9B0FF', 4); beam(b, a, '#C9B0FF', 4); G.disp[e.a] = e.pa; G.disp[e.b] = e.pb; renderTokens(); await sleep(350); focusCell(e.pa); await sleep(450); break; }
-    case 'burnHero': { const pl = P(e.p); SFX.burn(); banner(e.hero, HEROES[e.hero].name + ' сгорает', 'У игрока ' + pl.name + (e.why ? ', ' + e.why : ''), '#FF7A50'); burst(screenOfP(e.p), ['#FF7A50', '#FFD27A'], 30, 6, { g: -0.06 }); await sleep(900); break; }
-    case 'revive': SFX.ab.revive(); banner(e.hero, HEROES[e.hero].name + ' возвращается', P(e.p).name, '#FF9AC8'); pillar(screenOfP(e.p), '#FF9AC8'); await sleep(900); break;
+    case 'burnHero': { if (e._me === false) { burst(screenOfP(e.p), ['#FF7A50', '#FFD27A'], 16, 4, { g: -0.06 }); await sleep(300); break; } const pl = P(e.p); SFX.burn(); banner(e.hero, HEROES[e.hero].name + ' сгорает', 'У игрока ' + pl.name + (e.why ? ', ' + e.why : ''), '#FF7A50'); burst(screenOfP(e.p), ['#FF7A50', '#FFD27A'], 30, 6, { g: -0.06 }); await sleep(900); break; }
+    case 'revive': if (e._me === false) break; SFX.ab.revive(); banner(e.hero, HEROES[e.hero].name + ' возвращается', P(e.p).name, '#FF9AC8'); pillar(screenOfP(e.p), '#FF9AC8'); await sleep(900); break;
     case 'summon': await showSummon(e, s); break;
     case 'skip': SFX.skip(); floatAt(e.p, 'Пропуск хода', '#C9BFE3'); burst(screenOfP(e.p), '#3FBF7F', 16, 3); await sleep(850); break;
     case 'markTick': floatAt(e.p, '−' + e.amount + ' (метка)', '#B58CFF'); ringIn(screenOfP(e.p), '#B58CFF', 60, 30); await sleep(600); break;
@@ -2204,7 +2265,7 @@ async function playFx(e, s) {
 function renderTop() {
   const s = G.s; if (!s) return;
   const ev = EVENTS.find(e => e.id === s.event); $('evchip').textContent = '✧ ' + ev.name;
-  const rc = $('roomchip'); if (G.mode === 'online' && NET.code) { rc.hidden = false; rc.textContent = 'Комната ' + NET.code; } else rc.hidden = true;
+  const rc = $('roomchip'); if (G.mode === 'online' && NET.code) { rc.hidden = false; rc.textContent = '🔑 ' + NET.code; rc.title = 'Код комнаты'; } else rc.hidden = true;
   $('bSound').textContent = SND.on ? '🔊' : '🔇';
 }
 function setDockVar() { requestAnimationFrame(() => document.documentElement.style.setProperty('--dockh', (DESK() ? 0 : $('dock').offsetHeight) + 'px')); }
@@ -2216,7 +2277,7 @@ function renderDock() {
     const p = s.players[i]; const pos = G.disp[p.id] ?? p.pos; const pct = Math.round(pos / (CELLS - 1) * 100);
     strip.appendChild(h('div', { class: 'pchip' + (p.id === a.id && s.status === 'playing' ? ' act' : ''), style: '--pc:' + p.color, 'data-pid': p.id },
       avatarEl(p), h('div', null, h('b', null, p.name + (G.mode === 'online' && p.id === NET.myId ? ' (ты)' : '')),
-        h('div', { style: 'font-size:.72rem;opacity:.85' }, p.place ? '🏁 ' + p.place + ' место' : '◈ ' + p.souls + ', клетка ' + (pos + 1) + (p.st.skip ? ', пропуск' : '')),
+        h('div', { class: 'pst' }, p.place ? '🏁 ' + p.place + ' место' : '◈ ' + p.souls + ' · кл. ' + (pos + 1) + (p.st.skip ? ' · пропуск' : '')),
         h('div', { class: 'bar' }, h('i', { style: 'width:' + pct + '%' })))));
   });
   const who = $('who'); who.innerHTML = '';
@@ -2680,6 +2741,7 @@ function closeTalk() { $('reactRing').classList.remove('on'); $('bReact').setAtt
     const b = h('button', { 'aria-label': e, onclick: () => { sayOut('react', e); closeTalk(); } }, e);
     b.dataset.x = x; b.dataset.y = y; ring.appendChild(b);
   });
+  EMOJI.forEach(e => $('chatEmo').appendChild(h('button', { 'aria-label': e, onclick: () => { sayOut('react', e); closeTalk(); } }, e)));
   QUICK.forEach(q => $('chatQuick').appendChild(h('button', { onclick: () => { sayOut('chat', q); } }, q)));
 })();
 $('bReact').onclick = () => {
