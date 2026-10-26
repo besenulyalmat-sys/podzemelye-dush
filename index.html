@@ -147,6 +147,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .auraline.l3{border-color:#FFF4CF;box-shadow:0 0 24px rgba(255,236,170,.8);background:linear-gradient(90deg,rgba(181,140,255,.25),rgba(243,221,160,.3),rgba(127,212,255,.25));background-size:200% 100%;animation:aurabg 4s linear infinite}
 @keyframes aurabg{to{background-position:200% 0}}
 .hcard .zs{position:absolute;left:4px;top:4px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;background:rgba(14,10,26,.85);color:#F3DDA0}
+.abrow .reach{display:block;color:#C9BFE3;font-size:.78rem;margin:2px 0 4px}
 .hcard .fs{position:absolute;left:4px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--fc);border:2px solid rgba(14,10,26,.85)}
 .hcard.faura .fs{box-shadow:0 0 10px var(--fc),0 0 4px #fff}
 .hcard.faura{border-color:var(--fc);box-shadow:0 0 14px color-mix(in srgb,var(--fc) 75%,transparent)}
@@ -602,11 +603,14 @@ const OMENS = {
   ev_iridon: { name: 'Иридон', title: 'Радужный космический океан', col: '#FFC960',
     desc: 'Каждый игрок получает 30 очков. Три круга призыв стоит вдвое дешевле, а святилища усиливают героя любого цвета.' }
 };
+OMENS.ev_irisoracle = { name: 'Ирис Оракул', title: 'Всевидящее око космоса', col: '#8FE3FF',
+  desc: 'Око направляет отстающих: последний игрок переносится на 6 клеток вперёд, а лидер теряет 30 очков. Три круга способности всех игроков достают на 3 клетки дальше.' };
+if (typeof IMG !== 'undefined' && IMG.irisoracle) IMG.ev_irisoracle = IMG.irisoracle;
 const OMEN_ROUNDS = 3;
 function worldOn(s, k) { return !!(s.world && s.world.k === k); }
 const PCOLORS = ['#FFC960', '#7FD4FF', '#FF7E9A', '#9BE38F'];
 const START_SOULS = 160, HAND = 4;
-const GAME_VER = 17;
+const GAME_VER = 18;
 // Размер поля задаётся партией: 200, 350 или 500 плит. DK — множитель дальности способностей.
 const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' } };
 let COLS = 10, CELLS = 500, ROWS = 50, ZROWS = 10, DK = 1.5;
@@ -663,69 +667,77 @@ const AURA = [null,
   { name: 'Великий зодиак', desc: 'Каждый знак +3 к силе, 20 очков в начале хода и +1 к каждому броску.' }];
 function zodiacCount(p) { return new Set(p.hand.filter(h => ZSIGN[h.k]).map(h => h.k)).size; }
 function auraLevel(p) { const n = zodiacCount(p); return n >= 4 ? 3 : n === 3 ? 2 : n === 2 ? 1 : 0; }
-// ---------- Семьи душ (бета 17): распределение владельца ----------
-// lv[0] — 2 души семьи в руке, lv[1] — 3 и больше. Зодиак работает по-старому (созвездия).
+// ---------- Семьи душ (бета 18): распределение владельца ----------
+// lv[0] — 2 души семьи в руке, lv[1] — 3 души, lv[2] — 4 души (вся рука). Зодиак работает по-старому (созвездия).
 const FAMS = {
   angels: { name: 'Ангелы', col: '#F2C14E', m: ['solarion', 'soleria', 'auriella', 'elian', 'seraphim', 'aurelius', 'aurel', 'astraviel', 'heliosprime', 'aureliontrace'],
-    lv: ['Каждый третий твой ход тебя защищает щит.', 'Каждый третий твой ход тебя защищают щит и зеркало.'] },
+    lv: ['Каждый третий твой ход тебя защищает щит.', 'Каждый второй твой ход тебя защищает щит.', 'Каждый второй твой ход тебя защищают щит и зеркало.'] },
   starangels: { name: 'Звёздные ангелы', col: '#7FB8FF', m: ['nyktar', 'oneira', 'elion'],
-    lv: ['+1 к каждому броску.', '+1 к каждому броску, и способности достают на 2 клетки дальше.'] },
+    lv: ['+1 к каждому броску.', '+2 к каждому броску, и способности достают на 3 клетки дальше.'] },
   fallen: { name: 'Падшие', col: '#E5484D', m: ['argentum', 'malakar', 'ignifer', 'serafion'],
-    lv: ['Каждая способность против соперника забирает у него ещё 10 очков.', 'Каждая способность против соперника забирает у него ещё 20 очков.'] },
+    lv: ['Каждая способность против соперника забирает у него ещё 20 очков.', 'Каждая способность против соперника забирает у него ещё 35 очков.', 'Каждая способность против соперника забирает у него ещё 50 очков.'] },
   mech: { name: 'Механические', col: '#C9D1E0', m: ['mechseraph', 'nexarion', 'prismknight', 'serpentknight'],
-    lv: ['Каждая механическая душа в руке получает +1 к силе.', 'Каждая механическая душа в руке получает +2 к силе.'] },
+    lv: ['Каждая механическая душа в руке получает +1 к силе.', 'Каждая механическая душа в руке получает +2 к силе.', 'Каждая механическая душа в руке получает +3 к силе.'] },
   firewing: { name: 'Огнекрылые', col: '#FF9A3D', m: ['ashkar', 'vargar', 'solaris'],
-    lv: ['Твои перелёты дальше на 3 клетки.', 'Перелёты дальше на 3 клетки, и засады на тебя не нападают.'] },
+    lv: ['Твои перелёты дальше на 4 клетки.', 'Перелёты дальше на 6 клеток, и засады на тебя не нападают.'] },
   dragons: { name: 'Драконы', col: '#FF7A50', m: ['bonedragon', 'voiddragon'],
-    lv: ['+4 к силе в боях с обитателями подземелья.', '+4 к силе в боях с обитателями подземелья.'] },
+    lv: ['+6 к силе в боях с обитателями подземелья и +40 очков за каждую победу в них.'] },
   deep: { name: 'Дети глубин', col: '#2EC4B6', m: ['nereya', 'nereida', 'rafa', 'pearllord'],
-    lv: ['Твои отбрасывания и притягивания сильнее на 2 клетки.', 'Твои отбрасывания и притягивания сильнее на 4 клетки.'] },
+    lv: ['Твои отбрасывания и притягивания сильнее на 2 клетки.', 'Твои отбрасывания и притягивания сильнее на 4 клетки.', 'Твои отбрасывания и притягивания сильнее на 6 клеток.'] },
   east: { name: 'Восточное сияние', col: '#A77BFF', m: ['siran', 'selena', 'lyan', 'akiranon'],
-    lv: ['Призыв для тебя на 20 очков дешевле.', 'Призыв для тебя на 30 очков дешевле.'] },
+    lv: ['Призыв для тебя на 20 очков дешевле.', 'Призыв для тебя на 35 очков дешевле.', 'Призыв для тебя на 50 очков дешевле.'] },
   abyss: { name: 'Владыки бездны', col: '#8E7CC3', m: ['abysslord', 'purplelord', 'violetguard', 'necrolord', 'shadowlord', 'moonwitch'],
-    lv: ['В начале твоего хода ближайший соперник в пределах 3 клеток теряет 1 силы у случайного героя.', 'То же, но соперник в пределах 6 клеток.'] },
+    lv: ['В начале твоего хода ближайший соперник в пределах 4 клеток теряет 1 силы у случайного героя.', 'В начале твоего хода ближайший соперник в пределах 8 клеток теряет 1 силы у случайного героя.', 'В начале твоего хода все соперники в пределах 8 клеток теряют по 1 силы у случайного героя.'] },
   dead: { name: 'Мертвецы', col: '#C08A4E', m: ['necromancer', 'sanddead', 'voidmummy', 'undeadhorde', 'ghostchoir'],
-    lv: ['Когда соперник или засада сжигает твоего героя, ты получаешь 30 очков.', '30 очков за сожжённого героя, и в половине случаев герой восстаёт и остаётся в руке.'] },
+    lv: ['Когда соперник или засада сжигает твоего героя, ты получаешь 40 очков.', '40 очков за сожжённого героя, и в половине случаев он восстаёт и остаётся в руке.', '60 очков за сожжённого героя, и в трёх случаях из четырёх он восстаёт.'] },
   bloodcathedral: { name: 'Кровавый собор', col: '#B5122B', m: ['kilmi', 'morvena', 'velkar', 'kardein', 'erevion', 'flameguard', 'mortifer', 'vulkarot', 'hundredhands'],
-    lv: ['Твои яды и метки действуют на 1 ход дольше.', 'Твои яды и метки действуют на 2 хода дольше и забирают на 5 очков больше.'] },
+    lv: ['Твои яды и метки действуют на 1 ход дольше.', 'Твои яды и метки действуют на 2 хода дольше и забирают на 10 очков больше.', 'Твои яды и метки действуют на 3 хода дольше и забирают на 15 очков больше.'] },
   circus: { name: 'Цирк масок', col: '#FFD27A', m: ['gothjoker', 'caligari', 'corsairrouge', 'gothrabbit', 'crucifervane', 'marrek'],
-    lv: ['Ловкость рук: каждый четвёртый твой ход ты забираешь 20 очков у самого богатого соперника.', 'Ловкость рук: каждый третий твой ход ты забираешь 35 очков у самого богатого соперника.'] },
+    lv: ['Ловкость рук: каждый третий твой ход ты забираешь 30 очков у самого богатого соперника.', 'Ловкость рук: каждый второй твой ход ты забираешь 40 очков у самого богатого соперника.', 'Ловкость рук: каждый твой ход ты забираешь 40 очков у самого богатого соперника.'] },
   crystal: { name: 'Кристальные стражи', col: '#8FE3FF', m: ['mirazh', 'prismatix', 'emerion'],
-    lv: ['Каждый четвёртый твой ход ты получаешь защиту от одной засады.', 'Каждый третий твой ход тебя защищают щит и защита от одной засады.'] },
+    lv: ['Каждый третий твой ход ты получаешь защиту от одной засады.', 'Каждый второй твой ход тебя защищают щит и защита от одной засады.'] },
   forest: { name: 'Лесные духи', col: '#7BE0A4', m: ['verdan', 'eldraven', 'forestwarden', 'solariy', 'eirval', 'nepenta', 'bloodlock', 'eiriya', 'sahira', 'lirel', 'xenobius', 'rozalia', 'morven'],
-    lv: ['В начале хода ты получаешь 10 очков.', 'В начале хода ты получаешь 20 очков.'] },
+    lv: ['В начале хода ты получаешь 25 очков.', 'В начале хода ты получаешь 45 очков.', 'В начале хода ты получаешь 70 очков.'] },
   cosmic: { name: 'Космосияние', col: '#5B8CFF', m: ['starkeeper', 'astrael', 'nokteon', 'waterwarden', 'rainbowwarrior', 'crystalphoenix', 'ametida', 'krizaris', 'animachroma'],
-    lv: ['Сокровища дают тебе в полтора раза больше.', 'Сокровища дают вдвое больше, а святилище усиливает героя на +2.'] },
+    lv: ['Сокровища дают тебе вдвое больше.', 'Сокровища вдвое больше, а святилище усиливает героя на +2.', 'Сокровища втрое больше, а святилище усиливает героя на +3.'] },
   shadows: { name: 'Тени', col: '#6B5B95', m: ['malkrity', 'crimsonmistress', 'voidglot', 'deadecho', 'demonshade', 'taigo', 'linka', 'uglevor', 'mrakorog', 'mordrak', 'noktaria', 'nairel', 'nerissa'],
-    lv: ['Чужая способность против тебя в 1 случае из 5 тонет в тени.', 'Чужая способность против тебя в 1 случае из 3 тонет в тени.'] }
+    lv: ['Чужая способность против тебя в 1 случае из 4 тонет в тени.', 'Чужая способность против тебя в 2 случаях из 5 тонет в тени.', 'Чужая способность против тебя в половине случаев тонет в тени.'] }
 };
 const FAM_OF = {}; Object.keys(FAMS).forEach(f => FAMS[f].m.forEach(k => { FAM_OF[k] = f; }));
 function famCount(p, f) { return new Set(p.hand.filter(h => FAM_OF[h.k] === f).map(h => h.k)).size; }
-function famLv(p, f) { const n = famCount(p, f); return n >= 3 ? 2 : n === 2 ? 1 : 0; }
+function famLv(p, f) { const n = famCount(p, f); return Math.min(n >= 4 ? 3 : n === 3 ? 2 : n === 2 ? 1 : 0, FAMS[f].lv.length); }
 function famActive(p) { return Object.keys(FAMS).filter(f => famLv(p, f) > 0); }
 let CUR_RND = Math.random; // кубик текущего действия (для теней)
 let SHADOW_SEEN = {}; // тени решают один раз за действие для каждой цели
-function famRange(p) { return famLv(p, 'starangels') >= 2 ? km(2) : 0; }
+function famRange(p) { return famLv(p, 'starangels') >= 2 ? km(3) : 0; }
+function rangeBonus(s, p) { return famRange(p) + (worldOn(s, 'ev_irisoracle') ? km(3) : 0); }
 function famPush(p) { const l = famLv(p, 'deep'); return l ? km(l * 2) : 0; }
-function famFly(p) { return famLv(p, 'firewing') ? km(3) : 0; }
+function famFly(p) { const l = famLv(p, 'firewing'); return l ? km(l >= 2 ? 6 : 4) : 0; }
 function famStartTurn(s, p) {
   p.ft = (p.ft || 0) + 1; const t = p.ft;
-  let l = famLv(p, 'angels'); if (l && t % 3 === 0) { p.st.shield = true; if (l >= 2) p.st.mirror = true; fx(s, { t: 'status', p: p.id, msg: l >= 2 ? 'Ангелы: щит и зеркало' : 'Ангелы: щит' }); }
-  l = famLv(p, 'crystal'); if (l && t % (l >= 2 ? 3 : 4) === 0) { p.st.stone = (p.st.stone || 0) + 1; if (l >= 2) p.st.shield = true; fx(s, { t: 'status', p: p.id, msg: l >= 2 ? 'Кристальные стражи: щит и защита' : 'Кристальные стражи: защита от засады' }); }
-  l = famLv(p, 'forest'); if (l) { const n = l * 10; p.souls += n; fx(s, { t: 'gain', p: p.id, amount: n }); }
-  l = famLv(p, 'circus'); if (l && t % (l >= 2 ? 3 : 4) === 0) {
+  let l = famLv(p, 'angels'); if (l && t % (l >= 2 ? 2 : 3) === 0) { p.st.shield = true; if (l >= 3) p.st.mirror = true; fx(s, { t: 'status', p: p.id, msg: l >= 3 ? 'Ангелы: щит и зеркало' : 'Ангелы: щит' }); }
+  l = famLv(p, 'crystal'); if (l && t % (l >= 2 ? 2 : 3) === 0) { p.st.stone = (p.st.stone || 0) + 1; if (l >= 2) p.st.shield = true; fx(s, { t: 'status', p: p.id, msg: l >= 2 ? 'Кристальные стражи: щит и защита' : 'Кристальные стражи: защита от засады' }); }
+  l = famLv(p, 'forest'); if (l) { const n = [25, 45, 70][l - 1]; p.souls += n; fx(s, { t: 'gain', p: p.id, amount: n }); }
+  l = famLv(p, 'circus'); if (l && t % [3, 2, 1][l - 1] === 0) {
     const rich = alive(s).filter(q => q.id !== p.id).sort((a, b) => b.souls - a.souls)[0];
-    if (rich && rich.souls > 0) { const x = Math.min(l >= 2 ? 35 : 20, rich.souls); rich.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: rich.id, amount: x }); log(s, p.name + ': ловкость рук, ' + x + ' очков у ' + rich.name + '.'); }
+    if (rich && rich.souls > 0) { const x = Math.min(l >= 2 ? 40 : 30, rich.souls); rich.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: rich.id, amount: x }); log(s, p.name + ': ловкость рук, ' + x + ' очков у ' + rich.name + '.'); }
   }
   l = famLv(p, 'abyss'); if (l) {
-    const q = alive(s).filter(x => x.id !== p.id && x.hand.length && Math.abs(x.pos - p.pos) <= km(l >= 2 ? 6 : 3)).sort((a, b) => Math.abs(a.pos - p.pos) - Math.abs(b.pos - p.pos))[0];
-    if (q) { const h = q.hand[Math.floor(CUR_RND() * q.hand.length)]; h.b = (h.b || 0) - 1; fx(s, { t: 'status', p: q.id, msg: 'Бездна: ' + HEROES[h.k].name + ' −1 силы' }); }
+    const near = alive(s).filter(x => x.id !== p.id && x.hand.length && Math.abs(x.pos - p.pos) <= km(l >= 2 ? 8 : 4)).sort((a, b) => Math.abs(a.pos - p.pos) - Math.abs(b.pos - p.pos));
+    (l >= 3 ? near : near.slice(0, 1)).forEach(q => { const h = q.hand[Math.floor(CUR_RND() * q.hand.length)]; h.b = (h.b || 0) - 1; fx(s, { t: 'status', p: q.id, msg: 'Бездна: ' + HEROES[h.k].name + ' −1 силы' }); });
   }
+}
+// способности «по площади»: если в радиусе никого нет, применить нельзя (раньше карта сгорала впустую)
+const AREA_OPS = new Set(['skipNear', 'stealAll', 'pushAll', 'debuffAll', 'poisonAll']);
+function areaReach(s, p, ab) { // null — способность не зависит от радиуса; иначе {r, who}
+  if (!ab.ops || ab.t !== 'none' || !ab.ops.every(o => AREA_OPS.has(o.op) && (o.r || o.op === 'skipNear'))) return null;
+  const r = Math.max(...ab.ops.map(o => o.r >= 99 ? 9999 : km(o.r))) + rangeBonus(s, p);
+  return { r, who: alive(s).filter(q => q.id !== p.id && Math.abs(q.pos - p.pos) <= r) };
 }
 
 function cardPower(p, h) { return Math.max(1, HEROES[h.k].pw + (h.b || 0) + (ZSIGN[h.k] ? auraLevel(p) : 0) + (FAM_OF[h.k] === 'mech' ? famLv(p, 'mech') : 0)); }
 function handPower(p) { return p.hand.length ? p.hand.reduce((a, h) => a + cardPower(p, h), 0) : 1; }
-function cost(s, p) { let c = s.event === 'generous' ? 50 : 80; if (worldOn(s, 'ev_iridon')) c = c / 2; const l = p ? famLv(p, 'east') : 0; if (l) c = Math.max(10, c - (l >= 2 ? 30 : 20)); return c; }
+function cost(s, p) { let c = s.event === 'generous' ? 50 : 80; if (worldOn(s, 'ev_iridon')) c = c / 2; const l = p ? famLv(p, 'east') : 0; if (l) c = Math.max(10, c - [20, 35, 50][l - 1]); return c; }
 function altarCost(s) { const c = s.event === 'freealtar' ? 0 : s.event === 'generous' ? 25 : 40; return worldOn(s, 'ev_iridon') ? Math.round(c / 2) : c; }
 function log(s, m) { s.log.push(m); if (s.log.length > 50) s.log.shift(); }
 function fx(s, e) { s.fx.push(e); }
@@ -795,7 +807,7 @@ function protectHazard(s, p) { // traps, collapses, losses
 function defend(s, caster, target) { // returns 'ok' | 'blocked' | 'mirror'
   if (!target || target.id === caster.id) return 'ok';
   if (target.st.shield) { target.st.shield = false; fx(s, { t: 'guard', p: target.id, kind: 'shield' }); log(s, target.name + ': щит погасил способность.'); return 'blocked'; }
-  { const l = famLv(target, 'shadows'); if (l) { if (!(target.id in SHADOW_SEEN)) SHADOW_SEEN[target.id] = CUR_RND() < (l >= 2 ? 1 / 3 : 0.2); if (SHADOW_SEEN[target.id]) { if (SHADOW_SEEN[target.id] === true) { SHADOW_SEEN[target.id] = 'shown'; fx(s, { t: 'status', p: target.id, msg: 'Тени поглотили удар' }); log(s, target.name + ': способность утонула в тени.'); } return 'blocked'; } } }
+  { const l = famLv(target, 'shadows'); if (l) { if (!(target.id in SHADOW_SEEN)) SHADOW_SEEN[target.id] = CUR_RND() < [0.25, 0.4, 0.5][l - 1]; if (SHADOW_SEEN[target.id]) { if (SHADOW_SEEN[target.id] === true) { SHADOW_SEEN[target.id] = 'shown'; fx(s, { t: 'status', p: target.id, msg: 'Тени поглотили удар' }); log(s, target.name + ': способность утонула в тени.'); } return 'blocked'; } } }
   if (target.st.mirror) { target.st.mirror = false; fx(s, { t: 'mirror', p: target.id, to: caster.id }); log(s, target.name + ': зеркало отразило способность.'); return 'mirror'; }
   return 'ok';
 }
@@ -1545,6 +1557,8 @@ Object.assign(WILD, {
 });
 // зоны старых боссов: 2 — Алые глубины, 3 — Лунные залы, 4 — Звёздный подъём
 HEROES.bonedragon.zone = 3; HEROES.voiddragon.zone = 4;
+// Ирис Оракул по решению владельца — карта события, а не душа
+delete HEROES.irisoracle; delete WILD.irisoracle;
 
 // Великих стало 11, поэтому каждая выпадает реже: вместе они дают около 3% призывов
 Object.keys(HEROES).forEach(k => { if (HEROES[k].great) HEROES[k].w = 1.2; });
@@ -1598,33 +1612,33 @@ function runOps(s, p, ab, a, rnd, viaCopy) {
       case 'interest': { const n = Math.max(40, Math.round(p.souls * o.n / 100)); p.souls += n; fx(s, { t: 'gain', p: p.id, amount: n }); break; }
       case 'steal': { if (victim === p) break; const x = Math.min(o.n, victim.souls); victim.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: victim.id, amount: x }); break; }
       case 'drain': { const x = Math.min(o.n, victim.souls); victim.souls -= x; fx(s, { t: 'lose', p: victim.id, amount: x }); break; }
-      case 'stealAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + famRange(p))) return; const v = hostileTo(s, p, q); if (!v || v === p) return; const x = Math.min(o.n, v.souls); v.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: v.id, amount: x }); }); break;
+      case 'stealAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + rangeBonus(s, p))) return; const v = hostileTo(s, p, q); if (!v || v === p) return; const x = Math.min(o.n, v.souls); v.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: v.id, amount: x }); }); break;
       case 'drainAll': opps().forEach(q => { const v = hostileTo(s, p, q); if (!v) return; const x = Math.min(o.n, v.souls); v.souls -= x; fx(s, { t: 'lose', p: v.id, amount: x }); }); break;
       case 'richest': { const r = opps().sort((x, y) => y.souls - x.souls)[0]; if (!r) break; const v = hostileTo(s, p, r); if (!v || v === p) break; const x = Math.min(o.n, v.souls); v.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: v.id, amount: x }); break; }
       case 'fly': moveTo(s, p, p.pos + km(o.n) + famFly(p), 'fly'); moved = true; break;
       case 'up': moveTo(s, p, cellAbove(p.pos), 'fly'); moved = true; break;
       case 'catchup': { const ahead = opps().filter(q => q.pos > p.pos).sort((x, y) => x.pos - y.pos)[0]; const to = ahead ? Math.min(ahead.pos, p.pos + km(o.n)) : p.pos + km(4); moveTo(s, p, to, 'fly'); moved = true; break; }
       case 'push': moveTo(s, victim, victim.pos - km(o.n) - famPush(p), 'back'); break;
-      case 'pushAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + famRange(p))) return; const v = hostileTo(s, p, q); if (!v) return; moveTo(s, v, v.pos - km(o.n === 'd6' ? d(6, rnd) : o.n) - famPush(p), 'back'); }); break;
+      case 'pushAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + rangeBonus(s, p))) return; const v = hostileTo(s, p, q); if (!v) return; moveTo(s, v, v.pos - km(o.n === 'd6' ? d(6, rnd) : o.n) - famPush(p), 'back'); }); break;
       case 'pull': { if (victim === p) break; moveTo(s, victim, p.pos, 'back'); break; }
       case 'skip': if (addSkip(victim, o.n || 1)) fx(s, { t: 'status', p: victim.id, msg: (o.n || 1) > 1 ? 'Пропуск ' + o.n + ' ходов' : 'Пропуск хода' }); else fx(s, { t: 'status', p: victim.id, msg: 'Тёмные очки!' }); break;
-      case 'skipNear': opps().forEach(q => { if (dist(p, q) > (km(o.r) + famRange(p))) return; const v = hostileTo(s, p, q); if (!v) return; if (addSkip(v, 1)) fx(s, { t: 'status', p: v.id, msg: 'Пропуск хода' }); }); break;
+      case 'skipNear': opps().forEach(q => { if (dist(p, q) > (km(o.r) + rangeBonus(s, p))) return; const v = hostileTo(s, p, q); if (!v) return; if (addSkip(v, 1)) fx(s, { t: 'status', p: v.id, msg: 'Пропуск хода' }); }); break;
       case 'shield': p.st.shield = true; break;
       case 'stone': p.st.stone = Math.max(p.st.stone, o.n); break;
       case 'mirror': p.st.mirror = true; break;
       case 'buff': p.hand.forEach(h => h.b = (h.b || 0) + o.n); break;
       case 'debuff': victim.hand.forEach(h => h.b = (h.b || 0) - o.n); fx(s, { t: 'status', p: victim.id, msg: 'Сила −' + o.n }); break;
-      case 'debuffAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + famRange(p))) return; const v = hostileTo(s, p, q); if (!v) return; v.hand.forEach(h => h.b = (h.b || 0) - o.n); }); break;
+      case 'debuffAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + rangeBonus(s, p))) return; const v = hostileTo(s, p, q); if (!v) return; v.hand.forEach(h => h.b = (h.b || 0) - o.n); }); break;
       case 'burn': burnRandom(s, victim, rnd, HEROES[a.heroKey] ? HEROES[a.heroKey].name : ''); break;
       case 'blind': opps().forEach(q => { if (!(q.st.shades > 0)) q.st.blind = Math.max(q.st.blind, o.n); }); break;
       case 'gallop': p.st.gallop = true; break;
       case 'dice3': p.st.dice3 = true; break;
       case 'boost': p.st.boost = { n: o.n, left: o.left }; break;
       case 'bless': p.st.bless = Math.max(2, Math.min(12, a.value | 0 || 12)); break;
-      case 'mark': { const bl = famLv(p, 'bloodcathedral'); victim.st.mark = { by: p.id, left: o.left + bl, per: o.per ? o.per + (bl >= 2 ? 5 : 0) : (bl >= 2 ? 25 : undefined) }; } fx(s, { t: 'status', p: victim.id, msg: 'Метка' }); break;
-      case 'poison': { const bl = famLv(p, 'bloodcathedral'); victim.st.poison = { left: o.left + bl, per: o.per + (bl >= 2 ? 5 : 0) }; } fx(s, { t: 'status', p: victim.id, msg: 'Яд' }); break;
+      case 'mark': { const bl = famLv(p, 'bloodcathedral'); victim.st.mark = { by: p.id, left: o.left + bl, per: o.per ? o.per + [0, 0, 10, 15][bl] : (bl >= 2 ? 20 + [0, 0, 10, 15][bl] : undefined) }; } fx(s, { t: 'status', p: victim.id, msg: 'Метка' }); break;
+      case 'poison': { const bl = famLv(p, 'bloodcathedral'); victim.st.poison = { left: o.left + bl, per: o.per + [0, 0, 10, 15][bl] }; } fx(s, { t: 'status', p: victim.id, msg: 'Яд' }); break;
       case 'burnAll': opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; burnRandom(s, v, rnd, HEROES[a.heroKey] ? HEROES[a.heroKey].name : ''); }); break;
-      case 'poisonAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + famRange(p))) return; const v = hostileTo(s, p, q); if (!v || v === p) return; v.st.poison = { left: o.left + famLv(p, 'bloodcathedral'), per: o.per + (famLv(p, 'bloodcathedral') >= 2 ? 5 : 0) }; fx(s, { t: 'status', p: v.id, msg: 'Яд' }); }); break;
+      case 'poisonAll': opps().forEach(q => { if (o.r && dist(p, q) > (km(o.r) + rangeBonus(s, p))) return; const v = hostileTo(s, p, q); if (!v || v === p) return; v.st.poison = { left: o.left + famLv(p, 'bloodcathedral'), per: o.per + [0, 0, 10, 15][famLv(p, 'bloodcathedral')] }; fx(s, { t: 'status', p: v.id, msg: 'Яд' }); }); break;
       case 'place': if (p.pos > 0) s.marks[p.pos] = { type: o.mark, owner: p.id }; break;
       case 'equalize': { if (victim === p) break; const sum = p.souls + victim.souls; const half = Math.floor(sum / 2); fx(s, { t: 'equalize', a: p.id, b: victim.id, from: [p.souls, victim.souls], to: half }); p.souls = sum - half; victim.souls = half; break; }
       case 'swapHero': { if (victim === p || !p.hand.length || !victim.hand.length) break; const i = Math.floor(rnd() * p.hand.length), j = Math.floor(rnd() * victim.hand.length); const t = p.hand[i]; p.hand[i] = victim.hand[j]; victim.hand[j] = t; fx(s, { t: 'heroSwap', a: p.id, b: victim.id, ga: p.hand[i].k, gb: victim.hand[j].k }); break; }
@@ -1670,10 +1684,10 @@ function burnRandom(s, victim, rnd, why) {
   if (!victim.hand.length) return null;
   const dl = famLv(victim, 'dead');
   const i = Math.floor(rnd() * victim.hand.length);
-  if (dl >= 2 && rnd() < 0.5) { const h = victim.hand[i]; victim.souls += 30; fx(s, { t: 'status', p: victim.id, msg: 'Мертвецы: ' + HEROES[h.k].name + ' восстаёт' }); fx(s, { t: 'gain', p: victim.id, amount: 30 }); log(s, victim.name + ': ' + HEROES[h.k].name + ' восстаёт из пепла.'); return null; }
+  if (dl >= 2 && rnd() < (dl >= 3 ? 0.75 : 0.5)) { const h = victim.hand[i]; const g = dl >= 3 ? 60 : 40; victim.souls += g; fx(s, { t: 'status', p: victim.id, msg: 'Мертвецы: ' + HEROES[h.k].name + ' восстаёт' }); fx(s, { t: 'gain', p: victim.id, amount: g }); log(s, victim.name + ': ' + HEROES[h.k].name + ' восстаёт из пепла.'); return null; }
   const h = victim.hand.splice(i, 1)[0];
   victim.lastBurned = h.k; fx(s, { t: 'burnHero', p: victim.id, hero: h.k, why });
-  if (dl) { victim.souls += 30; fx(s, { t: 'gain', p: victim.id, amount: 30 }); }
+  if (dl) { const g = dl >= 3 ? 60 : 40; victim.souls += g; fx(s, { t: 'gain', p: victim.id, amount: g }); }
   return h.k;
 }
 
@@ -1690,7 +1704,7 @@ function land(s, p, rnd, depth) {
     if (mk.type === 'seal') { delete s.marks[p.pos]; if (!protectHazard(s, p)) { const amt = Math.min(40, p.souls); p.souls -= amt; fx(s, { t: 'trap', p: p.id, amount: amt, seal: true }); log(s, p.name + ' попадает в звёздную ловушку.'); moveTo(s, p, p.pos - km(2), 'back'); } }
   }
   if (c.type === 'treasure') {
-    let amt = 30 + Math.floor(rnd() * 5) * 10 + Math.floor(p.pos / (CELLS / 10)) * 5; if (s.event === 'starfall') amt *= 2; { const l = famLv(p, 'cosmic'); if (l) amt = Math.round(amt * (l >= 2 ? 2 : 1.5)); }
+    let amt = 30 + Math.floor(rnd() * 5) * 10 + Math.floor(p.pos / (CELLS / 10)) * 5; if (s.event === 'starfall') amt *= 2; { const l = famLv(p, 'cosmic'); if (l) amt = amt * (l >= 3 ? 3 : 2); }
     p.souls += amt; fx(s, { t: 'treasure', p: p.id, amount: amt }); log(s, p.name + ' находит сокровище: +' + amt + '.');
   } else if (c.type === 'trap' && worldOn(s, 'ev_lavandia')) {
     p.souls += 20; fx(s, { t: 'calm', p: p.id, amount: 20 }); log(s, p.name + ': в долине тихо, засада молчит (+20).');
@@ -1705,7 +1719,7 @@ function land(s, p, rnd, depth) {
     applyWild(s, p, k, rnd);
   } else if (c.type === 'shrine') {
     const h = p.hand.find(x => HEROES[x.k].col === c.color) || (worldOn(s, 'ev_iridon') && p.hand.length ? p.hand[Math.floor(rnd() * p.hand.length)] : null);
-    if (h) { h.b = (h.b || 0) + (famLv(p, 'cosmic') >= 2 ? 2 : 1); fx(s, { t: 'shrine', p: p.id, color: c.color, hero: h.k }); log(s, p.name + ': святилище усиливает ' + HEROES[h.k].name + '.'); }
+    if (h) { h.b = (h.b || 0) + Math.max(1, famLv(p, 'cosmic')); fx(s, { t: 'shrine', p: p.id, color: c.color, hero: h.k }); log(s, p.name + ': святилище усиливает ' + HEROES[h.k].name + '.'); }
     else { p.souls += 20; fx(s, { t: 'shrine', p: p.id, color: c.color }); }
   } else if (c.type === 'battle') {
     const k = foeHero(rnd, p.pos, true); // босс может встретиться только в бою
@@ -1717,19 +1731,23 @@ function land(s, p, rnd, depth) {
   afterLand(s, p);
 }
 function drawOmen(s, p, rnd) {
-  const ks = Object.keys(OMENS).filter(k => !worldOn(s, k));
-  const k = ks[Math.floor(rnd() * ks.length)];
+  // колода знамений: каждая карта выпадает по разу, потом колода тасуется заново
+  if (!s.omenBag || !s.omenBag.length) { const b = Object.keys(OMENS).filter(k => !worldOn(s, k)); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } s.omenBag = b; }
+  let k = s.omenBag.pop(); if (worldOn(s, k) && s.omenBag.length) { const k2 = s.omenBag.pop(); s.omenBag.unshift(k); k = k2; }
   s.world = { k, left: OMEN_ROUNDS };
   fx(s, { t: 'omen', p: p.id, k });
   log(s, p.name + ' открывает знамение: ' + OMENS[k].name + '. ' + OMENS[k].desc);
   if (k === 'ev_checkervoid') alive(s).forEach(q => { const n = d(6, rnd) * (rnd() < 0.5 ? -1 : 1); moveTo(s, q, Math.min(CELLS - 2, q.pos + n), n > 0 ? 'jump' : 'back'); });
   if (k === 'ev_lavandia') alive(s).forEach(clearBad);
+  if (k === 'ev_irisoracle') { const al = alive(s).sort((a, b) => a.pos - b.pos); const last = al[0], lead = al[al.length - 1];
+    if (last) moveTo(s, last, Math.min(CELLS - 2, last.pos + km(6)), 'jump');
+    if (lead && lead !== last) { const x = Math.min(30, lead.souls); lead.souls -= x; fx(s, { t: 'lose', p: lead.id, amount: x }); } }
   if (k === 'ev_iridon') alive(s).forEach(q => { q.souls += 30; fx(s, { t: 'gain', p: q.id, amount: 30 }); });
 }
 function resolveBattle(s, p, rnd) {
   const { foe, power } = s.pending; s.pending = null; s.phase = 'roll';
-  const r = fight(p, power - (famLv(p, 'dragons') ? 4 : 0), rnd); if (famLv(p, 'dragons') && !r.auto) r.myPow += 4; let reward = 0, lost = 0, recruit = false, guarded = false;
-  if (r.win) { reward = 30 + power * 4; if (s.event === 'bloodmoon') reward = Math.round(reward * 1.5); p.souls += reward; recruit = true; }
+  const r = fight(p, power - (famLv(p, 'dragons') ? 6 : 0), rnd); if (famLv(p, 'dragons') && !r.auto) r.myPow += 6; let reward = 0, lost = 0, recruit = false, guarded = false;
+  if (r.win) { reward = 30 + power * 4; if (s.event === 'bloodmoon') reward = Math.round(reward * 1.5); p.souls += reward; recruit = true; if (famLv(p, 'dragons')) { reward += 40; p.souls += 40; } }
   else if (!r.tie) { lost = Math.min(30, p.souls); p.souls -= lost; }
   fx(s, { t: 'battle', p: p.id, foe, foePow: power, foeRoll: r.b, myPow: r.myPow, myRoll: r.a, auto: !!r.auto, win: r.win, tie: !!r.tie, reward, lost, recruit });
   log(s, p.name + (r.win ? ' побеждает ' + HEROES[foe].name + ' и забирает его душу.' : r.tie ? ' расходится вничью с ' + HEROES[foe].name + '.' : ' проигрывает ' + HEROES[foe].name + ', и душа обрушивает силу на него.'));
@@ -1805,7 +1823,7 @@ function abilityBlocked(s, p) {
 }
 function validTargets(s, p, ab) {
   if (ab.t === 'none') return [];
-  return alive(s).filter(q => (ab.t === 'any' || q.id !== p.id) && (ab.r >= 99 || dist(p, q) <= abR(ab) + famRange(p)) && (!ab.ahead || q.pos > p.pos));
+  return alive(s).filter(q => (ab.t === 'any' || q.id !== p.id) && (ab.r >= 99 || dist(p, q) <= abR(ab) + rangeBonus(s, p)) && (!ab.ahead || q.pos > p.pos));
 }
 function runAbility(s, p, ab, a, rnd, viaCopy) {
   const tgt = a.target ? s.players.find(q => q.id === a.target) : null;
@@ -1865,6 +1883,7 @@ function useAbility(s, p, a, rnd) {
   const idx = p.hand.findIndex(h => h.u === a.u); if (idx < 0) return false;
   const h = p.hand[idx]; const H = HEROES[h.k]; const ab = H.ab.find(x => x.id === a.ab); if (!ab) return false;
   if (ab.t !== 'none') { const ts = validTargets(s, p, ab); if (!a.target || !ts.some(q => q.id === a.target)) return false; }
+  { const ar = areaReach(s, p, ab); if (ar && !ar.who.length) return false; }
   const prevBurned = p.lastBurned; const fallenLv = famLv(p, 'fallen');
   p.hand.splice(idx, 1);
   p.lastBurned = h.k;
@@ -1872,7 +1891,7 @@ function useAbility(s, p, a, rnd) {
   log(s, p.name + ': ' + H.name + ' применяет «' + ab.name + '» и сгорает.');
   a.heroKey = h.k;
   const res = runAbility(s, p, ab, a, rnd);
-  if (fallenLv && ab.t !== 'none' && a.target && a.target !== p.id) { const q = s.players.find(x => x.id === a.target); if (q && !q.place && q.souls > 0) { const x = Math.min(fallenLv >= 2 ? 20 : 10, q.souls); q.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: q.id, amount: x }); } }
+  if (fallenLv && ab.t !== 'none' && a.target && a.target !== p.id) { const q = s.players.find(x => x.id === a.target); if (q && !q.place && q.souls > 0) { const x = Math.min([20, 35, 50][fallenLv - 1], q.souls); q.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: q.id, amount: x }); } }
   s.lastAb = { by: p.id, hero: h.k, ab: ab.id };
   return res;
 }
@@ -1909,7 +1928,7 @@ function act(state, action, rnd) {
       if (p.st.dice3) { dice.push(d(f, rnd)); p.st.dice3 = false; }
       if (p.st.bless) { const b = p.st.bless; dice.length = 2; dice[0] = Math.min(6, Math.ceil(b / 2)); dice[1] = b - dice[0]; p.st.bless = 0; }
       const v = dice.reduce((x, y) => x + y, 0);
-      let steps = v + (s.event === 'wind' ? 1 : 0) + (auraLevel(p) >= 3 ? 1 : 0) + (famLv(p, 'starangels') ? 1 : 0);
+      let steps = v + (s.event === 'wind' ? 1 : 0) + (auraLevel(p) >= 3 ? 1 : 0) + famLv(p, 'starangels');
       const al = alive(s); if (al.length > 1) { const others = al.filter(q => q.id !== p.id).map(q => q.pos); if (p.pos + Math.round(10 + CELLS * 0.03) <= Math.min(...others)) steps += 2; }
       if (p.st.gallop) { steps *= 2; p.st.gallop = false; }
       if (p.st.boost && p.st.boost.left > 0) { steps += p.st.boost.n; p.st.boost.left--; if (!p.st.boost.left) p.st.boost = null; }
@@ -1971,7 +1990,8 @@ function botAction(s) {
     const h = p.hand[Math.floor(Math.random() * p.hand.length)];
     const ab = HEROES[h.k].ab[Math.floor(Math.random() * HEROES[h.k].ab.length)];
     const leader = alive(s).filter(q => q.id !== p.id).sort((a, b) => b.pos - a.pos)[0];
-    if (ab.t === 'none') return { by: p.id, type: 'ability', u: h.u, ab: ab.id, value: 12 };
+    const ar = areaReach(s, p, ab);
+    if (ab.t === 'none' && !(ar && !ar.who.length)) return { by: p.id, type: 'ability', u: h.u, ab: ab.id, value: 12 };
     const ts = validTargets(s, p, ab).filter(q => q.id !== p.id);
     const tg = leader && ts.some(q => q.id === leader.id) ? leader : ts[0];
     if (tg && !(ab.id === 'swap' && tg.pos <= p.pos)) return { by: p.id, type: 'ability', u: h.u, ab: ab.id, target: tg.id, dir: -1, amount: 3 };
@@ -2315,7 +2335,7 @@ async function runQueue() {
 async function famUp(p, f, l) {
   const F = FAMS[f]; SFX.chime(); const pt = screenOfP(p.id); spiral(pt, [F.col, '#FFFFFF'], 40 + l * 20); ring(pt, F.col, 90 + l * 40, 4, 60);
   if (isMine(p)) { const hp = $('hand').getBoundingClientRect(); burst({ x: hp.left + hp.width / 2, y: hp.top + hp.height / 2 }, [F.col, '#FFFFFF'], 40, 6, { shape: 'star' }); }
-  banner(null, '⚜ Семья «' + F.name + '»' + (isMine(p) ? '' : ' у игрока ' + p.name), F.lv[l - 1], F.col);
+  banner(null, '⚜ Семья «' + F.name + '»' + (isMine(p) ? '' : ' у игрока ' + p.name), scl(F.lv[l - 1]), F.col);
   await sleep(1200);
 }
 async function auraUp(p, lv) {
@@ -2509,7 +2529,7 @@ async function showOmen(e, s) { // карта события: видят все,
   burst(cpt, e.k === 'ev_iridon' ? ['#FF8AD8', '#8FE3FF', '#FFC960', '#7BE0A4', '#B58CFF'] : [O.col, '#FFFFFF'], 70, 8, { shape: 'star' }); ring(cpt, O.col, 260, 7, 60);
   ov.appendChild(h('h4', null, O.name));
   ov.appendChild(h('p', null, h('i', null, O.title)));
-  ov.appendChild(h('div', { class: 'abl2' }, h('p', null, O.desc)));
+  ov.appendChild(h('div', { class: 'abl2' }, h('p', null, omenDesc(e.k))));
   await new Promise(res => { const b = h('button', { class: 'pbtn', style: 'min-width:180px;margin-top:6px' }, 'Дальше'); b.addEventListener('click', res); ov.appendChild(b); setTimeout(res, RM ? 1500 : 7000); });
   ov.classList.remove('on'); ov.innerHTML = '';
 }
@@ -2767,7 +2787,7 @@ function renderDock() {
   const au = $('aura'); au.innerHTML = '';
   if (lvl) au.appendChild(h('div', { class: 'auraline l' + lvl }, h('b', null, '✦ ' + AURA[lvl].name + ': ' + zc + ' ' + (zc >= 4 && zc % 10 >= 5 || zc % 10 === 0 ? 'знаков' : 'знака')), h('span', null, AURA[lvl].desc)));
   else if (zc === 1) au.appendChild(h('div', { class: 'auraline l0' }, h('span', null, 'Собери в руке второй знак зодиака, чтобы зажечь созвездие.')));
-  famActive(v).forEach(f => { const F = FAMS[f], l = famLv(v, f), n = famCount(v, f); au.appendChild(h('div', { class: 'auraline fam f' + l, style: '--fc:' + F.col }, h('b', null, '⚜ ' + F.name + ': ' + n + (n >= 5 ? ' душ' : ' души')), h('span', null, F.lv[l - 1]))); });
+  famActive(v).forEach(f => { const F = FAMS[f], l = famLv(v, f), n = famCount(v, f); au.appendChild(h('div', { class: 'auraline fam f' + l, style: '--fc:' + F.col }, h('b', null, '⚜ ' + F.name + ': ' + n + ' души'), h('span', null, scl(F.lv[l - 1])))); });
   const hand = $('hand'); hand.innerHTML = '';
   for (let i = 0; i < HAND; i++) {
     const hh = v.hand[i];
@@ -2809,12 +2829,14 @@ function yesNo(title, text, yesLabel, noLabel, onYes, onNo, img, color) {
   const top = img ? h('div', { class: 'cardrow', style: '--hc:' + (color || '#D9B66B') }, h('img', { src: img, alt: '' }), h('p', { style: 'margin:0' }, text)) : h('p', null, text);
   openModal(title, null, h('div', null, top, h('div', { class: 'mact' }, noLabel ? h('button', { class: 'abtn alt', onclick: onNo }, noLabel) : null, h('button', { class: 'abtn', onclick: onYes }, yesLabel))), { center: true, locked: true });
 }
+function scl(t) { return abDesc({ desc: t }); }
+function omenDesc(k) { return k === 'ev_irisoracle' ? scl(OMENS[k].desc) : OMENS[k].desc; }
 function famInfo(owner, f) {
   const F = FAMS[f], n = owner ? famCount(owner, f) : 0, l = owner ? famLv(owner, f) : 0;
   const others = F.m.filter(k => !owner || !owner.hand.some(x => x.k === k)).map(k => HEROES[k] ? HEROES[k].name : k);
   return h('div', { class: 'auraline fam' + (l ? ' f' + l : ''), style: '--fc:' + F.col + ';margin:6px 0' },
     h('b', null, '⚜ Семья «' + F.name + '»' + (owner ? ': в руке ' + n : '')),
-    h('span', null, '2 души: ' + F.lv[0] + (f === 'dragons' ? '' : ' 3 и больше: ' + F.lv[1])), h('br'),
+    h('span', null, F.lv.map((t, i) => (i + 2) + ' души: ' + scl(t)).join(' ')), h('br'),
     h('small', { style: 'opacity:.8' }, 'Ещё в семье: ' + others.join(', ') + '.'));
 }
 function cardSheet(owner, hh, face) {
@@ -2824,9 +2846,12 @@ function cardSheet(owner, hh, face) {
   const blocked = mineNow ? abilityBlocked(s, owner) : null;
   const list = h('div', { class: 'abl' });
   H.ab.filter(ab => !F || ab.face === F.id).forEach(ab => {
-    const noT = mineNow && ab.t !== 'none' && !validTargets(s, owner, ab).length;
-    const btn = h('button', { class: 'abtn', disabled: !mineNow || !!blocked || noT, onclick: () => pickAbility(owner, hh, ab) }, noT ? 'Нет целей' + (ab.r < 99 ? ' в пределах ' + abR(ab) + ' клеток' : '') : 'Применить и сжечь карту');
-    list.appendChild(h('div', { class: 'abrow' }, h('b', null, ab.name), h('span', null, abDesc(ab)), btn));
+    const ar = areaReach(s, owner, ab);
+    const noT = mineNow && ((ab.t !== 'none' && !validTargets(s, owner, ab).length) || (ar && !ar.who.length));
+    const rr = ar ? ar.r : ab.r >= 99 ? 0 : abR(ab) + rangeBonus(s, owner);
+    const btn = h('button', { class: 'abtn', disabled: !mineNow || !!blocked || noT, onclick: () => pickAbility(owner, hh, ab) }, noT ? 'Никого в пределах ' + rr + ' клеток' : 'Применить и сжечь карту');
+    const reach = ar && mineNow ? h('small', { class: 'reach' }, ar.who.length ? 'Сейчас достанет: ' + ar.who.map(q => q.name + ' (клетка ' + (q.pos + 1) + ')').join(', ') : 'Сейчас никого рядом: ближайший соперник дальше ' + ar.r + ' клеток.') : null;
+    list.appendChild(h('div', { class: 'abrow' }, h('b', null, ab.name), h('span', null, abDesc(ab)), reach, btn));
   });
   const lvl = auraLevel(owner); const z = ZSIGN[hh.k];
   const note = !mineNow ? 'Способности можно применять в свой ход до броска кубиков.' : blocked ? blocked : 'Пока герой в руке, он добавляет ' + pw + ' к силе в боях. После применения способности он сгорит.';
@@ -2894,8 +2919,8 @@ function showRules() {
     h('p', null, 'Герои призываются за очки душ, в руке до ' + HAND + ' карт. Пока герой в руке, его сила помогает в боях. Нажми на карту, чтобы применить одну из её способностей: после этого герой сгорит.'),
     h('p', null, 'Клетки: 💎 сокровище, 🗡 засада (случайная душа сразу бьёт своей силой), ⚔️ бой с душой (можно сразиться или пройти мимо; победа — душа твоя, поражение — её сила бьёт по тебе), 🔮 алтарь, 🎴 знамение, цветной круг — святилище. Нажми на клетку, чтобы узнать подробнее.'),
     h('p', null, '🎴 Знамение — карта события. Кто встанет на эту клетку, открывает одну из карт мира: Чекервоид, Лавандию или Иридон. Три круга она меняет подземелье для всех. Действующее знамение видно наверху, нажми на него, чтобы прочитать.'),
-    h('p', null, '⚜ Семьи душ: похожие души усиливают друг друга. Если в руке 2 души одной семьи, загорается бонус, 3 и больше — бонус сильнее. У карты семьи в углу цветная точка, а нажав на карту, увидишь всю семью.'),
-    ...Object.keys(FAMS).map(f => h('p', { style: 'margin:0 0 4px;font-size:.88rem' }, h('b', { style: 'color:' + FAMS[f].col }, FAMS[f].name + '. '), '2: ' + FAMS[f].lv[0] + (f === 'dragons' ? '' : ' 3+: ' + FAMS[f].lv[1]))),
+    h('p', null, '⚜ Семьи душ: похожие души усиливают друг друга. Если в руке 2 души одной семьи, загорается бонус, 3 — бонус сильнее, 4 (вся рука) — самый сильный. У карты семьи в углу цветная точка, а нажав на карту, увидишь всю семью.'),
+    ...Object.keys(FAMS).map(f => h('p', { style: 'margin:0 0 4px;font-size:.88rem' }, h('b', { style: 'color:' + FAMS[f].col }, FAMS[f].name + '. '), FAMS[f].lv.map((t, i) => (i + 2) + ': ' + scl(t)).join(' '))),
     h('p', null, 'Созвездия: если в руке 2 разных знака зодиака, загорается Малое созвездие (+1 к силе знаков), 3 знака — Созвездие (+2 и 10 очков за ход), 4 знака — Великий зодиак (+3, 20 очков за ход и +1 к броску). Рыбы — двойная карта: переверни её, чтобы выбрать способность ледяной или алой стороны.'),
     h('p', null, 'Очки душ даются за шаги, сокровища и победы. Отстающим за шаг даётся вдвое больше, а сильно отставший получает +2 к броску. На длинном поле дальность способностей больше: числа в описаниях уже пересчитаны.'),
     h('p', null, 'Души бывают разных классов. Известные души носят имена, их знают многие. Твари подземелья — местные стайные существа: слабые души, попав в этот мир, становятся их сородичами, и твари охотятся на новичков. Тварей нельзя призвать: они живут только в подземелье и нападают в боях и засадах, а победив тварь в бою, ты забираешь её в руку. Они слабее остальных душ. Там же водятся орды — стаи мертвецов и чудовищ, которые бьют по всем вокруг, — и редкие боссы подземелья: они встречаются только во второй половине пути, очень сильны, но победа над боссом приносит много очков и могучую карту. У безымянных душ имя неизвестно, о них знают только по способностям.'),
@@ -2962,7 +2987,9 @@ function renderResume() {
   b.hidden = false; $('bForget').hidden = false;
   b.disabled = sv.mode === 'host' && typeof Peer === 'undefined';
 }
+function cleanSave(st) { (st.players || []).forEach(p => { p.hand = (p.hand || []).filter(h => HEROES[h.k]); }); return st; } // герои, ставшие картами событий, убираются из старых сохранений
 function resumeLocal(sv) {
+  cleanSave(sv.s);
   resetGameView(); G.mode = 'local'; G.localPlayers = sv.players || sv.s.players.map(p => ({ name: p.name, bot: p.bot })); show('game');
   const st = sv.s; st.fx = []; st.seq = (st.seq || 0) + 1; enqueue(st);
 }
@@ -2998,7 +3025,7 @@ $('setupGo').onclick = () => {
 $('bRules').onclick = showRules;
 $('bMenu').onclick = showMenu;
 $('bSound').onclick = () => { SND.on = !SND.on; store.set('sound', SND.on); audioInit(); renderTop(); if (SND.on) SFX.chime(); };
-$('wchip').onclick = () => { if (!G.s || !G.s.world) return; const k = G.s.world.k, O = OMENS[k]; openModal(O.name, null, h('div', null, h('img', { src: IMG[k].card, alt: O.name, style: 'display:block;width:min(56vw,200px);margin:0 auto 10px;border-radius:12px;box-shadow:0 0 30px ' + O.col }), h('p', null, h('i', null, O.title + '. ')), h('p', null, O.desc), h('p', { style: 'color:#C9BFE3' }, 'Осталось кругов: ' + G.s.world.left + '.'), h('div', { class: 'mact' }, h('button', { class: 'abtn', onclick: closeModal }, 'Понятно'))), { center: true }); };
+$('wchip').onclick = () => { if (!G.s || !G.s.world) return; const k = G.s.world.k, O = OMENS[k]; openModal(O.name, null, h('div', null, h('img', { src: IMG[k].card, alt: O.name, style: 'display:block;width:min(56vw,200px);margin:0 auto 10px;border-radius:12px;box-shadow:0 0 30px ' + O.col }), h('p', null, h('i', null, O.title + '. ')), h('p', null, omenDesc(k)), h('p', { style: 'color:#C9BFE3' }, 'Осталось кругов: ' + G.s.world.left + '.'), h('div', { class: 'mact' }, h('button', { class: 'abtn', onclick: closeModal }, 'Понятно'))), { center: true }); };
 $('evchip').onclick = () => { if (!G.s) return; const ev = EVENTS.find(e => e.id === G.s.event); openModal(ev.name, ev.desc, h('div', { class: 'mact' }, h('button', { class: 'abtn', onclick: closeModal }, 'Понятно')), { center: true }); };
 addEventListener('resize', () => { setDockVar(); if (G.s && MAP.key) { renderBoard(G.s.seed, G.s.event); renderTokens(); renderMarks(); } });
 
@@ -3109,6 +3136,7 @@ function hostAttach(peer, code) {
   peer.on('error', e => { if (e && e.type === 'network') toast('Проблема с сетью. Друзья могут не подключиться, пока она не наладится.'); });
 }
 async function resumeHost(sv) {
+  cleanSave(sv.s);
   audioInit(); $('bResume').disabled = true; $('resumeHint').textContent = 'Открываю комнату ' + sv.code + '…';
   let peer = null;
   for (let i = 0; i < 6 && !peer; i++) {
