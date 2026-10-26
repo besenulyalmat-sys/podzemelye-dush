@@ -10,54 +10,21 @@
 <style>
 :root{
   --scene:#120D22; --scene2:#1E1638; --gold:#D9B66B; --gold2:#F3DDA0; --soul:#8FE3FF; --ember:#FF6B7A; --leaf:#7BE0A4;
-  --panel:#F1E8D4; --panel2:#E6DAC0; --ink:#2A2140; --ink2:#5E5378; --line:#CDBE9C; --btn:#2A2140; --btnInk:#F6EFDF;
-  --overlay:rgba(14,10,26,.72);
-  color-scheme:light;
+  --panel:#191330; --panel2:#241C40; --ink:#EFE7D6; --ink2:#A99DC8; --line:#3A2F5E; --btn:#D9B66B; --btnInk:#1A1430;
+  --overlay:rgba(8,6,16,.74);
+  color-scheme:dark;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){ --panel:#1A1430; --panel2:#251D42; --ink:#EFE7D6; --ink2:#A99DC8; --line:#3B3060; --btn:#D9B66B; --btnInk:#1A1430; color-scheme:dark; }
+  :root:not([data-theme="light"]){ color-scheme:dark; }
 }
-:root[data-theme="dark"]{ --panel:#1A1430; --panel2:#251D42; --ink:#EFE7D6; --ink2:#A99DC8; --line:#3B3060; --btn:#D9B66B; --btnInk:#1A1430; color-scheme:dark; }
+:root[data-theme="dark"]{ color-scheme:dark; }
 *,*::before,*::after{box-sizing:inherit}
 html,body{height:100%;margin:0}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{background:var(--scene);color:var(--ink);font-family:Philosopher,"Trebuchet MS",system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--scene)}
-button{font:inherit;cursor:pointer;color:inherit}
-button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-offset:2px}
-.disp{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;letter-spacing:.01em}
-#app{position:relative;height:100%}
-.screen{position:absolute;inset:0;display:none}
-.screen.on{display:block}
-
-/* ---------- Home ---------- */
-#home{color:#EFE7D6;overflow-y:auto;background:
-  radial-gradient(60% 40% at 50% 18%,rgba(217,182,107,.22),transparent 70%),
-  radial-gradient(80% 50% at 50% 100%,rgba(120,80,200,.25),transparent 70%),var(--scene)}
-.home-in{max-width:520px;margin:0 auto;padding:28px 20px 40px;text-align:center}
-.fan{position:relative;height:250px;margin:6px auto 0;width:300px}
-.fan img{position:absolute;left:50%;top:10px;width:126px;border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.6);transform-origin:50% 120%}
-.fan img:nth-child(1){transform:translateX(-50%) rotate(-16deg) translateX(-62px)}
-.fan img:nth-child(2){transform:translateX(-50%) rotate(16deg) translateX(62px)}
-.fan img:nth-child(3){transform:translateX(-50%) translateY(-8px);width:140px;z-index:2;box-shadow:0 0 0 1px rgba(243,221,160,.5),0 0 50px rgba(243,201,96,.45),0 20px 40px rgba(0,0,0,.6)}
-.home-in h1{font-size:clamp(2.2rem,8vw,3.1rem);line-height:1.02;margin:10px 0 6px;color:var(--gold2)}
-.home-in h1 small{display:block;font-size:.5em;color:#C9BFE3;font-family:Philosopher,sans-serif;font-weight:400;margin-bottom:6px}
-.home-in p.lead{color:#C9BFE3;margin:0 auto 22px;max-width:36ch;line-height:1.5}
-.hbtns{display:grid;gap:10px}
-.hbtn{border:1px solid rgba(217,182,107,.5);background:rgba(30,22,56,.85);color:#EFE7D6;border-radius:14px;padding:15px 16px;font-size:1.05rem;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.hbtn small{color:#A99DC8;font-size:.85rem;display:block}
-.hbtn#bLocal{background:linear-gradient(180deg,#E8C77C,#C59B4C);color:#1E1638;border-color:transparent;font-weight:700}
-.hbtn#bLocal small{color:#3B2F18}
-#bResume:not([hidden]) ~ #bLocal{background:rgba(30,22,56,.85);color:#EFE7D6;border-color:rgba(217,182,107,.5);font-weight:400}
-#bResume:not([hidden]) ~ #bLocal small{color:#A99DC8}
-.hbtn.main{background:linear-gradient(180deg,#E8C77C,#C59B4C);color:#1E1638;border-color:transparent;font-weight:700}
-.hbtn.main small{color:#3B2F18}
-.hbtn:disabled{opacity:.45;cursor:not-allowed}
-.joinrow{display:flex;gap:8px}
-.joinrow input{flex:1;min-width:0;background:rgba(30,22,56,.85);border:1px solid rgba(217,182,107,.5);border-radius:14px;color:#EFE7D6;padding:14px;font:inherit;font-size:1.05rem;text-transform:uppercase;letter-spacing:.2em}
-[hidden]{display:none!important}
 .sizeh{font-size:1rem;color:#C9BFE3;margin:6px 0 8px;font-weight:400}
 .sizes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .sizes button{border:1px solid #3B3060;background:rgba(30,22,56,.85);color:#EFE7D6;border-radius:14px;padding:10px 6px;font:inherit;text-align:center;line-height:1.25}
@@ -333,6 +300,83 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-o
   .die,.spark,.flip .in,.banner,.float,.modal,.fight{animation-duration:.01s!important}
   .shake{animation:none}
 }
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-offset:2px}
+.disp{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;letter-spacing:.01em}
+#app{position:relative;height:100%}
+.screen{position:absolute;inset:0;display:none}
+.screen.on{display:block}
+
+/* ---------- Home ---------- */
+#home{color:#EFE7D6;overflow-y:auto;background:
+  radial-gradient(60% 40% at 50% 18%,rgba(217,182,107,.22),transparent 70%),
+  radial-gradient(80% 50% at 50% 100%,rgba(120,80,200,.25),transparent 70%),var(--scene)}
+.home-in{max-width:520px;margin:0 auto;padding:28px 20px 40px;text-align:center}
+.fan{position:relative;height:250px;margin:6px auto 0;width:300px}
+.fan img{position:absolute;left:50%;top:10px;width:126px;border-radius:10px;box-shadow:0 18px 40px rgba(0,0,0,.6);transform-origin:50% 120%}
+.fan img:nth-child(1){transform:translateX(-50%) rotate(-16deg) translateX(-62px)}
+.fan img:nth-child(2){transform:translateX(-50%) rotate(16deg) translateX(62px)}
+.fan img:nth-child(3){transform:translateX(-50%) translateY(-8px);width:140px;z-index:2;box-shadow:0 0 0 1px rgba(243,221,160,.5),0 0 50px rgba(243,201,96,.45),0 20px 40px rgba(0,0,0,.6)}
+.home-in h1{font-size:clamp(2.2rem,8vw,3.1rem);line-height:1.02;margin:10px 0 6px;color:var(--gold2)}
+.home-in h1 small{display:block;font-size:.5em;color:#C9BFE3;font-family:Philosopher,sans-serif;font-weight:400;margin-bottom:6px}
+.home-in p.lead{color:#C9BFE3;margin:0 auto 22px;max-width:36ch;line-height:1.5}
+.hbtns{display:grid;gap:10px}
+.hbtn{border:1px solid rgba(217,182,107,.5);background:rgba(30,22,56,.85);color:#EFE7D6;border-radius:14px;padding:15px 16px;font-size:1.05rem;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hbtn small{color:#A99DC8;font-size:.85rem;display:block}
+.hbtn#bLocal{background:linear-gradient(180deg,#E8C77C,#C59B4C);color:#1E1638;border-color:transparent;font-weight:700}
+.hbtn#bLocal small{color:#3B2F18}
+#bResume:not([hidden]) ~ #bLocal{background:rgba(30,22,56,.85);color:#EFE7D6;border-color:rgba(217,182,107,.5);font-weight:400}
+#bResume:not([hidden]) ~ #bLocal small{color:#A99DC8}
+.hbtn.main{background:linear-gradient(180deg,#E8C77C,#C59B4C);color:#1E1638;border-color:transparent;font-weight:700}
+.hbtn.main small{color:#3B2F18}
+.hbtn:disabled{opacity:.45;cursor:not-allowed}
+.joinrow{display:flex;gap:8px}
+.joinrow input{flex:1;min-width:0;background:rgba(30,22,56,.85);border:1px solid rgba(217,182,107,.5);border-radius:14px;color:#EFE7D6;padding:14px;font:inherit;font-size:1.05rem;text-transform:uppercase;letter-spacing:.2em}
+[hidden]{display:none!important}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.abtn{border:0;border-radius:12px;padding:11px 14px;font-weight:700;background:linear-gradient(180deg,#E8C77C,#C59B4C);color:#1E1638;box-shadow:0 2px 0 #8C6A30;transition:transform .08s,filter .15s}
+.abtn:hover{filter:brightness(1.07)}
+.abtn:active{transform:translateY(1px);box-shadow:none}
+.abtn.alt{background:var(--panel2);color:var(--ink);border:1px solid var(--line);font-weight:400;box-shadow:none}
+.abtn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.mact{display:flex;gap:8px;margin-top:12px}
+.mact .abtn{flex:1}
+.mopt{color:var(--ink);transition:border-color .15s,background .15s}
+.mopt:hover{border-color:var(--gold)}
+.mopt small{display:block;color:var(--ink2);font-size:.8rem}
+.logl{list-style:none;margin:0;padding:0;display:grid;gap:6px;max-height:55vh;overflow-y:auto}
+.logl li{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:.9rem;line-height:1.4}
+#extra:empty{display:none}
+#extra{display:grid;gap:6px;margin-top:8px}
+#extra .abtn{width:100%}
+#dock{background:linear-gradient(180deg,#211A3E,#16112B);border-top:1px solid rgba(217,182,107,.35)}
+.hslot{background:rgba(255,255,255,.03);border-color:#3A2F5E}
+.sumbtn{border-color:rgba(217,182,107,.55)}
+.sumbtn:not(:disabled):hover{background:rgba(217,182,107,.1)}
+#who{color:var(--gold2)}
+/* лента событий */
+#feed{position:fixed;left:10px;right:66px;bottom:calc(var(--dockh,240px) + 10px);z-index:29;display:flex;flex-direction:column;gap:6px;pointer-events:none;max-width:460px}
+.fitem{pointer-events:auto;background:rgba(18,13,34,.94);border:1px solid rgba(255,255,255,.08);border-left:4px solid var(--pc,#D9B66B);border-radius:12px;padding:8px 10px;color:#EFE7D6;font-size:.86rem;line-height:1.35;box-shadow:0 6px 18px rgba(0,0,0,.5);animation:fin .25s ease-out;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.fitem b{color:#F3DDA0;font-weight:700}
+.fitem .fx2{display:block;color:#C9BFE3;font-size:.82rem;margin-top:2px}
+.fitem.me{border-color:rgba(255,126,154,.5);border-left-color:#FF7E9A;background:rgba(48,14,30,.95)}
+.fitem.me .fx2.mine{color:#FFB3C2}
+.fitem.out{animation:fout .35s ease-in forwards}
+@keyframes fin{from{opacity:0;transform:translateY(8px)}}
+@keyframes fout{to{opacity:0;transform:translateX(-20px)}}
+/* компьютер: панель игрока справа, поле слева */
+@media (min-width:980px) and (min-height:560px){
+  #dock{left:auto;right:0;top:0;bottom:0;width:390px;max-width:none;margin:0;border-radius:0;border-top:0;border-left:1px solid rgba(217,182,107,.3);overflow-y:auto;padding:16px 16px 18px;display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.45)}
+  #scroller{right:390px;padding-bottom:60px!important}
+  #topbar{right:390px}
+  #strip{flex-wrap:wrap;overflow:visible}
+  #who{font-size:1.45rem;margin-top:6px}
+  #hand{grid-template-columns:repeat(2,minmax(0,min(150px,calc((100vh - 340px) / 3))));justify-content:center;gap:12px;margin:6px 0}
+  #bar{margin-top:auto;padding-top:12px}
+  #talk{right:406px;bottom:18px}
+  #chatbox{left:auto;right:462px;bottom:18px;width:380px}
+  #feed{left:18px;right:auto;bottom:18px;width:400px}
+}
 </style>
 </head>
 <body>
@@ -413,6 +457,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--soul);outline-o
 </div>
 <canvas id="fxc"></canvas>
 <div id="stage"></div>
+<div id="feed" aria-live="polite"></div>
 <div id="ov"></div>
 <div class="sumov" id="sumov"></div>
 <div id="talk" hidden>
@@ -504,7 +549,7 @@ const EVENTS = [
 ];
 const PCOLORS = ['#FFC960', '#7FD4FF', '#FF7E9A', '#9BE38F'];
 const START_SOULS = 160, HAND = 4;
-const GAME_VER = 10;
+const GAME_VER = 11;
 // Размер поля задаётся партией: 200, 350 или 500 плит. DK — множитель дальности способностей.
 const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' } };
 let COLS = 10, CELLS = 500, ROWS = 50, ZROWS = 10, DK = 1.5;
@@ -524,7 +569,7 @@ function cellWord(n, acc) { // «на 1 клетку, на 3 клетки, на 
   if (acc && d >= 2 && d <= 4 && (dd < 12 || dd > 14)) return 'клетки';
   return 'клеток';
 }
-function clsLabel(H) { return H.great ? 'Великая душа' : H.cls === 'beast' ? 'Тварь подземелья' : H.cls === 'nameless' ? 'Безымянная душа, имя неизвестно' : 'Известная душа'; }
+function clsLabel(H) { return H.great ? (H.cls === 'nameless' ? 'Великая душа, имя неизвестно' : 'Великая душа') : H.cls === 'beast' ? 'Тварь подземелья' : H.cls === 'nameless' ? 'Безымянная душа, имя неизвестно' : 'Известная душа'; }
 const COSMIC = ['blue', 'purple', 'black'];
 
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -637,11 +682,11 @@ function defend(s, caster, target) { // returns 'ok' | 'blocked' | 'mirror'
 // ---------- Battles ----------
 function foeHero(rnd) { // в боях и засадах чаще нападают местные твари: они охотятся на новые души
   const beasts = Object.keys(HEROES).filter(k => HEROES[k].cls === 'beast');
-  if (beasts.length && rnd() < 0.45) { const tot = beasts.reduce((a, k) => a + HEROES[k].w, 0); let r = rnd() * tot; for (const k of beasts) { r -= HEROES[k].w; if (r <= 0) return k; } return beasts[0]; }
+  if (beasts.length && rnd() < 0.7) { const tot = beasts.reduce((a, k) => a + HEROES[k].w, 0); let r = rnd() * tot; for (const k of beasts) { r -= HEROES[k].w; if (r <= 0) return k; } return beasts[0]; }
   return weightedHero(rnd, false);
 }
 function weightedHero(rnd, allowGreat) {
-  const keys = Object.keys(HEROES).filter(k => allowGreat || !HEROES[k].great);
+  const keys = Object.keys(HEROES).filter(k => HEROES[k].cls !== 'beast' && (allowGreat || !HEROES[k].great)); // твари не призываются
   const tot = keys.reduce((a, k) => a + HEROES[k].w, 0); let r = rnd() * tot;
   for (const k of keys) { r -= HEROES[k].w; if (r <= 0) return k; } return keys[0];
 }
@@ -987,6 +1032,70 @@ Object.assign(WILD, {
   purplelord: { burn: 1, msg: 'испепеляет героя тёмным пламенем' }, neonguard: { skip: 1, msg: 'ослепляет неоновым светом' }, redeyes: { souls: 50, msg: 'смотрит тысячей алых глаз' }
 });
 
+// ---------- Распределение классов (бета 11): твари слабее и только в подземелье, новые Великие души ----------
+Object.assign(HEROES, {
+  // твари: не призываются, встречаются только в боях и засадах; способности скромнее
+  mrakorog: { name: 'Мракорог', title: 'Тварь туманных руин', cls: 'beast', pw: 4, w: 6, col: 'black', motif: 'smoke', ab: [
+    T('mr_horn', 'Удар рога', 'Соперник в пределах 3 клеток отлетает на 3 клетки.', 'enemy', [{ op: 'push', n: 3 }], { r: 3 }),
+    T('mr_gallop', 'Тёмный галоп', 'Следующий бросок удваивается.', 'none', [{ op: 'gallop' }])] },
+  uglevor: { name: 'Углевор', title: 'Пожиратель туманных руин', cls: 'beast', pw: 4, w: 6, col: 'black', motif: 'claw', ab: [
+    T('ug_devour', 'Укус', 'Соперник в пределах 3 клеток теряет 25 очков.', 'enemy', [{ op: 'drain', n: 25 }], { r: 3 }),
+    T('ug_fog', 'Туман руин', 'Соперники в пределах 3 клеток пропускают ход.', 'none', [{ op: 'skipNear', r: 3 }])] },
+  skvernotel: { name: 'Сквернотел', title: 'Тварь ритуальной скверны', cls: 'beast', pw: 5, w: 6, col: 'red', motif: 'blood', ab: [
+    T('sv_rot', 'Скверна', 'Соперник в пределах 5 клеток три своих хода теряет по 15 очков.', 'enemy', [{ op: 'poison', per: 15, left: 3 }], { r: 5 }),
+    T('sv_skin', 'Сброс кожи', 'Снимает с тебя вредные эффекты.', 'none', [{ op: 'cleanseSelf' }])] },
+  pletevra: { name: 'Плетевра', title: 'Тварь багровых нитей', cls: 'beast', pw: 4, w: 6, col: 'pink', motif: 'blood', ab: [
+    T('pl_web', 'Багровые нити', 'Соперник в пределах 4 клеток пропускает ход.', 'enemy', [{ op: 'skip', n: 1 }], { r: 4 }),
+    T('pl_ball', 'Клубок', 'Все соперники притягиваются к тебе на 2 клетки.', 'none', [{ op: 'pullAll', n: 2 }])] },
+  karaptis: { name: 'Караптис', title: 'Жук-воин туманного леса', cls: 'beast', pw: 4, w: 6, col: 'silver', motif: 'claw', ab: [
+    T('kr_shell', 'Хитиновый панцирь', 'Две следующие засады или ловушки на тебя не подействуют.', 'none', [{ op: 'stone', n: 2 }]),
+    T('kr_claws', 'Серповидные когти', 'Соперник в пределах 2 клеток теряет 20 очков.', 'enemy', [{ op: 'drain', n: 20 }], { r: 2 })] },
+  akuliptilia: { name: 'Акулиптилия', title: 'Тварь-левиафан лунных вод', cls: 'beast', pw: 5, w: 6, col: 'silver', motif: 'water', ab: [
+    T('ak_grip', 'Хватка левиафана', 'Соперник впереди в пределах 6 клеток притягивается на твою клетку.', 'enemy', [{ op: 'pull' }], { r: 6, ahead: true }),
+    T('ak_wave', 'Чёрная волна', 'Соперники в пределах 5 клеток отступают на 2 клетки.', 'none', [{ op: 'pushAll', n: 2, r: 5 }])] },
+  skit: { name: 'Скит', title: 'Кошмар Запределья', cls: 'beast', pw: 4, w: 6, col: 'silver', motif: 'smoke', ab: [
+    T('sc_glide', 'Скольжение ската', 'Вместо броска скользишь на 6 клеток вперёд.', 'none', [{ op: 'fly', n: 6 }], { move: true }),
+    T('sc_dread', 'Кошмар', 'Соперник в пределах 5 клеток теряет 20 очков.', 'enemy', [{ op: 'drain', n: 20 }], { r: 5 })] },
+  crystalphoenix: { name: 'Кристальный феникс', title: 'Тварь радужного неба', cls: 'beast', pw: 5, w: 6, col: 'pink', motif: 'feather', ab: [
+    T('cp_flight', 'Радужный взлёт', 'Вместо броска ты взлетаешь на 7 клеток вперёд.', 'none', [{ op: 'fly', n: 7 }], { move: true }),
+    T('cp_rebirth', 'Пепел перьев', 'Снимает с тебя вредные эффекты, и ты получаешь 25 очков.', 'none', [{ op: 'cleanseSelf' }, { op: 'souls', n: 25 }])] },
+  eirval: { name: 'Эйрваль', title: 'Тварь изумрудного леса', cls: 'beast', pw: 4, w: 6, col: 'green', motif: 'petal', ab: [
+    T('ev_path', 'Лесная тропа', 'Вместо броска лес поднимает тебя на ряд выше.', 'none', [{ op: 'up' }], { move: true }),
+    T('ev_breath', 'Дыхание леса', 'Снимает с тебя вредные эффекты.', 'none', [{ op: 'cleanseSelf' }])] },
+  talveir: { name: 'Тальвейр', title: 'Крылатая тварь небес', cls: 'beast', pw: 4, w: 6, col: 'teal', motif: 'feather', ab: [
+    T('tv_leap', 'Прыжок над головами', 'Вместо броска перелетаешь на 6 клеток, и каждый соперник, над которым пролетел, отдаёт тебе 10.', 'none', [{ op: 'jumpTax', n: 6, tax: 10 }], { move: true }),
+    T('tv_fan', 'Павлиний веер', 'Две следующие засады на тебя не подействуют.', 'none', [{ op: 'stone', n: 2 }])] },
+  dragonknight: { name: 'Крылатый рыцарь-дракон', title: 'Тварь лунного шторма', cls: 'beast', pw: 5, w: 6, col: 'silver', motif: 'claw', ab: [
+    T('dk_dive', 'Пикирование', 'Вместо броска ты пикируешь к ближайшему сопернику впереди, но не дальше 8 клеток.', 'none', [{ op: 'catchup', n: 8 }], { move: true }),
+    T('dk_wing', 'Удар крыла', 'Соперник в пределах 3 клеток отлетает на 3 клетки.', 'enemy', [{ op: 'push', n: 3 }], { r: 3 })] },
+  riptibi: { name: 'Риптиби', title: 'Крылатая тварь-дракон луны', cls: 'beast', pw: 4, w: 6, col: 'orange', motif: 'fire', ab: [
+    T('rp_dash', 'Стрекозиный рывок', 'Вместо броска перелетаешь на 6 клеток вперёд.', 'none', [{ op: 'fly', n: 6 }], { move: true }),
+    T('rp_blades', 'Два клинка', 'Забирает 20 очков у соперника в пределах 3 клеток.', 'enemy', [{ op: 'steal', n: 20 }], { r: 3 })] },
+  // новые Великие души
+  veylor: { name: 'Вейлор', title: 'Космический страж', pw: 8, w: 2, col: 'pink', motif: 'feather', great: true, ab: [
+    T('vo_halo', 'Розовый ореол', 'Соперники в пределах 8 клеток отлетают на 6 клеток, и каждый соперник теряет 20 очков.', 'none', [{ op: 'pushAll', n: 6, r: 8 }, { op: 'drainAll', n: 20 }]),
+    T('vo_wall', 'Перьевая крепость', 'Щит, зеркало и защита от трёх следующих засад.', 'none', [{ op: 'shield' }, { op: 'mirror' }, { op: 'stone', n: 3 }]),
+    T('vo_flight', 'Полёт стража', 'Вместо броска ты взлетаешь на 14 клеток вперёд.', 'none', [{ op: 'fly', n: 14 }], { move: true })] },
+  iceherald: { name: 'Ледяной вестник', title: 'Вестник бездны с ледяным нимбом', cls: 'nameless', pw: 8, w: 2, col: 'teal', motif: 'crystal', great: true, ab: [
+    T('ih_halo', 'Ледяной нимб', 'Соперники в пределах 8 клеток пропускают ход, а их герои теряют 2 силы.', 'none', [{ op: 'skipNear', r: 8 }, { op: 'debuffAll', n: 2, r: 8 }]),
+    T('ih_wind', 'Ветер бездны', 'Круг соперники не могут применять способности, и следующий бросок каждого поведёт его назад.', 'none', [{ op: 'blind', n: 1 }, { op: 'reverse' }]),
+    T('ih_frost', 'Вечная мерзлота', 'Соперник пропускает два хода и три своих хода теряет по 20 очков.', 'enemy', [{ op: 'skip', n: 2 }, { op: 'poison', per: 20, left: 3 }])] },
+  abysscrystal: { name: 'Страж расколотой бездны', title: 'Игрок кристальными костями', cls: 'nameless', pw: 8, w: 2, col: 'black', motif: 'crystal', great: true, ab: [
+    T('ac_dice', 'Кристальные кости', 'Ты получаешь 40 очков и сам выбираешь, сколько выпадет на кубиках.', 'none', [{ op: 'souls', n: 40 }, { op: 'bless' }], { p: 'die' }),
+    T('ac_bet', 'Ставка бездны', 'Следующий бросок делается тремя кубиками и удваивается.', 'none', [{ op: 'dice3' }, { op: 'gallop' }]),
+    T('ac_luck', 'Расколотая удача', 'Каждый соперник отдаёт тебе 30 очков.', 'none', [{ op: 'stealAll', n: 30 }])] },
+  crownlord: { name: 'Владыка в сияющей короне', title: 'Безликий с оком во тьме', cls: 'nameless', pw: 8, w: 2, col: 'silver', motif: 'eye', great: true, ab: [
+    T('cl_crown', 'Корона порядка', 'Снимает со всех игроков метки, яды, оковы и ловушки, и ты получаешь 60 очков.', 'none', [{ op: 'cleanseAll' }, { op: 'souls', n: 60 }]),
+    T('cl_eye', 'Всевидящее око', 'Тебя защищают щит и зеркало, и ты сам выбираешь, сколько выпадет на кубиках.', 'none', [{ op: 'shield' }, { op: 'mirror' }, { op: 'bless' }], { p: 'die' }),
+    T('cl_rings', 'Кольца власти', 'Вырывает по одному случайному герою у двух соперников и забирает себе в руку.', 'none', [{ op: 'takeHeroes', n: 2 }])] },
+  rainbowwarrior: { name: 'Радужная воительница', title: 'Воительница звёздных бурь', cls: 'nameless', pw: 8, w: 2, col: 'pink', motif: 'crystal', great: true, ab: [
+    T('rw_blade', 'Радужный клинок', 'Соперник в пределах 8 клеток отлетает на 8 клеток, и у него сгорает случайный герой.', 'enemy', [{ op: 'push', n: 8 }, { op: 'burn' }], { r: 8 }),
+    T('rw_storm', 'Звёздная буря', 'Следующий бросок делается тремя кубиками, и тебя защищают щит и зеркало.', 'none', [{ op: 'dice3' }, { op: 'shield' }, { op: 'mirror' }]),
+    T('rw_sky', 'Разрез небес', 'Все соперники отлетают назад на 1–6 клеток, а их герои теряют 1 силы.', 'none', [{ op: 'pushAll', n: 'd6' }, { op: 'debuffAll', n: 1 }])] }
+});
+
+// Великих стало 11, поэтому каждая выпадает реже: вместе они дают около 3% призывов
+Object.keys(HEROES).forEach(k => { if (HEROES[k].great) HEROES[k].w = 1.2; });
 const MOTIF = { zefir: 'feather', rak: 'water', arkarion: 'rock', nairel: 'star', lilia: 'petal', grombor: 'rock', noktis: 'star', kaisei: 'claw', mirazh: 'crystal', erevion: 'fire', verdan: 'petal', eiriya: 'feather', soleria: 'feather', solarion: 'feather', nexarion: 'void', astrael: 'star' };
 for (const k in MOTIF) HEROES[k].motif = MOTIF[k];
 Object.assign(WILD, {
@@ -1594,7 +1703,7 @@ const TINFO = {
 function cellCenter(i) { const r = rowOf(i), c = colOf(i); return { x: c * MAP.cs + MAP.cs / 2, y: MAP.top + (ROWS - 1 - r) * MAP.cs + MAP.cs / 2 }; }
 function renderBoard(seed, ev) {
   const B = buildBoard(seed, ev); MAP.B = B; MAP.key = seed + ':' + ev + ':' + CELLS;
-  const sc = $('scroller'); const W = Math.min((sc.clientWidth || innerWidth) - 12, 560);
+  const sc = $('scroller'); const W = Math.min((sc.clientWidth || innerWidth) - 12, DESK() ? 740 : 560);
   MAP.W = W; MAP.cs = W / COLS; MAP.H = MAP.top + ROWS * MAP.cs + 30;
   const m = $('map'); m.style.width = W + 'px'; m.style.height = MAP.H + 'px';
   m.style.setProperty('--cs', MAP.cs + 'px'); m.style.setProperty('--ts', Math.min(38, MAP.cs * 0.7) + 'px');
@@ -1662,8 +1771,9 @@ function renderTokens() {
 }
 function screenOfCell(i) { const t = MAP.tiles[i]; if (!t) return null; const r = t.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
 function screenOfP(pid) { const t = MAP.toks[pid]; if (t) { const r = t.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; } return screenOfCell(G.disp[pid] || 0); }
+function DESK() { return matchMedia('(min-width:980px) and (min-height:560px)').matches; }
 function focusCell(i, instant) {
-  if (!MAP.B) return; const sc = $('scroller'); const vis = sc.clientHeight - $('dock').offsetHeight;
+  if (!MAP.B) return; const sc = $('scroller'); const vis = sc.clientHeight - (DESK() ? 0 : $('dock').offsetHeight);
   const y = cellCenter(i).y + 64;
   sc.scrollTo({ top: Math.max(0, y - Math.max(120, vis) * 0.55), behavior: instant || RM ? 'auto' : 'smooth' });
 }
@@ -1699,6 +1809,7 @@ async function runQueue() {
     }
     G.s = ns; renderTokens(); renderDock();
     const skip = G.queue.length > 2;
+    try { feedState(ns); } catch (err) { console.error(err); }
     if (!skip) for (const e of ns.fx || []) { try { await playFx(e, ns); } catch (err) { console.error(err); } }
     ns.players.forEach(p => G.disp[p.id] = p.pos);
     renderTokens(); renderMarks(); renderDock();
@@ -1717,6 +1828,67 @@ async function auraUp(p, lv) {
   if (lv >= 3) flash('rgba(243,221,160,.35)');
   banner(null, '✦ ' + AURA[lv].name + (isMine(p) ? '' : ' у игрока ' + p.name), signs + ' — ' + AURA[lv].desc, '#F3DDA0');
   await sleep(1300);
+}
+// ---- лента событий: кто что применил и на кого это подействовало ----
+function meId() { const s = G.s; if (!s) return null; if (G.mode === 'online') return NET.myId; const hs = s.players.filter(p => !p.bot); return hs.length === 1 ? hs[0].id : null; }
+function feedState(ns) {
+  const me = meId(); const P = id => ns.players.find(p => p.id === id); const N = id => { const p = P(id); return p ? p.name : '?'; };
+  const isMe = id => id && id === me; const V = (id, a, b) => isMe(id) ? 'Ты ' + b : N(id) + ' ' + a;
+  const hn = k => HEROES[k] ? HEROES[k].name : k;
+  const items = []; let g = null;
+  const start = (head, col, actor) => { g = { head, col, mine: isMe(actor), eff: new Map() }; items.push(g); };
+  const add = (id, frag) => { if (!g || !id) return; if (!g.eff.has(id)) g.eff.set(id, []); const a = g.eff.get(id); if (!a.includes(frag)) a.push(frag); if (isMe(id)) g.mine = true; };
+  const solo = (txt, col, id) => { items.push({ head: txt, col, mine: isMe(id), eff: new Map() }); g = null; };
+  const dist = path => path && path.length > 1 ? Math.abs(path[path.length - 1] - path[0]) : 0;
+  const cells = n => n + ' ' + cellWord(n, true);
+  for (const e of ns.fx || []) {
+    const col = e.p && P(e.p) ? P(e.p).color : '#D9B66B';
+    switch (e.t) {
+      case 'ability': {
+        const H = HEROES[e.hero]; const ab = H && H.ab.find(x => x.id === e.ab);
+        const tgt = e.target && e.target !== e.p ? ' на ' + (isMe(e.target) ? 'тебя' : N(e.target)) : '';
+        start(V(e.p, e.copy ? 'повторяет' : 'применяет', e.copy ? 'повторяешь' : 'применяешь') + ' «' + (ab ? ab.name : 'способность') + '»' + (H ? ' (' + H.name + ')' : '') + tgt, col, e.p);
+        if (isMe(e.target)) g.mine = true; break;
+      }
+      case 'summon': start(V(e.p, 'призывает', 'призываешь') + ' ' + hn(e.hero), col, e.p); break;
+      case 'battle': start(V(e.p, 'сражается', 'сражаешься') + ' с ' + hn(e.foe) + ': ' + (e.win ? 'победа, +' + e.reward + ' и душа в руку' : e.tie ? 'ничья' : 'поражение, −' + e.lost), col, e.p); break;
+      case 'battlePass': solo(V(e.p, 'проходит', 'проходишь') + ' мимо: ' + hn(e.foe) + ' остаётся в подземелье', col, e.p); break;
+      case 'ambush': start('Засада! ' + hn(e.foe) + ' нападает на ' + (isMe(e.p) ? 'тебя' : N(e.p)), col, e.p); break;
+      case 'duel': start('Дуэль: ' + N(e.a) + ' против ' + N(e.b) + (e.tie ? ' — ничья' : ' — побеждает ' + (e.win ? N(e.a) : N(e.b))), P(e.a) ? P(e.a).color : col, e.a); if (isMe(e.b)) g.mine = true; break;
+      case 'trap': solo((isMe(e.p) ? 'Ты попадаешь' : N(e.p) + ' попадает') + ' в ловушку: −' + e.amount + ' очков', col, e.p); break;
+      case 'camp': solo((isMe(e.p) ? 'Ты платишь' : N(e.p) + ' платит') + ' ' + e.amount + ' за чужой лагерь игроку ' + N(e.by), col, e.p); break;
+      case 'finish': solo(V(e.p, 'входит', 'входишь') + ' в звёздные врата: ' + e.place + ' место!', col, e.p); break;
+      case 'skip': solo(V(e.p, 'пропускает', 'пропускаешь') + ' ход', col, e.p); break;
+      case 'poisonTick': solo((isMe(e.p) ? 'Яд: ты теряешь ' : 'Яд: ' + N(e.p) + ' теряет ') + e.amount, col, e.p); break;
+      case 'markTick': solo((isMe(e.p) ? 'Печать: ты отдаёшь ' : 'Печать: ' + N(e.p) + ' отдаёт ') + e.amount + ' игроку ' + N(e.by), col, e.p); break;
+      case 'shuffle': start('Руки всех игроков перемешаны', col, e.p); break;
+      case 'orbit': start('Все игроки меняются местами по кругу', col, null); ns.players.forEach(p => { if (isMe(p.id)) g.mine = true; }); break;
+      case 'lose': add(e.p, '−' + e.amount + ' очков'); break;
+      case 'steal': add(e.from, 'отдаёт ' + e.amount + (isMe(e.p) ? ' тебе' : ' игроку ' + N(e.p))); break;
+      case 'status': add(e.p, String(e.msg || '').toLowerCase()); break;
+      case 'burnHero': add(e.p, 'сгорает ' + hn(e.hero)); break;
+      case 'takeHero': add(e.from, 'лишается героя ' + hn(e.hero)); break;
+      case 'heroSwap': add(e.b, 'отдаёт ' + hn(e.gb) + ' и получает ' + hn(e.ga)); break;
+      case 'equalize': add(e.b, 'очки делятся поровну: ' + e.to); break;
+      case 'guard': add(e.p, 'щит отразил удар'); break;
+      case 'mirror': add(e.p, 'зеркало вернуло удар'); break;
+      case 'wildHit': add(e.p, hn(e.foe) + ' ' + e.msg); break;
+      case 'swap': add(e.b, 'меняется местами'); break;
+      case 'move': if (g && e.kind !== 'walk') { const n = dist(e.path); if (n) add(e.p, (e.kind === 'back' ? 'назад на ' : 'вперёд на ') + cells(n)); } break;
+    }
+  }
+  items.forEach(it => {
+    const lines = [...it.eff.entries()].map(([id, fr]) => ({ mine: isMe(id), txt: (isMe(id) ? 'По тебе: ' : N(id) + ': ') + fr.join(', ') }));
+    pushFeed(it.head, lines, it.col, it.mine);
+  });
+}
+function pushFeed(head, lines, col, mine) {
+  const box = $('feed'); if (!box) return;
+  const el = h('div', { class: 'fitem' + (mine ? ' me' : ''), style: '--pc:' + col, onclick: () => drop() }, h('b', null, head), ...lines.map(l => h('span', { class: 'fx2' + (l.mine ? ' mine' : '') }, l.txt)));
+  const drop = () => { if (!el.isConnected) return; el.classList.add('out'); setTimeout(() => el.remove(), 350); };
+  box.appendChild(el);
+  while (box.children.length > 3) box.firstChild.remove();
+  setTimeout(drop, mine ? 9000 : 6500);
 }
 function renderAll() { renderTokens(); renderMarks(); renderDock(); renderTop(); }
 function afterPlayback() {
@@ -2035,7 +2207,7 @@ function renderTop() {
   const rc = $('roomchip'); if (G.mode === 'online' && NET.code) { rc.hidden = false; rc.textContent = 'Комната ' + NET.code; } else rc.hidden = true;
   $('bSound').textContent = SND.on ? '🔊' : '🔇';
 }
-function setDockVar() { requestAnimationFrame(() => document.documentElement.style.setProperty('--dockh', $('dock').offsetHeight + 'px')); }
+function setDockVar() { requestAnimationFrame(() => document.documentElement.style.setProperty('--dockh', (DESK() ? 0 : $('dock').offsetHeight) + 'px')); }
 function renderDock() {
   const s = G.s; if (!s) return;
   const a = activeP(s); const v = viewer(); const ctl = canControl();
@@ -2175,7 +2347,7 @@ function showRules() {
     h('p', null, 'Клетки: 💎 сокровище, 🗡 засада (случайная душа сразу бьёт своей силой), ⚔️ бой с душой (можно сразиться или пройти мимо; победа — душа твоя, поражение — её сила бьёт по тебе), 🔮 алтарь, цветной круг — святилище. Нажми на клетку, чтобы узнать подробнее.'),
     h('p', null, 'Созвездия: если в руке 2 разных знака зодиака, загорается Малое созвездие (+1 к силе знаков), 3 знака — Созвездие (+2 и 10 очков за ход), 4 знака — Великий зодиак (+3, 20 очков за ход и +1 к броску). Рыбы — двойная карта: переверни её, чтобы выбрать способность ледяной или алой стороны.'),
     h('p', null, 'Очки душ даются за шаги, сокровища и победы. Отстающим за шаг даётся вдвое больше, а сильно отставший получает +2 к броску. На длинном поле дальность способностей больше: числа в описаниях уже пересчитаны.'),
-    h('p', null, 'Души бывают разных классов. Известные души носят имена, их знают многие. Твари подземелья — местные стайные существа: слабые души, попав в этот мир, становятся их сородичами, и твари охотятся на новичков, поэтому в боях и засадах они нападают чаще. У безымянных душ имя неизвестно, о них знают только по способностям.'),
+    h('p', null, 'Души бывают разных классов. Известные души носят имена, их знают многие. Твари подземелья — местные стайные существа: слабые души, попав в этот мир, становятся их сородичами, и твари охотятся на новичков. Тварей нельзя призвать: они живут только в подземелье и нападают в боях и засадах, а победив тварь в бою, ты забираешь её в руку. Они слабее остальных душ. У безымянных душ имя неизвестно, о них знают только по способностям.'),
     h('p', null, 'В игре ' + Object.keys(HEROES).length + ' героев. Изредка выпадают Великие души: ' + Object.keys(HEROES).filter(k => HEROES[k].great).map(k => HEROES[k].name).join(', ') + '. Их способности меняют всю партию.'),
     h('div', { class: 'mact' }, h('button', { class: 'abtn', onclick: closeModal }, 'Понятно')));
   openModal('Как играть', null, c);
@@ -2214,6 +2386,7 @@ function showResults() {
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
   if (id === 'game' || id === 'lobby') wakeOn(); else wakeOff();
+  const fd = document.getElementById('feed'); if (fd) fd.hidden = id !== 'game';
   if (typeof talkVisible === 'function') talkVisible(id === 'game' && G.mode === 'online');
   if (id === 'home' && typeof renderResume === 'function') renderResume();
 }
@@ -2222,7 +2395,7 @@ let WAKE = null;
 async function wakeOn() { try { if ('wakeLock' in navigator && !WAKE && document.visibilityState === 'visible') { WAKE = await navigator.wakeLock.request('screen'); WAKE.addEventListener('release', () => { WAKE = null; }); } } catch (e) { WAKE = null; } }
 function wakeOff() { try { if (WAKE) WAKE.release(); } catch (e) { } WAKE = null; }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ($('game').classList.contains('on') || $('lobby').classList.contains('on'))) wakeOn(); });
-function resetGameView() { CHAT.hist = []; $('chatDot').hidden = true; G.aura = {}; G.s = null; G.queue = []; G.qseq = 0; G.disp = {}; G.playing = false; G.busy = false; MAP.key = null; clearTimeout(G.botT); closeModal(); $('win').classList.remove('on'); }
+function resetGameView() { if ($('feed')) $('feed').innerHTML = ''; CHAT.hist = []; $('chatDot').hidden = true; G.aura = {}; G.s = null; G.queue = []; G.qseq = 0; G.disp = {}; G.playing = false; G.busy = false; MAP.key = null; clearTimeout(G.botT); closeModal(); $('win').classList.remove('on'); }
 // ---- сохранение партии: на одном устройстве и у создателя комнаты ----
 function saveGame(ns) {
   if (G.mode !== 'local' && !(G.mode === 'online' && NET.isHost)) return;
@@ -2275,7 +2448,7 @@ $('bRules').onclick = showRules;
 $('bMenu').onclick = showMenu;
 $('bSound').onclick = () => { SND.on = !SND.on; store.set('sound', SND.on); audioInit(); renderTop(); if (SND.on) SFX.chime(); };
 $('evchip').onclick = () => { if (!G.s) return; const ev = EVENTS.find(e => e.id === G.s.event); openModal(ev.name, ev.desc, h('div', { class: 'mact' }, h('button', { class: 'abtn', onclick: closeModal }, 'Понятно')), { center: true }); };
-addEventListener('resize', () => { if (G.s && MAP.key) { renderBoard(G.s.seed, G.s.event); renderTokens(); renderMarks(); } });
+addEventListener('resize', () => { setDockVar(); if (G.s && MAP.key) { renderBoard(G.s.seed, G.s.event); renderTokens(); renderMarks(); } });
 
 async function doAct(a) {
   if (G.busy || G.playing || !G.s) return;
