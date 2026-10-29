@@ -122,7 +122,51 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 #darkov.on{opacity:.94}
 .seeh{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap}.seeh img{width:22px;height:22px;border-radius:5px;object-fit:cover;border:1px solid rgba(255,255,255,.35)}
 .pkc{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.pkc button{background:none;border:2px solid transparent;border-radius:10px;padding:2px;color:inherit;font:inherit;width:84px}.pkc button img{width:100%;border-radius:8px;display:block}.pkc button:disabled{opacity:.35}
-.hcard .lk{position:absolute;inset:0;display:grid;place-items:center;font-size:1.4rem;text-shadow:0 0 6px #000}
+.hcard .lk{position:absolute;inset:0;display:grid;place-items:center;align-content:center;font-size:1.4rem;text-shadow:0 0 6px #000;border-radius:inherit;pointer-events:none}
+.hcard .lk small{font-size:.62rem;font-weight:700;color:#fff}
+.hcard.lf-ice img{filter:saturate(.3) brightness(.85) hue-rotate(160deg)}
+.hcard .lk.ice{background:linear-gradient(135deg,rgba(235,250,255,.75),rgba(150,210,255,.35) 35%,rgba(235,250,255,.55) 55%,rgba(120,190,255,.4)),repeating-linear-gradient(60deg,transparent 0 9px,rgba(255,255,255,.55) 9px 10px),repeating-linear-gradient(-40deg,transparent 0 13px,rgba(255,255,255,.4) 13px 14px);box-shadow:inset 0 0 0 2px rgba(225,248,255,.95),inset 0 0 18px rgba(255,255,255,.9);color:#E8F8FF}
+.hcard .lk.crystal{background:conic-gradient(from 20deg,rgba(210,170,255,.65),rgba(120,220,255,.35),rgba(255,170,235,.55),rgba(170,130,255,.45),rgba(210,170,255,.65));box-shadow:inset 0 0 0 2px rgba(230,200,255,.9),inset 0 0 14px rgba(255,255,255,.6)}
+.hcard .lk.shadow{background:radial-gradient(circle,rgba(20,10,30,.55),rgba(10,0,20,.85));}
+.hcard .lk.chain{background:repeating-linear-gradient(45deg,rgba(40,40,50,.55) 0 8px,rgba(150,150,170,.45) 8px 11px);}
+.hcard .lk.mute{background:rgba(30,30,40,.55);filter:grayscale(1)}
+.token .tst{position:absolute;inset:-7px;border-radius:50%;pointer-events:none;display:none}
+.token .tst.ice{display:block;border-radius:22%;transform:rotate(8deg);background:linear-gradient(135deg,rgba(240,252,255,.75),rgba(150,215,255,.35) 40%,rgba(240,252,255,.6) 60%,rgba(110,180,250,.45));box-shadow:0 0 0 2px rgba(220,245,255,.95),0 0 14px rgba(150,215,255,.95),inset 0 0 10px #fff}
+.token .tst.bubble{display:block;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.85) 0 10%,rgba(160,230,255,.25) 32%,rgba(60,170,230,.18) 60%,rgba(120,210,255,.55) 100%);box-shadow:0 0 0 2px rgba(190,240,255,.8),0 0 14px rgba(80,190,240,.8);animation:tbob 2.2s ease-in-out infinite}
+.token .tst.crystal{display:block;border-radius:30%;background:conic-gradient(from 0deg,rgba(210,170,255,.7),rgba(120,220,255,.45),rgba(255,170,235,.65),rgba(170,130,255,.55),rgba(210,170,255,.7));box-shadow:0 0 0 2px rgba(235,210,255,.95),0 0 16px rgba(190,140,255,.95);animation:spin 9s linear infinite}
+.token .tst.web{display:block;background:repeating-conic-gradient(rgba(240,240,255,.85) 0 3deg,transparent 3deg 45deg),repeating-radial-gradient(circle,transparent 0 5px,rgba(240,240,255,.75) 5px 6px);opacity:.85}
+.token .tst.chain{display:block;border:3px dashed rgba(200,200,215,.95);box-shadow:0 0 10px rgba(0,0,0,.6);animation:spin 5s linear infinite}
+.token .tst.poison{display:block;inset:-4px;box-shadow:0 0 12px 3px rgba(120,230,90,.75);animation:tpz 1.4s ease-in-out infinite alternate}
+.token .tst.stun{display:block;inset:-9px;border:2px dotted rgba(255,230,120,.9);animation:spin 2.4s linear infinite}
+@keyframes tbob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(1.04)}}
+@keyframes tpz{from{opacity:.45}to{opacity:1}}
+.zov.v-fire{background:radial-gradient(circle at 50% 85%,rgba(255,170,60,.65),rgba(255,70,20,.3) 55%,transparent 75%);animation:zfl 1.1s ease-in-out infinite alternate}
+.zov.v-ice{background:linear-gradient(135deg,rgba(235,250,255,.6),rgba(140,205,255,.3) 50%,rgba(235,250,255,.55)),repeating-linear-gradient(60deg,transparent 0 7px,rgba(255,255,255,.45) 7px 8px);box-shadow:inset 0 0 0 2px rgba(225,248,255,.95),inset 0 0 12px rgba(255,255,255,.8)}
+.zov.v-water{background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.6) 0 8%,rgba(90,200,240,.35) 40%,rgba(30,120,210,.3));animation:zbob 2.4s ease-in-out infinite}
+.zov.v-crystal{background:conic-gradient(from 30deg,rgba(210,170,255,.55),rgba(120,220,255,.35),rgba(255,170,235,.5),rgba(210,170,255,.55));animation:zsh 2.6s ease-in-out infinite alternate}
+.zov.v-vine{background:repeating-linear-gradient(60deg,rgba(70,190,90,.55) 0 3px,transparent 3px 9px),repeating-linear-gradient(-30deg,rgba(40,140,60,.5) 0 3px,transparent 3px 11px)}
+.zov.v-web{background:repeating-conic-gradient(rgba(235,235,255,.6) 0 2deg,transparent 2deg 30deg),repeating-radial-gradient(circle,transparent 0 6px,rgba(235,235,255,.5) 6px 7px)}
+.zov.v-portal{background:conic-gradient(from 0deg,var(--zc),#fff,var(--zc),#120024,var(--zc));border-radius:50%;-webkit-mask:radial-gradient(circle,transparent 0 30%,#000 32% 62%,transparent 64%);mask:radial-gradient(circle,transparent 0 30%,#000 32% 62%,transparent 64%);animation:spin 1.8s linear infinite;box-shadow:none}
+.zov.v-void{background:radial-gradient(circle,rgba(0,0,0,.9) 0 28%,color-mix(in srgb,var(--zc) 45%,transparent) 55%,transparent 72%);animation:zpu 2s ease-in-out infinite}
+.zov.v-star{background:radial-gradient(circle,rgba(255,240,180,.6) 0 9%,transparent 11%),radial-gradient(circle at 22% 30%,#fff 0 2px,transparent 3px),radial-gradient(circle at 76% 66%,#fff 0 2px,transparent 3px),color-mix(in srgb,var(--zc) 22%,transparent);animation:ztw 1.5s ease-in-out infinite alternate}
+.zov.v-blood{background:radial-gradient(circle at 40% 60%,rgba(210,20,50,.6),rgba(120,0,25,.35) 50%,transparent 72%)}
+.zov.v-smoke{background:radial-gradient(circle at 30% 40%,rgba(170,160,200,.5),transparent 60%),radial-gradient(circle at 70% 62%,rgba(120,110,160,.5),transparent 60%);animation:zsm 3s ease-in-out infinite alternate}
+.zov.v-petal{background:radial-gradient(circle at 30% 30%,rgba(255,150,205,.55) 0 18%,transparent 20%),radial-gradient(circle at 70% 70%,rgba(255,120,185,.5) 0 16%,transparent 18%),color-mix(in srgb,var(--zc) 20%,transparent)}
+.zov.v-rock{background:repeating-linear-gradient(45deg,rgba(165,125,85,.5) 0 6px,rgba(95,72,52,.45) 6px 12px)}
+.zov.v-claw{background:repeating-linear-gradient(-55deg,transparent 0 7px,rgba(255,205,175,.6) 7px 9px),color-mix(in srgb,var(--zc) 18%,transparent)}
+.zov.v-eye{background:radial-gradient(ellipse 46% 26%,rgba(255,255,255,.6) 0 60%,transparent 63%),color-mix(in srgb,var(--zc) 25%,transparent)}
+.zov.v-card{background:repeating-linear-gradient(45deg,rgba(255,255,255,.2) 0 5px,transparent 5px 10px),color-mix(in srgb,var(--zc) 25%,transparent)}
+.zov.v-feather{background:repeating-linear-gradient(100deg,transparent 0 6px,rgba(225,242,255,.5) 6px 8px),color-mix(in srgb,var(--zc) 18%,transparent);background-size:24px 100%;animation:zwi 1.2s linear infinite}
+.zov.v-light{background:radial-gradient(circle,rgba(255,240,170,.75),rgba(255,210,90,.3) 50%,transparent 72%);animation:ztw 1.3s ease-in-out infinite alternate}
+.zov.v-amber{background:radial-gradient(circle at 40% 40%,rgba(255,200,90,.6),rgba(200,120,20,.4) 60%,transparent 80%)}
+@keyframes zfl{from{filter:brightness(.85)}to{filter:brightness(1.4)}}
+@keyframes zbob{0%,100%{transform:scale(.96)}50%{transform:scale(1.03)}}
+@keyframes zsh{from{filter:hue-rotate(0deg) brightness(1)}to{filter:hue-rotate(40deg) brightness(1.3)}}
+@keyframes zpu{0%,100%{transform:scale(.92)}50%{transform:scale(1.05)}}
+@keyframes ztw{from{opacity:.65}to{opacity:1}}
+@keyframes zsm{from{transform:translateX(-2px)}to{transform:translateX(2px)}}
+@keyframes zwi{from{background-position:0 0}to{background-position:24px 0}}
+@media (prefers-reduced-motion:reduce){.zov,.token .tst{animation:none!important}}
 .token{position:absolute;left:0;top:0;width:var(--ts);height:var(--ts);margin:calc(var(--ts) / -2) 0 0 calc(var(--ts) / -2);border-radius:50%;border:3px solid var(--pc);background:#1E1638;overflow:hidden;transition:transform .18s ease;z-index:6;box-shadow:0 4px 12px rgba(0,0,0,.7);display:grid;place-items:center;color:#fff;font-weight:700}
 .token img{width:100%;height:100%;object-fit:cover}
 .token.act{z-index:7;box-shadow:0 0 0 3px rgba(255,255,255,.2),0 0 20px var(--pc)}
@@ -636,7 +680,7 @@ const OMEN_ROUNDS = 3;
 function worldOn(s, k) { return !!(s.world && s.world.k === k); }
 const PCOLORS = ['#FFC960', '#7FD4FF', '#FF7E9A', '#9BE38F'];
 const START_SOULS = 160, HAND = 4;
-const GAME_VER = 24;
+const GAME_VER = 25;
 // Размер поля задаётся партией: 350, 700, 1000 или 1500 плит (200 и 500 остались для старых сохранений). DK — множитель дальности способностей.
 const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' }, 700: { cols: 10, dk: 1.75, label: 'Долгое', time: 'около 3 часов' }, 1000: { cols: 10, dk: 2, label: 'Очень долгое', time: 'около 4 часов' }, 1500: { cols: 10, dk: 2.5, label: 'Эпическое', time: '5–6 часов' } };
 const SIZE_CHOICES = [350, 700, 1000, 1500];
@@ -2246,12 +2290,12 @@ function applyEff(s, q, effs, ctx) { // ctx: { k — тварь, c — клет�
         break;
       }
       case 'bind': if (!noEffect(s, q)) { q.st.bind = { need: o.need, per: o.per || 0, why: o.why || '' }; fx(s, { t: 'status', p: q.id, msg: 'Плен: нужно ' + o.need.join(' или ') }); } break;
-      case 'debuffOne': if (q.hand.length) { const h = q.hand[Math.floor(rnd() * q.hand.length)]; h.b = (h.b || 0) - o.n; if (o.lock) h.lock = Math.max(h.lock || 0, o.lock + act1); fx(s, { t: 'status', p: q.id, msg: HEROES[h.k].name + ' −' + o.n + (o.lock ? ', закрыт' : '') }); } break;
+      case 'debuffOne': if (q.hand.length) { const h = q.hand[Math.floor(rnd() * q.hand.length)]; h.b = (h.b || 0) - o.n; if (o.lock) { h.lock = Math.max(h.lock || 0, o.lock + act1); h.lockFx = lockVisOf(ctx.k); } fx(s, { t: 'status', p: q.id, msg: HEROES[h.k].name + ' −' + o.n + (o.lock ? ', закрыт' : '') }); } break;
       case 'debuffAll': if (q.hand.length) { q.hand.forEach(h => h.b = (h.b || 0) - o.n); fx(s, { t: 'status', p: q.id, msg: 'Сила героев −' + o.n }); } break;
       case 'burn': { const kk = burnRandom(s, q, rnd, HEROES[ctx.k] ? HEROES[ctx.k].name : ''); if (kk && o.verb) { const e = s.fx[s.fx.length - 1]; if (e && e.t === 'burnHero') e.verb = o.verb; } break; }
       case 'burnWeak': if (q.hand.length) { let wi = 0; q.hand.forEach((h, i) => { if (cardPower(q, h) < cardPower(q, q.hand[wi])) wi = i; }); burnRandom(s, q, rnd, HEROES[ctx.k].name, wi); } break;
       case 'takeHero': if (q.hand.length) { const i = Math.floor(rnd() * q.hand.length); const h = q.hand.splice(i, 1)[0]; q.lastBurned = h.k; fx(s, { t: 'loseHero', p: q.id, hero: h.k, by: ctx.k }); } break;
-      case 'lock': { const free = q.hand.filter(h => !(h.lock > 0)); if (free.length && !noEffect(s, q)) { const h = free[Math.floor(rnd() * free.length)]; h.lock = o.n + act1; fx(s, { t: 'status', p: q.id, msg: HEROES[h.k].name + ': карта закрыта' }); } break; }
+      case 'lock': { const free = q.hand.filter(h => !(h.lock > 0)); if (free.length && !noEffect(s, q)) { const h = free[Math.floor(rnd() * free.length)]; h.lock = o.n + act1; h.lockFx = lockVisOf(ctx.k); fx(s, { t: 'status', p: q.id, msg: HEROES[h.k].name + ': карта закрыта' }); } break; }
       case 'shadowMark': if (!noEffect(s, q)) { q.st.shadowMark = true; fx(s, { t: 'status', p: q.id, msg: 'Метка тени' }); } break;
       case 'slow': if (!noEffect(s, q)) { q.st.slow = { n: o.n, left: o.left + act1 }; fx(s, { t: 'status', p: q.id, msg: 'Броски −' + o.n }); } break;
       case 'noShield': if (!noEffect(s, q)) { q.st.noShield = o.left + act1; q.st.shield = false; fx(s, { t: 'status', p: q.id, msg: 'Щиты бесполезны' }); } break;
@@ -2268,7 +2312,7 @@ function applyEff(s, q, effs, ctx) { // ctx: { k — тварь, c — клет�
       case 'blind': if (!(q.st.shades > 0) && !noEffect(s, q)) { q.st.blind = Math.max(q.st.blind, o.n + act1); fx(s, { t: 'status', p: q.id, msg: 'Способности молчат' }); } break;
       case 'payFwd': if (q.souls >= o.n) { loseN(s, q, o.n); moveTo(s, q, Math.min(CELLS - 2, q.pos + km(o.fwd)), 'jump'); } else { const b = bxOf(ctx.k, o.alt); fx(s, { t: 'status', p: q.id, msg: b.name }); applyEff(s, q, b.eff, ctx); } break;
       case 'oneOf': { const opt = o.opts[Math.floor(rnd() * o.opts.length)]; applyEff(s, q, opt, ctx); break; }
-      case 'lockAll': if (!noEffect(s, q)) { q.hand.forEach(h => { h.lock = Math.max(h.lock || 0, o.n + act1); }); fx(s, { t: 'status', p: q.id, msg: 'Карты закрыты' }); } break;
+      case 'lockAll': if (!noEffect(s, q)) { q.hand.forEach(h => { h.lock = Math.max(h.lock || 0, o.n + act1); h.lockFx = lockVisOf(ctx.k); }); fx(s, { t: 'status', p: q.id, msg: 'Карты закрыты' }); } break;
       case 'bindAfter': q.st.bindAfter = o.n; break;
       case 'half': if (!noEffect(s, q)) { q.st.gravity = Math.max(q.st.gravity, 1); fx(s, { t: 'status', p: q.id, msg: 'Следующий бросок вдвое короче' }); } break;
       case 'takeEach': alive(s).filter(x => x.id !== q.id).forEach(x => { const y = Math.min(o.n, x.souls); if (y) { x.souls -= y; q.souls += y; fx(s, { t: 'steal', p: q.id, from: x.id, amount: y }); } }); break;
@@ -2390,7 +2434,7 @@ function placeZone(s, Z, c, owner, hero, rnd) {
   const cells = shapeCells(s, Z, c, rnd);
   if (Z.z === 'camp') { const rows = new Set(cells.map(rowOf)); s.zones = s.zones.filter(z => !(z.z === 'camp' && z.cells.some(i => rows.has(rowOf(i))))); }
   const zone = { id: s.zid, z: Z.z, hero, owner, cells, left: Z.left || null, once: !!(ZK[Z.z] && ZK[Z.z].once) };
-  if (Z.z === 'trap') Object.assign(zone, { eff: Z.eff || [], tax: Z.tax || 0, own: Z.own || null, icon: Z.icon || '⚠', nm: Z.name || 'ловушка', blank: !!Z.blank });
+  if (Z.z === 'trap') Object.assign(zone, { eff: Z.eff || [], tax: Z.tax || 0, own: Z.own || null, icon: Z.icon || '⚠', nm: Z.name || 'ловушка', blank: !!Z.blank, vis: Z.vis || '' });
   if (cells.length) s.zones.push(zone);
   fx(s, { t: 'zone', z: Z.z, hero, owner, cells });
   return zone;
@@ -2429,7 +2473,7 @@ function zoneStop(s, p, rnd) { // остановка на клетке с зон
   for (const z of zonesAt(s, p.pos).slice()) {
     const own = !enemyZone(z, p); const zh = () => fx(s, { t: 'zoneHit', p: p.id, z: z.z, hero: z.hero, nm: z.nm });
     switch (z.z) {
-      case 'portal': if (!own) { const to = z.cells.filter(i => i !== p.pos); if (to.length) { const d2 = to[Math.floor(rnd() * to.length)]; fx(s, { t: 'status', p: p.id, msg: 'Портал!' }); moveTo(s, p, d2, d2 > p.pos ? 'jump' : 'back'); res = 'moved'; } } break;
+      case 'portal': if (!own) { const to = z.cells.filter(i => i !== p.pos); if (to.length) { const d2 = to[Math.floor(rnd() * to.length)]; fx(s, { t: 'status', p: p.id, msg: 'Портал!' }); moveTo(s, p, d2, 'portal'); res = 'moved'; } } break;
       case 'trap': if (own) { if (z.own) { const p0 = p.pos; applyEff(s, p, z.own, { k: z.hero, c: p.pos, rnd }); if (p.pos !== p0) res = 'moved'; } break; }
         { if (z.once) dropZoneCell(s, z, p.pos); if (protectHazard(s, p)) break; zh(); if (z.tax) toOwner(s, z, p, z.tax); const p0 = p.pos; applyEff(s, p, z.eff, { k: z.hero, c: p.pos, rnd }); if (p.pos !== p0) res = 'moved'; } break;
       case 'glow': if (own) { gainN(s, p, 40); p.st.shield = !(p.st.noShield > 0); fx(s, { t: 'status', p: p.id, msg: 'Сияние: +40 и щит' }); } else if (!protectHazard(s, p)) { zh(); toOwner(s, z, p, 40); } dropZoneCell(s, z, p.pos); break;
@@ -2726,6 +2770,7 @@ function soulMeet(s, p, k, rnd, battle) { // душа применяет одн�
 HOSTILE_OPS.add('delayHit'); HOSTILE_OPS.add('areaLock'); HOSTILE_OPS.add('bindT');
 function pickN(arr, n, rnd) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, n); }
 function heroName(k) { return HEROES[k] ? HEROES[k].name : ''; }
+function lockVisOf(k) { const H = HEROES[k]; if (!H) return 'chain'; if (/лед|лёд|мороз|иней|фрост|близзард|снеж|замерз|ледян|холод/i.test(H.name + ' ' + H.title)) return 'ice'; if (H.motif === 'crystal') return 'crystal'; if (H.motif === 'smoke' || H.motif === 'void') return 'shadow'; return 'chain'; }
 function passCells(from, to) { const out = []; const st = to > from ? 1 : -1; for (let i = from + st; st > 0 ? i <= to : i >= to; i += st) out.push(i); return out; }
 function passFxApply(s, p, from, to) { // «мимо кого пролетишь»: отбросить или взять плату
   const P = p.st.passFx; if (!P) return; p.st.passFx = null;
@@ -2759,11 +2804,11 @@ const OPS24 = {
   drainAhead({ s, p, o, opps }) { opps().forEach(q => { if (q.pos <= p.pos || rowOf(q.pos) - rowOf(p.pos) > o.rows) return; const v = hostileTo(s, p, q); if (!v || v === p) return; loseN(s, v, o.n); }); },
   clonesHalf({ s, p, o, opps }) { opps().forEach(q => { if (Math.abs(rowOf(q.pos) - rowOf(p.pos)) > o.rows) return; const v = hostileTo(s, p, q); if (!v || v === p) return; const x = Math.floor(v.souls / 2); if (x) { v.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: v.id, amount: x }); } }); },
   darkAll({ s, p, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; if (addSkip(v, 2)) fx(s, { t: 'status', p: v.id, msg: 'Затмение: пропуск 2 ходов' }); if (!(v.st.shades > 0)) v.st.blind = Math.max(v.st.blind, 3); v.st.dark = 2; v.hand.forEach(h => h.b = (h.b || 0) - 1); }); },
-  lockRand({ s, p, o, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; const n = o.lo + Math.floor(rnd() * (o.hi - o.lo + 1)); pickN(v.hand.filter(h => !(h.lock > 0)), n, rnd).forEach(h => { h.lock = o.left; }); fx(s, { t: 'status', p: v.id, msg: 'Карты закрыты' }); }); },
-  lockEach({ s, p, o, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; const free = v.hand.filter(h => !(h.lock > 0)); if (!free.length) return; const h = free[Math.floor(rnd() * free.length)]; h.lock = o.left; fx(s, { t: 'status', p: v.id, msg: HEROES[h.k].name + ' кристаллизован' }); }); },
+  lockRand({ s, p, o, a, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; const n = o.lo + Math.floor(rnd() * (o.hi - o.lo + 1)); pickN(v.hand.filter(h => !(h.lock > 0)), n, rnd).forEach(h => { h.lock = o.left; h.lockFx = lockVisOf(a.heroKey); }); fx(s, { t: 'status', p: v.id, msg: 'Карты закрыты' }); }); },
+  lockEach({ s, p, o, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; const free = v.hand.filter(h => !(h.lock > 0)); if (!free.length) return; const h = free[Math.floor(rnd() * free.length)]; h.lock = o.left; h.lockFx = 'crystal'; fx(s, { t: 'status', p: v.id, msg: HEROES[h.k].name + ' кристаллизован' }); }); },
   passFx({ p, o }) { p.st.passFx = { push: o.push || 0, tax: o.tax || 0 }; },
   noShieldAll({ s, p, o, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; v.st.noShield = o.left; v.st.shield = false; v.st.mirror = false; fx(s, { t: 'status', p: v.id, msg: 'Защиты не работают' }); }); },
-  bindAll({ s, p, o, a, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; v.st.bind = { need: o.need, per: o.per || 0, max: o.max || 0, why: heroName(a.heroKey) }; fx(s, { t: 'status', p: v.id, msg: 'Плен: нужно ' + o.need.join(' или ') }); }); },
+  bindAll({ s, p, o, a, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; v.st.bind = { need: o.need, per: o.per || 0, max: o.max || 0, why: heroName(a.heroKey), vis: o.vis || '' }; fx(s, { t: 'status', p: v.id, msg: 'Плен: нужно ' + o.need.join(' или ') }); }); },
   paradox({ s, p, rnd, opps }) {
     let taken = 0;
     opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return;
@@ -2799,17 +2844,17 @@ const OPS24 = {
     const cells = pickN(pool, 8, rnd).sort((x, y) => x - y);
     s.zid = (s.zid || 0) + 1; s.zones.push({ id: s.zid, z: 'portal', hero: a.heroKey, owner: p.id, cells, left: 4, once: false });
     fx(s, { t: 'zone', z: 'portal', hero: a.heroKey, owner: p.id, cells });
-    const top = Math.max(...cells); if (top > from) moveTo(s, p, top, 'jump');
+    const top = Math.max(...cells); if (top > from) moveTo(s, p, top, 'portal');
   },
   walkTax({ s, p, o }) { const from = p.pos; p.st.passFx = { tax: o.tax }; moveTo(s, p, Math.min(CELLS - 1, p.pos + km(o.n)), 'walk'); passFxApply(s, p, from, p.pos); return 'moved'; },
   flyTrail({ s, p, o, a, rnd }) { const from = p.pos; moveTo(s, p, Math.min(CELLS - 1, p.pos + km(o.n)), 'fly');
     const cells = pickN(passCells(from, p.pos - 1).filter(i => i > 0), o.cells, rnd).sort((x, y) => x - y);
-    if (cells.length) { s.zid = (s.zid || 0) + 1; const z = { id: s.zid, z: 'trap', hero: a.heroKey, owner: p.id, cells, left: o.left || 4, once: false, tax: o.tax, eff: [], icon: '🌋', nm: 'кошмарный пепел' }; s.zones.push(z); fx(s, { t: 'zone', z: 'trap', hero: a.heroKey, owner: p.id, cells }); }
+    if (cells.length) { s.zid = (s.zid || 0) + 1; const z = { id: s.zid, z: 'trap', hero: a.heroKey, owner: p.id, cells, left: o.left || 4, once: false, tax: o.tax, eff: [], icon: '🌋', nm: 'кошмарный пепел', vis: 'fire' }; s.zones.push(z); fx(s, { t: 'zone', z: 'trap', hero: a.heroKey, owner: p.id, cells }); }
     return 'moved'; },
   reverseN({ s, p, o, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; v.st.reverse = o.n; fx(s, { t: 'status', p: v.id, msg: 'Броски назад: ' + o.n }); }); },
   delayHit({ s, p, o, victim }) { if (!victim || victim === p) return; victim.st.delay = (victim.st.delay || []).concat([{ left: o.left, op: 'lose', n: o.n }]); fx(s, { t: 'status', p: victim.id, msg: 'Удар вернётся через ' + o.left + ' круга' }); },
-  areaLock({ s, p, o, rnd, opps }) { opps().forEach(q => { if (!inArea(p.pos, q, o.area)) return; const v = hostileTo(s, p, q); if (!v || v === p) return; loseN(s, v, o.n); applyEff(s, v, [{ op: 'lock', n: o.lock }], { k: p.id, c: p.pos, rnd }); }); },
-  bindT({ s, p, o, a, victim }) { if (!victim || victim === p || noEffect(s, victim)) return; victim.st.bind = { need: o.need, per: 0, why: heroName(a.heroKey) }; fx(s, { t: 'status', p: victim.id, msg: 'Плен: нужно ' + o.need.join(' или ') }); }
+  areaLock({ s, p, o, a, rnd, opps }) { opps().forEach(q => { if (!inArea(p.pos, q, o.area)) return; const v = hostileTo(s, p, q); if (!v || v === p) return; loseN(s, v, o.n); applyEff(s, v, [{ op: 'lock', n: o.lock }], { k: a.heroKey, c: p.pos, rnd }); }); },
+  bindT({ s, p, o, a, victim }) { if (!victim || victim === p || noEffect(s, victim)) return; victim.st.bind = { need: o.need, per: 0, why: heroName(a.heroKey), vis: o.vis || '' }; fx(s, { t: 'status', p: victim.id, msg: 'Плен: нужно ' + o.need.join(' или ') }); }
 };
 
 // ---------- Великие души (правки владельца) ----------
@@ -2836,27 +2881,27 @@ const OPS24 = {
   set('rainbowwarrior', 0, 'Радужный клинок', 'У каждого соперника сгорает по два случайных героя.', [{ op: 'burnEach', n: 2 }]);
   set('rainbowwarrior', 1, 'Звёздная буря', 'Следующий бросок делается тремя кубиками, тебя защищают щит и зеркало, а все, мимо кого ты пройдёшь этим броском, отлетают на 5 клеток назад.', [{ op: 'dice3' }, { op: 'shield' }, { op: 'mirror' }, { op: 'passFx', push: 5 }]);
   set('rainbowwarrior', 2, 'Разрез небес', 'Все соперники отлетают на 6 клеток назад, их герои теряют по 1 силы, и три круга у них не работают щиты, зеркала и другие защиты.', [{ op: 'pushAll', n: 6 }, { op: 'debuffAll', n: 1 }, { op: 'noShieldAll', left: 3 }]);
-  set('iceherald', 0, 'Ледяной нимб', 'Все соперники замерзают и стоят, пока на кубике не выпадет 3 или пока эффект не снимут способностью. Дольше трёх кругов заморозка не держится.', [{ op: 'bindAll', need: [3], max: 3 }]);
+  set('iceherald', 0, 'Ледяной нимб', 'Все соперники замерзают и стоят, пока на кубике не выпадет 3 или пока эффект не снимут способностью. Дольше трёх кругов заморозка не держится.', [{ op: 'bindAll', need: [3], max: 3, vis: 'ice' }]);
   set('iceherald', 1, 'Ветер бездны', 'Два круга соперники не могут применять способности, и следующий бросок каждого соперника ведёт назад.', [{ op: 'blind', n: 2 }, { op: 'reverse' }]);
   set('iceherald', 2, 'Вечная мерзлота', 'Любой соперник попадает в долгий плен (стоит, пока на кубике не выпадет 6) и четыре своих хода отдаёт тебе по 40 очков.', [{ op: 'bind', need: [6] }, { op: 'mark', per: 40, left: 4 }], { t: 'enemy' });
-  add('iceherald', 'ih_ice', 'Всевидящий лёд', '15 случайных клеток на 6 следующих этажах замерзают на четыре круга: их обычные свойства пропадают. Соперник, остановившийся на такой клетке, замерзает (стоит, пока на кубике не выпадет 3 или 4) и отдаёт тебе 30 очков.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 6, n: 15 }], left: 4, tax: 30, blank: true, icon: '❄', name: 'замёрзшая клетка', eff: [{ op: 'bind', need: [3, 4], why: 'всевидящий лёд' }] }]);
+  add('iceherald', 'ih_ice', 'Всевидящий лёд', '15 случайных клеток на 6 следующих этажах замерзают на четыре круга: их обычные свойства пропадают. Соперник, остановившийся на такой клетке, замерзает (стоит, пока на кубике не выпадет 3 или 4) и отдаёт тебе 30 очков.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 6, n: 15 }], left: 4, tax: 30, blank: true, icon: '❄', name: 'замёрзшая клетка', vis: 'ice', eff: [{ op: 'bind', need: [3, 4], why: 'всевидящий лёд' }] }]);
   set('crownlord', 0, 'Корона порядка', 'Со всех снимаются вредные эффекты, с поля — метки, затмение рассеивается, а за это каждый соперник платит тебе 100 очков.', [{ op: 'cleanseAll' }, { op: 'stealAll', n: 100 }]);
   add('crownlord', 'cr_paradox', 'Парадокс', 'Все бонусы к силе у героев соперников отменяются, а у двух случайных героев каждого соперника забирается ещё по 3 силы. Вся забранная сила делится поровну между твоими героями.', [{ op: 'paradox' }]);
   set('abysscrystal', 0, 'Кристальные кости', 'Ты получаешь 100 очков и сам выбираешь, сколько выпадет на кубиках.', [{ op: 'souls', n: 100 }, { op: 'bless' }], { p: 'die' });
   set('abysscrystal', 2, 'Расколотая удача', 'Каждый соперник отдаёт тебе случайно от 60 до 180 очков.', [{ op: 'stealRange', lo: 60, hi: 180 }]);
-  add('abysscrystal', 'ac_lands', 'Расколотые земли', '12 случайных клеток на 7 следующих этажах кристаллизуются на четыре круга. Соперник, остановившийся на такой клетке, кристаллизуется (стоит, пока на кубике не выпадет 4 или 5), отдаёт тебе 40 очков, и с ним случается одно из трёх: все его герои теряют по 2 силы, или два круга не работают его карты, или, выбравшись, он отступает на 5 клеток.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 7, n: 12 }], left: 4, tax: 40, icon: '💎', name: 'расколотая земля', eff: [{ op: 'bind', need: [4, 5], why: 'расколотые земли' }, { op: 'oneOf', opts: [[{ op: 'debuffAll', n: 2 }], [{ op: 'lockAll', n: 2 }], [{ op: 'bindAfter', n: 5 }]] }] }]);
+  add('abysscrystal', 'ac_lands', 'Расколотые земли', '12 случайных клеток на 7 следующих этажах кристаллизуются на четыре круга. Соперник, остановившийся на такой клетке, кристаллизуется (стоит, пока на кубике не выпадет 4 или 5), отдаёт тебе 40 очков, и с ним случается одно из трёх: все его герои теряют по 2 силы, или два круга не работают его карты, или, выбравшись, он отступает на 5 клеток.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 7, n: 12 }], left: 4, tax: 40, icon: '💎', name: 'расколотая земля', vis: 'crystal', eff: [{ op: 'bind', need: [4, 5], why: 'расколотые земли' }, { op: 'oneOf', opts: [[{ op: 'debuffAll', n: 2 }], [{ op: 'lockAll', n: 2 }], [{ op: 'bindAfter', n: 5 }]] }] }]);
   set('divineguard', 2, 'Небесный суд', 'Ты вырываешь случайного героя у одного соперника и забираешь себе, самый богатый соперник отдаёт тебе 120 очков, а все герои всех соперников теряют по 1 силы.', [{ op: 'takeHeroes', n: 1 }, { op: 'richest', n: 120 }, { op: 'debuffAll', n: 1 }]);
   add('divineguard', 'dg_fall', 'Вызов падения', 'Руки всех игроков, включая твою, перемешиваются, очки всех игроков тоже перемешиваются, а затем каждый соперник отдаёт тебе 50 очков.', [{ op: 'shuffleHands' }, { op: 'shuffleSouls' }, { op: 'stealAll', n: 50 }]);
-  set('neonreaper', 2, 'Зелёное пламя', 'Каждый соперник отдаёт тебе 80 очков, а зелёное пламя занимает 8 случайных клеток на 4 следующих этажах на четыре круга: соперник, остановившийся там, теряет 100 очков.', [{ op: 'stealAll', n: 80 }, { op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 4, n: 8 }], left: 4, icon: '🔥', name: 'зелёное пламя', eff: [{ op: 'lose', n: 100 }] }]);
+  set('neonreaper', 2, 'Зелёное пламя', 'Каждый соперник отдаёт тебе 80 очков, а зелёное пламя занимает 8 случайных клеток на 4 следующих этажах на четыре круга: соперник, остановившийся там, теряет 100 очков.', [{ op: 'stealAll', n: 80 }, { op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 4, n: 8 }], left: 4, icon: '🔥', name: 'зелёное пламя', vis: 'fire', eff: [{ op: 'lose', n: 100 }] }]);
   add('neonreaper', 'nr_dead', 'Призыв мёртвых', 'На каждого соперника поднимается случайный герой из сгоревших в этой партии и применяет против него свою способность. Если сгоревших ещё нет, поднимается случайная душа.', [{ op: 'raiseDead' }]);
   set('astralkeeper', 0, 'Руны времени', 'Все соперники пропускают ход, и два следующих броска каждого из них ведут назад.', [{ op: 'skipNear', r: 999 }, { op: 'reverseN', n: 2 }]);
-  add('astralkeeper', 'ak_marks', 'Метки уничтожения', '13 меток в случайных клетках на 6 следующих этажах на четыре круга. Соперник на метке отдаёт тебе 100 очков, а все его герои теряют по 2 силы.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 6, n: 13 }], left: 4, tax: 100, icon: '☄', name: 'метка уничтожения', eff: [{ op: 'debuffAll', n: 2 }] }]);
+  add('astralkeeper', 'ak_marks', 'Метки уничтожения', '13 меток в случайных клетках на 6 следующих этажах на четыре круга. Соперник на метке отдаёт тебе 100 очков, а все его герои теряют по 2 силы.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 6, n: 13 }], left: 4, tax: 100, icon: '☄', name: 'метка уничтожения', vis: 'star', eff: [{ op: 'debuffAll', n: 2 }] }]);
   set('vulkarot', 0, 'Алое затмение', 'Два круга соперники не могут применять способности и теряют по 60 очков, а твои Охотники в руке получают +2 к силе.', [{ op: 'blind', n: 2 }, { op: 'drainAll', n: 60 }, { op: 'famBuff', fam: 'hunters', n: 2 }]);
   add('vulkarot', 'vu_ash', 'Пепельный полёт', 'Вместо броска ты перелетаешь на 17 клеток вперёд и оставляешь за собой 4 клетки кошмарного пепла на четыре круга: соперник на пепле отдаёт тебе 60 очков.', [{ op: 'flyTrail', n: 17, cells: 4, tax: 60, left: 4 }], { move: true });
   set('nightmareangel', 0, 'Крик двух ликов', 'Два круга соперники не могут применять способности, и каждый теряет 100 очков.', [{ op: 'blind', n: 2 }, { op: 'drainAll', n: 100 }]);
   add('nightmareangel', 'na_scream', 'Крик смерти', 'Все карты, которые сейчас в руках соперников, навсегда теряют способности: в бою их сила считается, но применить их нельзя.', [{ op: 'muteAll' }]);
   set('emeraldabyss', 1, 'Корни бездны', 'Каждый соперник отдаёт тебе 100 очков, а все их герои теряют по 2 силы.', [{ op: 'stealAll', n: 100 }, { op: 'debuffAll', n: 2 }]);
-  add('emeraldabyss', 'ea_vines', 'Изумрудные лозы', '14 лоз в случайных клетках на четыре круга: 7 на 4 этажа вверх и 7 на 4 этажа вниз. Соперник на лозе отдаёт тебе 60 очков, а потом четыре своих хода теряет ещё по 40, 30, 20 и 10.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 4, n: 7 }, { a: -4, b: -1, n: 7 }], left: 4, tax: 60, icon: '🌿', name: 'изумрудная лоза', eff: [{ op: 'poison', per: 40, left: 4, dec: 10 }] }]);
+  add('emeraldabyss', 'ea_vines', 'Изумрудные лозы', '14 лоз в случайных клетках на четыре круга: 7 на 4 этажа вверх и 7 на 4 этажа вниз. Соперник на лозе отдаёт тебе 60 очков, а потом четыре своих хода теряет ещё по 40, 30, 20 и 10.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 4, n: 7 }, { a: -4, b: -1, n: 7 }], left: 4, tax: 60, icon: '🌿', name: 'изумрудная лоза', vis: 'vine', eff: [{ op: 'poison', per: 40, left: 4, dec: 10 }] }]);
   HEROES.divineeye.seeHands = true;
   HEROES.divineeye.ab[0].desc = 'Пока эта карта у тебя в руке, ты видишь руки всех соперников. Если применить её, два круга соперники не могут применять способности, и каждый отдаёт тебе 60 очков.';
   add('divineeye', 'de_ruin', 'Око разрушений', 'У каждого соперника ты сам выбираешь одну карту из его руки, и она сгорает.', [{ op: 'picks' }], { p: 'picks' });
@@ -2865,12 +2910,12 @@ const OPS24 = {
   set('thousandeyegod', 0, 'Тысяча взглядов', 'У каждого соперника сгорает случайный герой, и каждый теряет 88 очков.', [{ op: 'burnAll' }, { op: 'drainAll', n: 88 }]);
   add('thousandeyegod', 'te_rays', 'Сияющие лучи', 'У каждого соперника ты сам выбираешь одного героя с силой не больше 6, и он сгорает.', [{ op: 'picks', maxPw: 6 }], { p: 'picks', maxPw: 6 });
   set('infernallord', 2, 'Пылающий нимб', 'Тебя защищает щит, все герои в руке получают +2 к силе, и 4 ловушки или встречи тебя не тронут.', [{ op: 'shield' }, { op: 'buff', n: 2 }, { op: 'stone', n: 4 }]);
-  add('infernallord', 'il_rain', 'Огненный дождь', '14 огненных клеток на четыре круга: 7 случайных на 3 этажа вперёд и 7 на 3 этажа назад. Соперник на такой клетке теряет 50 очков, и у него сгорает случайная карта.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 3, n: 7 }, { a: -3, b: -1, n: 7 }], left: 4, icon: '🔥', name: 'огненный дождь', eff: [{ op: 'lose', n: 50 }, { op: 'burn' }] }]);
+  add('infernallord', 'il_rain', 'Огненный дождь', '14 огненных клеток на четыре круга: 7 случайных на 3 этажа вперёд и 7 на 3 этажа назад. Соперник на такой клетке теряет 50 очков, и у него сгорает случайная карта.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 3, n: 7 }, { a: -3, b: -1, n: 7 }], left: 4, icon: '🔥', name: 'огненный дождь', vis: 'fire', eff: [{ op: 'lose', n: 50 }, { op: 'burn' }] }]);
   set('livingmountain', 2, 'Шаг великана', 'Вместо броска ты проходишь 18 клеток пешком: ловушки и стены по пути действуют, а каждый соперник, мимо которого ты прошёл, отдаёт тебе 120 очков.', [{ op: 'walkTax', n: 18, tax: 120 }], { move: true });
   add('livingmountain', 'lm_forest', 'Сердце леса', 'До конца партии твои Лесные хранители сильнее на 3: и те, что в руке, и те, что придут потом. Все герои всех соперников теряют по 2 силы.', [{ op: 'aura', aura: { fam: 'forest', pw: 3 } }, { op: 'debuffAll', n: 2 }]);
   set('crystallord', 2, 'Кристаллизация', 'У каждого соперника случайная карта кристаллизуется и становится бесполезной: её не применить, и её сила не считается в бою. Снять это может только очищение.', [{ op: 'lockEach', left: 999 }]);
   add('crystallord', 'cl_shine', 'Кристальное сияние', 'До конца партии твои кристальные герои сильнее на 2, а все числа в их способностях больше в полтора раза.', [{ op: 'aura', aura: { motif: 'crystal', pw: 2, mul: 1.5 } }]);
-  add('cosmictitan', 'ct_freeze', 'Замерзающее дыхание', 'Все соперники сразу теряют 70 очков и замерзают: стоят, пока на кубике не выпадет 4 или 5, и каждый круг в заморозке теряют ещё по 70.', [{ op: 'drainAll', n: 70 }, { op: 'bindAll', need: [4, 5], per: 70 }]);
+  add('cosmictitan', 'ct_freeze', 'Замерзающее дыхание', 'Все соперники сразу теряют 70 очков и замерзают: стоят, пока на кубике не выпадет 4 или 5, и каждый круг в заморозке теряют ещё по 70.', [{ op: 'drainAll', n: 70 }, { op: 'bindAll', need: [4, 5], per: 70, vis: 'ice' }]);
   add('astrolabeguard', 'ag_sphere', 'Сфера созвездий', 'До конца партии твои герои Космосияния сильнее на 3, а числа в их способностях больше в полтора раза. Все герои всех соперников теряют по 2 силы.', [{ op: 'aura', aura: { fam: 'cosmic', pw: 3, mul: 1.5 } }, { op: 'debuffAll', n: 2 }]);
 }
 
@@ -2880,18 +2925,18 @@ const OPS24 = {
   const trap = (name, rows, n, eff, opts) => Object.assign({ op: 'zone', z: 'trap', shape: 'scatter', groups: rows.map(g => ({ a: g[0], b: g[1], n: g[2] || n })), left: 4, eff, name }, opts || {});
   H.zefir.ab[0].desc = 'Сдвигает любого игрока на 2–6 клеток вперёд или назад.';
   H.zefir.ab[1].ops = [{ op: 'souls', n: 85 }, { op: 'shield' }]; H.zefir.ab[1].desc = genDesc(H.zefir.ab[1]);
-  H.zefir.ab.push({ id: 'zf_winds', name: 'Ветряные потоки', t: 'none', r: 99, desc: '6 клеток с ветром ложатся случайно по 2 следующим этажам на четыре круга. Встанешь на такую сам — ветер несёт тебя на 5 клеток вперёд. Встанет соперник — отбрасывает его на 5 клеток назад.', ops: [trap('ветряной поток', [[1, 2]], 6, [{ op: 'back', n: 5 }], { own: [{ op: 'fwd', n: 5 }], icon: '🌬' })] });
+  H.zefir.ab.push({ id: 'zf_winds', name: 'Ветряные потоки', t: 'none', r: 99, desc: '6 клеток с ветром ложатся случайно по 2 следующим этажам на четыре круга. Встанешь на такую сам — ветер несёт тебя на 5 клеток вперёд. Встанет соперник — отбрасывает его на 5 клеток назад.', ops: [trap('ветряной поток', [[1, 2]], 6, [{ op: 'back', n: 5 }], { own: [{ op: 'fwd', n: 5 }], icon: '🌬', vis: 'feather' })] });
   H.rak.ab[0].ops = [{ op: 'skip' }, { op: 'drain', n: 40 }]; H.rak.ab[0].desc = genDesc(H.rak.ab[0]);
   H.rak.ab[1].desc = 'Вместо броска вперёд кубик бросается, и ты идёшь назад, но каждый соперник, мимо которого прошёл, отдаёт тебе 40 очков.';
   H.rak.ab[2].ops = [{ op: 'shield' }, { op: 'stone', n: 2 }]; H.rak.ab[2].desc = genDesc(H.rak.ab[2]);
   H.arkarion.ab[0].ops = [{ op: 'gallop' }, { op: 'passFx', tax: 30 }]; H.arkarion.ab[0].desc = 'Следующий бросок удваивается, и каждый соперник, мимо которого проскачешь, отдаёт тебе 30 очков.';
   H.arkarion.ab.push({ id: 'ak_spear', name: 'Копьё кочевника', t: 'enemy', r: 3, rows: 2, ops: [{ op: 'push', n: 6 }, { op: 'drain', n: 40 }] }); H.arkarion.ab[2].desc = genDesc(H.arkarion.ab[2]);
-  H.nairel.ab.push({ id: 'nr_rain', name: 'Дождь стрел', t: 'none', r: 99, desc: '5 клеток со стрелами ложатся случайно по 3 следующим этажам на четыре круга. Соперник, остановившийся на такой клетке, отлетает на 6 клеток назад и теряет 30 очков.', ops: [trap('лунная стрела', [[1, 3]], 5, [{ op: 'lose', n: 30 }, { op: 'back', n: 6 }], { icon: '🏹' })] });
+  H.nairel.ab.push({ id: 'nr_rain', name: 'Дождь стрел', t: 'none', r: 99, desc: '5 клеток со стрелами ложатся случайно по 3 следующим этажам на четыре круга. Соперник, остановившийся на такой клетке, отлетает на 6 клеток назад и теряет 30 очков.', ops: [trap('лунная стрела', [[1, 3]], 5, [{ op: 'lose', n: 30 }, { op: 'back', n: 6 }], { icon: '🏹', vis: 'star' })] });
   H.moonwitch.ab[0].ops = [{ op: 'debuff', n: 2 }, { op: 'poison', per: 20, left: 2 }, { op: 'souls', n: 40 }]; H.moonwitch.ab[0].desc = 'Герои любого соперника теряют по 2 силы, он два своих хода теряет по 20 очков, а ты получаешь 40.';
-  H.moonwitch.ab.push({ id: 'mw_circles', name: 'Ведьмины круги', t: 'none', r: 99, desc: '4 светящихся круга ложатся случайно на твоём этаже и соседних на четыре круга. Соперник, вставший в такой круг, два круга не может применять способности.', ops: [trap('ведьмин круг', [[-1, 1]], 4, [{ op: 'blind', n: 2 }], { icon: '◎' })] });
-  H.demonshade.ab.push({ id: 'ds_trail', name: 'Теневой след', t: 'none', r: 99, desc: '4 клетки тени ложатся случайно на твоём этаже и этаже ниже на четыре круга. Соперник на тени пропускает ход и отдаёт тебе 30 очков.', ops: [trap('теневой след', [[-1, 0]], 4, [{ op: 'skip' }], { tax: 30, icon: '🌑' })] });
+  H.moonwitch.ab.push({ id: 'mw_circles', name: 'Ведьмины круги', t: 'none', r: 99, desc: '4 светящихся круга ложатся случайно на твоём этаже и соседних на четыре круга. Соперник, вставший в такой круг, два круга не может применять способности.', ops: [trap('ведьмин круг', [[-1, 1]], 4, [{ op: 'blind', n: 2 }], { icon: '◎', vis: 'smoke' })] });
+  H.demonshade.ab.push({ id: 'ds_trail', name: 'Теневой след', t: 'none', r: 99, desc: '4 клетки тени ложатся случайно на твоём этаже и этаже ниже на четыре круга. Соперник на тени пропускает ход и отдаёт тебе 30 очков.', ops: [trap('теневой след', [[-1, 0]], 4, [{ op: 'skip' }], { tax: 30, icon: '🌑', vis: 'void' })] });
   H.cosmicreaper.ab.push({ id: 'cr_late', name: 'Отложенная жатва', t: 'enemy', r: 9, rows: 2, desc: 'Соперник в пределах двух этажей от тебя через два круга теряет 80 очков, и это не снять щитом.', ops: [{ op: 'delayHit', left: 2, n: 80 }] });
-  H.waterwarden.ab.push({ id: 'ww_bubble', name: 'Звёздный пузырь', t: 'enemy', r: 4, rows: 1, desc: 'Соперник на твоём этаже или соседних попадает в водяной пузырь и стоит, пока на кубике не выпадет 1 или 6.', ops: [{ op: 'bindT', need: [1, 6] }] });
+  H.waterwarden.ab.push({ id: 'ww_bubble', name: 'Звёздный пузырь', t: 'enemy', r: 4, rows: 1, desc: 'Соперник на твоём этаже или соседних попадает в водяной пузырь и стоит, пока на кубике не выпадет 1 или 6.', ops: [{ op: 'bindT', need: [1, 6], vis: 'bubble' }] });
   HEROES.__done24 = { zefir: 1, rak: 1, arkarion: 1, nairel: 1, moonwitch: 1, demonshade: 1, cosmicreaper: 1, waterwarden: 1 };
 }
 
@@ -2933,12 +2978,12 @@ function b24Templates() {
       const own = m === 'feather' ? [{ op: 'fwd', n: 5 }] : null;
       H.ab.push({ id: k + '_t24', name: T[3][(hs >>> 7) % 4], t: 'none', r: 99,
         desc: n + ' ' + (n < 5 ? 'клетки' : 'клеток') + ' с ловушками ложатся случайно ' + ROWT[ri] + ' на четыре круга. Соперник, остановившийся на такой клетке, ' + T[1] + '.' + (tax ? ' Ещё он отдаёт тебе ' + tax + ' очков.' : '') + (own ? ' Тебя самого такая клетка несёт на 5 клеток вперёд.' : ''),
-        ops: [{ op: 'zone', z: 'trap', shape: 'scatter', groups: ROWS[ri].map(g => ({ a: g[0], b: g[1], n })), left: 4, eff: T[0], tax, own, icon: T[2], name: T[3][(hs >>> 7) % 4].toLowerCase() }] });
+        ops: [{ op: 'zone', z: 'trap', shape: 'scatter', groups: ROWS[ri].map(g => ({ a: g[0], b: g[1], n })), left: 4, eff: T[0], tax, own, icon: T[2], vis: m, name: T[3][(hs >>> 7) % 4].toLowerCase() }] });
     } else if (kind === 'delay') {
       H.ab.push({ id: k + '_d24', name: DELAY[m], t: 'enemy', r: 9, rows: 2, desc: 'Соперник в пределах двух этажей от тебя через два круга теряет 80 очков, и это не снять щитом.', ops: [{ op: 'delayHit', left: 2, n: 80 }] });
     } else if (kind === 'bind') {
       const pr = PAIRS[hs % PAIRS.length];
-      H.ab.push({ id: k + '_b24', name: BIND[m], t: 'enemy', r: 4, rows: 1, desc: 'Соперник на твоём этаже или соседних попадает в плен и стоит, пока на кубике не выпадет ' + pr.join(' или ') + ', а ты получаешь 30 очков.', ops: [{ op: 'bindT', need: pr }, { op: 'souls', n: 30 }] });
+      H.ab.push({ id: k + '_b24', name: BIND[m], t: 'enemy', r: 4, rows: 1, desc: 'Соперник на твоём этаже или соседних попадает в плен и стоит, пока на кубике не выпадет ' + pr.join(' или ') + ', а ты получаешь 30 очков.', ops: [{ op: 'bindT', need: pr, vis: m === 'water' ? 'bubble' : m === 'crystal' ? 'crystal' : m === 'petal' ? 'web' : 'chain' }, { op: 'souls', n: 30 }] });
     } else if (kind === 'aura') {
       H.ab.push({ id: k + '_a24', name: 'Зов семьи', t: 'none', r: 99, desc: 'До конца партии герои семьи «' + FAMS[fam].name + '» в твоей руке сильнее на 1, и те, что придут потом, тоже. Ты получаешь 40 очков.', ops: [{ op: 'aura', aura: { fam, pw: 1 } }, { op: 'souls', n: 40 }] });
     } else {
@@ -3532,7 +3577,7 @@ const SFX = {
 };
 
 // ===================== Particle FX =====================
-const FX = { c: null, x: null, dpr: 1, parts: [], rings: [], beams: [], run: false };
+const FX = { c: null, x: null, dpr: 1, parts: [], rings: [], beams: [], cust: [], run: false };
 function fxInit() {
   FX.c = $('fxc'); FX.x = FX.c.getContext('2d');
   const rs = () => { FX.dpr = Math.min(2, window.devicePixelRatio || 1); FX.c.width = innerWidth * FX.dpr; FX.c.height = innerHeight * FX.dpr; };
@@ -3548,6 +3593,11 @@ function fxLoop() {
     const a = Math.min(1, p.life / p.max * 1.4);
     x.globalAlpha = a; x.fillStyle = p.color;
     if (p.shape === 'feather') { x.save(); x.translate(p.x, p.y); x.rotate(p.rot); x.beginPath(); x.ellipse(0, 0, p.size * 2.2, p.size * 0.7, 0, 0, Math.PI * 2); x.fill(); x.restore(); }
+    else if (p.shape === 'shard') { x.save(); x.translate(p.x, p.y); x.rotate(p.rot); x.beginPath(); x.moveTo(0, -p.size * 2.2); x.lineTo(p.size * 0.6, 0); x.lineTo(0, p.size * 2.2); x.lineTo(-p.size * 0.6, 0); x.fill(); x.restore(); }
+    else if (p.shape === 'flake') { x.save(); x.translate(p.x, p.y); x.rotate(p.rot); x.strokeStyle = p.color; x.lineWidth = 1.2; x.beginPath(); for (let i = 0; i < 6; i++) { x.moveTo(0, 0); x.lineTo(0, -p.size * 2); x.rotate(Math.PI / 3); } x.stroke(); x.restore(); }
+    else if (p.shape === 'petal' || p.shape === 'leaf') { x.save(); x.translate(p.x, p.y); x.rotate(p.rot); x.beginPath(); x.ellipse(0, 0, p.size * 1.6, p.size * 0.8, 0, 0, Math.PI * 2); x.fill(); x.restore(); }
+    else if (p.shape === 'drop') { x.beginPath(); x.arc(p.x, p.y, p.size, 0, Math.PI * 2); x.fill(); x.beginPath(); x.moveTo(p.x - p.size, p.y); x.lineTo(p.x, p.y - p.size * 2.4); x.lineTo(p.x + p.size, p.y); x.fill(); }
+    else if (p.shape === 'ember') { x.globalAlpha = a * (0.6 + Math.random() * 0.4); x.beginPath(); x.arc(p.x, p.y, p.size * (0.6 + 0.4 * p.life / p.max), 0, Math.PI * 2); x.fill(); }
     else if (p.shape === 'star') { x.save(); x.translate(p.x, p.y); x.rotate(p.rot); x.beginPath(); for (let i = 0; i < 4; i++) { x.rotate(Math.PI / 2); x.lineTo(0, -p.size * 2); x.lineTo(p.size * 0.4, -p.size * 0.4); } x.fill(); x.restore(); }
     else { x.beginPath(); x.arc(p.x, p.y, p.size, 0, Math.PI * 2); x.fill(); }
   }
@@ -3557,8 +3607,10 @@ function fxLoop() {
   for (const b of FX.beams) { b.life--; const t = 1 - b.life / b.max; const prog = Math.min(1, t * 2.2); x.globalAlpha = 1 - Math.max(0, t - 0.4) / 0.6; x.strokeStyle = b.color; x.lineCap = 'round';
     x.lineWidth = b.w * 3; x.globalAlpha *= 0.35; x.beginPath(); x.moveTo(b.x1, b.y1); x.lineTo(b.x1 + (b.x2 - b.x1) * prog, b.y1 + (b.y2 - b.y1) * prog); x.stroke();
     x.globalAlpha = (1 - Math.max(0, t - 0.4) / 0.6); x.lineWidth = b.w; x.beginPath(); x.moveTo(b.x1, b.y1); x.lineTo(b.x1 + (b.x2 - b.x1) * prog, b.y1 + (b.y2 - b.y1) * prog); x.stroke(); }
+  FX.cust = FX.cust.filter(c => c.life > 0);
+  for (const c of FX.cust) { c.life--; x.save(); try { c.draw(x, 1 - c.life / c.max); } catch (err) { c.life = 0; } x.restore(); }
   x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
-  if (FX.parts.length || FX.rings.length || FX.beams.length) requestAnimationFrame(fxLoop); else { FX.run = false; x.clearRect(0, 0, innerWidth, innerHeight); }
+  if (FX.parts.length || FX.rings.length || FX.beams.length || FX.cust.length) requestAnimationFrame(fxLoop); else { FX.run = false; x.clearRect(0, 0, innerWidth, innerHeight); }
 }
 function part(o) { FX.parts.push(Object.assign({ vx: 0, vy: 0, g: 0, drag: 0.96, size: 3, life: 50, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.2, shape: 'dot' }, o, { max: o.life || 50 })); fxKick(); }
 function burst(pt, color, n = 26, spd = 5, o = {}) {
@@ -3604,6 +3656,94 @@ Object.assign(SFX.ab, {
   gravity() { tone(400, 1.2, { f2: 60, vol: 0.2 }); noise(1.2, { f: 800, f2: 100, q: 2, vol: 0.2 }); },
   resonance() { [262, 392, 523, 784, 1047].forEach((f, i) => tone(f, 2, { vol: 0.06, attack: 0.3, at: i * 0.12, detune: i * 4 })); }
 });
+
+// ===================== Бета 25: графика способностей и движения =====================
+// Энергетические снаряды с хвостом, удары с ударной волной, волна по области, порталы, полёт дугой,
+// лёд, пузыри, кристаллы, паутина и цепи на фишках и картах.
+const MOTIF_SHAPE = { fire: 'ember', water: 'drop', crystal: 'shard', claw: 'shard', blood: 'drop', smoke: 'dot', void: 'dot', star: 'star', feather: 'feather', petal: 'petal', rock: 'shard', eye: 'star', card: 'shard', ice: 'flake', vine: 'leaf' };
+function fxCustom(life, draw) { if (RM) life = Math.ceil(life / 2); FX.cust.push({ life, max: life, draw }); fxKick(); }
+function lighten(col, k) { const c = col.replace('#', ''); const n = parseInt(c.length === 3 ? c.split('').map(x => x + x).join('') : c, 16); const r = n >> 16 & 255, g = n >> 8 & 255, b = n & 255; const f = v => Math.round(v + (255 - v) * k); return 'rgb(' + f(r) + ',' + f(g) + ',' + f(b) + ')'; }
+function glowDot(x, px, py, r, col, a) { const g = x.createRadialGradient(px, py, 0, px, py, r); g.addColorStop(0, 'rgba(255,255,255,' + a + ')'); g.addColorStop(0.25, col); g.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = a; x.fillStyle = g; x.beginPath(); x.arc(px, py, r, 0, Math.PI * 2); x.fill(); }
+function impact(pt, col, motif, power = 1) { // удар: вспышка, две ударные волны, осколки по мотиву
+  if (!pt) return; const sh = MOTIF_SHAPE[motif] || 'shard', R = 70 * power;
+  fxCustom(26, (x, k) => { const r = R * (0.3 + k * 0.9); glowDot(x, pt.x, pt.y, r, col, (1 - k) * 0.9); });
+  ring(pt, '#FFFFFF', R * 0.9, 6, 26); setTimeout(() => ring(pt, col, R * 1.5, 5, 36), 70);
+  burst(pt, [col, lighten(col, 0.6), '#FFFFFF'], Math.round(30 * power), 7 * power, { shape: sh, drag: 0.93 });
+  if (motif === 'fire') for (let i = 0; i < (RM ? 4 : 18); i++) part({ x: pt.x + (Math.random() - 0.5) * 30, y: pt.y, vx: (Math.random() - 0.5) * 2, vy: -2 - Math.random() * 4, drag: 0.97, color: Math.random() < 0.5 ? '#FFB347' : '#FF5A2A', size: 2 + Math.random() * 3, life: 40 + Math.random() * 30, shape: 'ember' });
+  if (motif === 'void' || motif === 'smoke') ringIn(pt, col, R * 1.4, 34);
+  if (power >= 1) shake();
+}
+function orb(a, b, col, motif, opts = {}) { // энергетический снаряд по дуге с хвостом; промис — момент попадания
+  return new Promise(res => {
+    if (!a || !b) { res(); return; }
+    const sh = MOTIF_SHAPE[motif] || 'dot', dist = Math.hypot(b.x - a.x, b.y - a.y);
+    const life = Math.max(16, Math.min(38, Math.round(dist / 14))) + (opts.slow ? 8 : 0);
+    const nx = -(b.y - a.y) / (dist || 1), ny = (b.x - a.x) / (dist || 1), bend = (opts.bend ?? (Math.random() < 0.5 ? -1 : 1)) * Math.min(120, dist * 0.35);
+    const cx = (a.x + b.x) / 2 + nx * bend, cy = (a.y + b.y) / 2 + ny * bend - 30;
+    const at = s => { const u = 1 - s; return { x: u * u * a.x + 2 * u * s * cx + s * s * b.x, y: u * u * a.y + 2 * u * s * cy + s * s * b.y }; };
+    let done = false;
+    fxCustom(life, (x, k) => {
+      const e = k < 1 ? 1 - Math.pow(1 - k, 1.6) : 1; const p = at(e), q = at(Math.max(0, e - 0.08));
+      x.globalAlpha = 0.5; x.strokeStyle = col; x.lineWidth = 10 * (opts.size || 1); x.lineCap = 'round'; x.beginPath(); x.moveTo(q.x, q.y); x.lineTo(p.x, p.y); x.stroke();
+      glowDot(x, p.x, p.y, 22 * (opts.size || 1), col, 1); glowDot(x, p.x, p.y, 8 * (opts.size || 1), '#FFFFFF', 1);
+      if (!RM && Math.random() < 0.9) part({ x: p.x, y: p.y, vx: (Math.random() - 0.5) * 1.6, vy: (Math.random() - 0.5) * 1.6, drag: 0.93, color: Math.random() < 0.6 ? col : lighten(col, 0.6), size: 1.5 + Math.random() * 2.5, life: 22 + Math.random() * 14, shape: sh });
+      if (!done && k > 0.97) { done = true; if (!opts.noImpact) impact(b, col, motif, opts.power || 1); res(); }
+    });
+    setTimeout(() => { if (!done) { done = true; if (!opts.noImpact) impact(b, col, motif, opts.power || 1); res(); } }, life * 22 + 200);
+  });
+}
+function nova(c, col, motif, R = 160) { // волна по области от заклинателя
+  if (!c) return;
+  fxCustom(34, (x, k) => { const r = 10 + R * (1 - Math.pow(1 - k, 2.4)); const g = x.createRadialGradient(c.x, c.y, r * 0.6, c.x, c.y, r); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.75, col); g.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = (1 - k) * 0.8; x.fillStyle = g; x.beginPath(); x.arc(c.x, c.y, r, 0, Math.PI * 2); x.fill(); });
+  ring(c, '#FFFFFF', R * 0.7, 4, 30); burst(c, [col, '#FFFFFF'], 36, 8, { shape: MOTIF_SHAPE[motif] || 'dot' });
+}
+function portalFx(pt, col, life = 46, closing) { // вращающийся круг портала
+  if (!pt) return;
+  fxCustom(life, (x, k) => {
+    const open = closing ? 1 - k : Math.min(1, k * 3), fade = closing ? 1 - k : k > 0.75 ? (1 - k) / 0.25 : 1; const R = 34 * open;
+    const g = x.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, R); g.addColorStop(0, 'rgba(10,0,30,.95)'); g.addColorStop(0.6, 'rgba(20,0,50,.6)'); g.addColorStop(1, col);
+    x.globalAlpha = fade; x.fillStyle = g; x.beginPath(); x.ellipse(pt.x, pt.y, R, R * 0.62, 0, 0, Math.PI * 2); x.fill();
+    for (let i = 0; i < 6; i++) { const a0 = k * 14 + i * Math.PI / 3; x.strokeStyle = i % 2 ? '#FFFFFF' : col; x.lineWidth = 3; x.beginPath(); x.ellipse(pt.x, pt.y, R * (0.55 + i * 0.08), R * 0.62 * (0.55 + i * 0.08), 0, a0, a0 + 1.2); x.stroke(); }
+    if (!RM && Math.random() < 0.5) { const a = Math.random() * 6.28; part({ x: pt.x + Math.cos(a) * R, y: pt.y + Math.sin(a) * R * 0.62, vx: -Math.cos(a) * 1.5, vy: -Math.sin(a) * 1, drag: 0.94, color: col, size: 2, life: 20, shape: 'star' }); }
+  });
+}
+async function arcMove(e, from, to) { // полёт и прыжок дугой: без шагов по клеткам
+  const t = MAP.toks[e.p]; const col = ((G.s && G.s.players.find(x => x.id === e.p)) || {}).color || '#FFE9A8';
+  if (!t || from == null || from === to) { G.disp[e.p] = to; renderTokens(); return; }
+  const c0 = cellCenter(from), c1 = cellCenter(to); const dist = Math.hypot(c1.x - c0.x, c1.y - c0.y);
+  const fly = e.kind === 'fly', back = e.kind === 'back';
+  const H2 = back ? Math.min(40, 10 + dist * 0.12) : Math.min(fly ? 240 : 150, 40 + dist * (fly ? 0.4 : 0.3));
+  const dur = RM ? 200 : back ? Math.min(520, 260 + dist * 0.5) : Math.min(fly ? 1300 : 900, 420 + dist * (fly ? 1.1 : 0.8));
+  const frames = []; for (let i = 0; i <= 16; i++) { const s = i / 16; const x = c0.x + (c1.x - c0.x) * s, y = c0.y + (c1.y - c0.y) * s - H2 * 4 * s * (1 - s); frames.push({ transform: `translate(${x}px,${y}px) scale(${fly ? 1 + 0.35 * Math.sin(Math.PI * s) : 1})` }); }
+  focusCell(to); t.style.transition = 'none';
+  const an = t.animate(frames, { duration: dur, easing: back ? 'cubic-bezier(.2,.8,.3,1)' : 'ease-in-out' });
+  let on = true; const trail = () => { if (!on) return; const r = t.getBoundingClientRect(); const pt = { x: r.left + r.width / 2, y: r.top + r.height / 2 }; part({ x: pt.x, y: pt.y, vx: (Math.random() - 0.5), vy: (Math.random() - 0.5), drag: 0.95, color: Math.random() < 0.5 ? col : '#FFFFFF', size: back ? 2 : 3, life: back ? 14 : 26, shape: fly ? 'star' : 'dot' }); requestAnimationFrame(trail); };
+  if (!RM) requestAnimationFrame(trail); (back ? SFX.back : SFX.step)();
+  await an.finished.catch(() => {}); on = false;
+  G.disp[e.p] = to; renderTokens(); an.cancel(); void t.offsetWidth; t.style.transition = '';
+  const pt = screenOfP(e.p); if (back) { impact(pt, '#FFB0A0', 'claw', 0.5); } else { ring(pt, col, 60, 4, 28); burst(pt, [col, '#FFFFFF'], 14, 3); }
+  await sleep(90);
+}
+async function portalMove(e, from, to) { // вход в один портал и выход из другого
+  const t = MAP.toks[e.p]; const col = '#B58CFF';
+  if (!t) { G.disp[e.p] = to; renderTokens(); return; }
+  const p0 = screenOfP(e.p); portalFx(p0, col, 40); SFX.chime && SFX.chime();
+  t.style.transition = 'none'; const base = t.style.transform;
+  const a1 = t.animate([{ transform: base + ' scale(1) rotate(0deg)', opacity: 1 }, { transform: base + ' scale(0.05) rotate(540deg)', opacity: 0 }], { duration: RM ? 120 : 520, easing: 'ease-in' });
+  await a1.finished.catch(() => {}); t.style.opacity = '0'; a1.cancel();
+  G.disp[e.p] = to; renderTokens(); focusCell(to); await sleep(RM ? 80 : 420);
+  const p1 = screenOfP(e.p); portalFx(p1, col, 44);
+  const nb = t.style.transform; t.style.opacity = '';
+  const a2 = t.animate([{ transform: nb + ' scale(0.05) rotate(-540deg)', opacity: 0 }, { transform: nb + ' scale(1.25) rotate(0deg)', opacity: 1, offset: 0.8 }, { transform: nb + ' scale(1) rotate(0deg)', opacity: 1 }], { duration: RM ? 120 : 560, easing: 'ease-out' });
+  await a2.finished.catch(() => {}); a2.cancel(); void t.offsetWidth; t.style.transition = '';
+  burst(p1, [col, '#FFFFFF'], 20, 4, { shape: 'star' });
+}
+function bindVis(b) { if (!b) return ''; if (b.vis) return b.vis; const w = (b.why || '').toLowerCase();
+  if (/лёд|лед|мерзл|замерз|нимб|холод|снеж|иней|мороз/.test(w)) return 'ice'; if (/пузыр|риф|водоворот|вод|прилив/.test(w)) return 'bubble';
+  if (/кристал|куб|друз|земл|осколк/.test(w)) return 'crystal'; if (/нит|паутин|клуб/.test(w)) return 'web'; return 'chain'; }
+const LOCK_ICON = { ice: '❄', crystal: '💎', shadow: '🌑', chain: '⛓', mute: '🔇' };
+const ZVIS = { glow: 'light', camp: 'camp', seal: 'star', crossSeal: 'star', rift: 'void', bloodtrap: 'blood', firewall: 'fire', firecircle: 'fire', reef: 'water', crystalWall: 'crystal', thorns: 'petal', cubes: 'crystal', crystalForest: 'crystal', web: 'web', webcover: 'web', resin: 'amber', puddle: 'void', boneWall: 'rock', iceWall: 'ice', crystalArea: 'crystal', moth: 'smoke', portal: 'portal' };
+
 // ===================== v2 helpers =====================
 function heroTier(k) { const H = HEROES[k]; return H.great ? 6 : H.w <= 4 ? 5 : H.w <= 7 ? 4 : 3; }
 function heroColor(k) { return COLORS[HEROES[k].col].hex; }
@@ -3683,7 +3823,7 @@ function renderMarks() {
 function renderZones() {
   if (!G.s) return;
   document.querySelectorAll('.zov').forEach(m => m.remove());
-  (G.s.zones || []).forEach(z => { const col = heroColor(z.hero); const K = ZK[z.z] || {}; z.cells.forEach(i => { const t = MAP.tiles[i]; if (!t) return; t.firstChild.appendChild(h('span', { class: 'zov' + (K.big ? ' big' : ''), style: '--zc:' + col }, h('i', null, z.icon || K.icon || '·'))); }); });
+  (G.s.zones || []).forEach(z => { const col = heroColor(z.hero); const K = ZK[z.z] || {}; z.cells.forEach(i => { const t = MAP.tiles[i]; if (!t) return; t.firstChild.appendChild(h('span', { class: 'zov v-' + (z.vis || ZVIS[z.z] || 'gen') + (K.big ? ' big' : ''), style: '--zc:' + col }, h('i', null, z.icon || K.icon || '·'))); }); });
   const me = G.s.players.find(x => x.id === meId()); const dk = $('darkov'); if (dk) dk.classList.toggle('on', !!(me && me.st.dark > 0 && !me.place));
   if (G.s.blank) Object.keys(G.s.blank).forEach(i => { const t = MAP.tiles[i]; if (t) { t.className = 'tile empty'; const ic = t.firstChild.firstChild; if (ic && ic.nodeType === 3) ic.textContent = ''; } });
 }
@@ -3701,6 +3841,7 @@ function renderTokens() {
     if (t.dataset.k !== key) { t.dataset.k = key; t.innerHTML = ''; if (k) t.appendChild(h('img', { src: IMG[k].av, alt: '' })); else t.textContent = (p.name || '?').slice(0, 1).toUpperCase(); }
     const n = G.disp[p.id] ?? p.pos; const c = cellCenter(n); const g = groups[n]; const gi = g.indexOf(p.id); const of = g.length > 1 ? offs[gi + 1] || [0, 0] : [0, 0];
     t.style.transform = `translate(${c.x + of[0]}px,${c.y + of[1]}px)`;
+    { let o = t.querySelector('.tst'); if (!o) { o = h('span', { class: 'tst' }); t.appendChild(o); } const bv = p.st && p.st.bind ? bindVis(p.st.bind) : ''; o.className = 'tst' + (bv ? ' ' + bv : p.st && p.st.poison ? ' poison' : p.st && p.st.skip ? ' stun' : ''); }
     t.classList.toggle('act', p.id === act); t.classList.toggle('shielded', !!(p.st && (p.st.shield || p.st.mirror))); t.classList.toggle('done', !!p.place); t.classList.toggle('aura', auraLevel(p) >= 1); t.dataset.al = auraLevel(p);
   });
 }
@@ -3900,6 +4041,9 @@ async function showDice(e) {
   await sleep(650); st.innerHTML = '';
 }
 async function animMove(e) {
+  if (e.path && e.path.length) { const from = G.disp[e.p] ?? e.path[0], to = e.path[e.path.length - 1];
+    if (e.kind === 'portal') return portalMove(e, from, to);
+    if (e.kind === 'fly' || e.kind === 'jump' || e.kind === 'back') return arcMove(e, from, to); }
   const fast = e.kind === 'fly' || e.kind === 'jump';
   for (const n of e.path) {
     G.disp[e.p] = n; renderTokens(); focusCell(n);
@@ -4094,19 +4238,21 @@ function genericFx(heroKey, ab, c, t, all) {
   if (ops.includes('cleanseAll')) { flash('rgba(255,255,255,.55)'); all.concat([c]).forEach(pt => ring(pt, '#FFFFFF', 80, 4)); return; }
   if (ops.includes('blind')) { flash('rgba(20,10,40,.6)'); all.forEach(pt => { ringIn(pt, col, 90); motifFx(pt, col, m, 14); }); return; }
   if (ops.some(o => ['fly', 'up', 'catchup', 'behindLeader', 'jumpTax'].includes(o))) { pillar(c, col); motifFx(c, col, m, 30); flash(col + '55'); return; }
-  if (t && ops.some(o => TGT_OPS.includes(o))) {
+  if (t && ops.some(o => TGT_OPS.includes(o) || ['bind', 'bindT', 'delayHit', 'skip', 'blindOthers'].includes(o))) {
     const inward = ops.includes('steal') || ops.includes('pull');
-    inward ? beam(t, c, col, 4, 30) : (m === 'void' || m === 'smoke' ? lightning(c, t, col) : beam(c, t, col, 4, 30));
-    setTimeout(() => { motifFx(t, col, m, 30); if (ops.includes('burn')) motifFx(t, '#FF7A50', 'fire', 30); }, 250);
-    if (ops.includes('push')) shake();
+    nova(c, col, m, 60);
+    orb(c, t, col, m, { power: 1.1, size: 1.2 }).then(() => { motifFx(t, col, m, 26); if (ops.includes('burn')) impact(t, '#FF7A50', 'fire', 0.8); if (inward) setTimeout(() => orb(t, c, lighten(col, 0.4), m, { power: 0.5, size: 0.7 }), 120); });
     return;
   }
-  if (ops.some(o => ['pushAll', 'stealAll', 'drainAll', 'skipNear', 'debuffAll', 'reverse', 'richest', 'takeHeroes', 'ambushAll', 'hand15', 'pullAll'].includes(o))) {
-    all.forEach((pt, i) => setTimeout(() => { (m === 'void' || m === 'smoke' ? lightning : beam)(c, pt, col, 3, 26); setTimeout(() => motifFx(pt, col, m, 20), 200); }, i * 120));
-    motifFx(c, col, m, 20); if (ops.includes('pushAll')) shake(); return;
+  if (ops.some(o => ['pushAll', 'stealAll', 'drainAll', 'skipNear', 'debuffAll', 'reverse', 'richest', 'takeHeroes', 'ambushAll', 'hand15', 'pullAll', 'poisonAll', 'burnAll', 'burnEach', 'burnHandAll', 'areaLock', 'bindAll', 'darkAll', 'lockRand', 'lockEach', 'muteAll', 'noShieldAll', 'clonesHalf', 'drainAhead', 'stealRange', 'paradox', 'raiseDead', 'forcedBeasts', 'reverseN', 'picks'].includes(o))) {
+    nova(c, col, m, 170); flash(col + '33');
+    all.forEach((pt, i) => setTimeout(() => orb(c, pt, col, m, { power: 0.9, bend: i % 2 ? 1 : -1 }).then(() => motifFx(pt, col, m, 18)), 140 + i * 160));
+    return;
   }
   if (ops.some(o => ['souls', 'interest', 'perOpp'].includes(o))) { burst(c, ['#F3DDA0', '#FFFFFF'], 24, 4, { shape: 'star' }); }
-  if (ops.some(o => ['shield', 'stone', 'mirror'].includes(o))) { ring(c, col, 70, 6, 50); setTimeout(() => ring(c, '#FFFFFF', 50, 3, 40), 160); }
+  if (ops.some(o => ['shield', 'stone', 'mirror'].includes(o))) { fxCustom(50, (x, k) => { const R = 46 + 6 * Math.sin(k * 9); x.globalAlpha = (1 - k) * 0.9; x.strokeStyle = col; x.lineWidth = 3; x.beginPath(); for (let i = 0; i <= 6; i++) { const a = i * Math.PI / 3 + k * 2; const px = c.x + Math.cos(a) * R, py = c.y + Math.sin(a) * R; i ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke(); glowDot(x, c.x, c.y, R, col, (1 - k) * 0.35); }); ring(c, '#FFFFFF', 50, 3, 40); }
+  if (ops.some(o => ['zone', 'portals'].includes(o))) { nova(c, col, m, 120); }
+  if (ops.some(o => ['aura', 'famBuff', 'summonFam'].includes(o))) { const pt = { x: innerWidth / 2, y: innerHeight - 160 }; pillar(c, col); burst(pt, [col, '#FFFFFF'], 50, 7, { shape: 'star' }); ring(pt, col, 170, 5); }
   if (ops.includes('buff') || ops.includes('buffOne')) { const pt = { x: innerWidth / 2, y: innerHeight - 160 }; burst(pt, [col, '#FFFFFF'], 40, 6, { shape: 'star' }); ring(pt, col, 150, 4); }
   if (ops.includes('place')) { ring(c, col, 50, 3, 60); }
   if (ops.includes('regen') || ops.includes('shades')) { pillar(c, col); }
@@ -4148,14 +4294,14 @@ async function playFx(e, s) {
     }
     case 'omen': await showOmen(e, s); break;
     case 'meet': await showMeet(e, s); break;
-    case 'meetHit': { const col = heroColor(e.foe); const pt = screenOfP(e.p); motifFx(pt, col, HEROES[e.foe].motif, 24); ring(pt, col, 64, 4); await sleep(e._me === false ? 180 : 360); break; }
+    case 'meetHit': { const col = heroColor(e.foe); const pt = screenOfP(e.p); impact(pt, col, HEROES[e.foe].motif, e._me === false ? 0.5 : 0.85); motifFx(pt, col, HEROES[e.foe].motif, 18); await sleep(e._me === false ? 180 : 360); break; }
     case 'offer': { if (e._me === false) break; const b = bxOf(e.foe, e.ab); banner(e.foe, e.yes ? 'Согласие' : 'Отказ', HEROES[e.foe].name + ': «' + b.name + '»', heroColor(e.foe)); await sleep(900); break; }
     case 'zone': { renderZones(); const col = heroColor(e.hero); const pts = (e.cells || []).slice(0, 14).map(screenOfCell).filter(Boolean); pts.forEach((pt, i) => setTimeout(() => ring(pt, col, 40, 3), i * 40)); SFX.chime(); await sleep(e._me === false ? 250 : 600); break; }
-    case 'zoneHit': { const col = heroColor(e.hero); const pt = screenOfP(e.p); motifFx(pt, col, HEROES[e.hero].motif, 22); floatAt(e.p, (ZK[e.z] || {}).icon || '!', col); await sleep(450); break; }
+    case 'zoneHit': { const col = heroColor(e.hero); const pt = screenOfP(e.p); impact(pt, col, HEROES[e.hero].motif, 0.6); motifFx(pt, col, HEROES[e.hero].motif, 16); floatAt(e.p, (ZK[e.z] || {}).icon || '!', col); await sleep(450); break; }
     case 'zoneEnd': renderZones(); break;
     case 'loseHero': { if (e._me === false) { burst(screenOfP(e.p), ['#C9B0FF', '#FFFFFF'], 14, 4); await sleep(250); break; } banner(e.hero, HEROES[e.hero].name + ' потерян', HEROES[e.by].name + ' забирает героя у игрока ' + P(e.p).name, heroColor(e.by)); await sleep(1000); break; }
     case 'horde': await showHorde(e, s); break;
-    case 'hordeHit': { const H = HORDES[e.k]; const col = COLORS[H.col].hex; const pt = screenOfP(e.p); motifFx(pt, col, H.motif, 26); ring(pt, col, 70, 4); await sleep(e._me === false ? 200 : 380); break; }
+    case 'hordeHit': { const H = HORDES[e.k]; const col = COLORS[H.col].hex; const pt = screenOfP(e.p); impact(pt, col, H.motif, 0.8); motifFx(pt, col, H.motif, 20); await sleep(e._me === false ? 200 : 380); break; }
     case 'omenEnd': { const O = OMENS[e.k]; banner(e.k, 'Знамение рассеялось', O.name + ': подземелье снова прежнее', O.col); await sleep(1100); break; }
     case 'calm': SFX.chime(); floatAt(e.p, 'Тишина долины +' + e.amount, '#C9A2FF'); burst(screenOfP(e.p), ['#C9A2FF', '#FFFFFF'], 22, 3, { shape: 'star' }); await sleep(700); break;
     case 'dice': await showDice(e); break;
@@ -4288,8 +4434,9 @@ function renderDock() {
     const H = HEROES[hh.k]; const pw = cardPower(v, hh); const z = ZSIGN[hh.k];
     const fk = FAM_OF[hh.k]; const fl = fk ? famLv(v, fk) : 0;
     const lockedC = hh.lock > 0 || hh.mute || (v.st.shadowMark && FAM_OF[hh.k] === 'shadows');
-    hand.appendChild(h('button', { class: 'hcard' + (lockedC ? ' locked' : '') + (H.great ? ' great' : '') + (z && lvl ? ' zaura l' + lvl : '') + (fl ? ' faura' : ''), style: '--hc:' + heroColor(hh.k) + (fk ? ';--fc:' + FAMS[fk].col : ''), 'aria-label': H.name, onclick: () => cardSheet(v, hh) },
-      h('img', { src: IMG[hh.k].card, alt: '' }), h('span', { class: 'pw' }, '⚔ ' + pw), z ? h('span', { class: 'zs' }, z) : null, H.faces ? h('span', { class: 'flipb' }, '⇄') : null, !z && FAM_OF[hh.k] ? h('span', { class: 'fs', title: FAMS[FAM_OF[hh.k]].name }) : null, h('span', { class: 'nm' }, H.name), lockedC ? h('span', { class: 'lk' }, hh.lock > 0 ? '🔒' : hh.mute ? '🔇' : '🌑') : null));
+    const lf = hh.mute ? 'mute' : hh.lock > 0 ? (hh.lock > 100 ? 'crystal' : hh.lockFx || 'chain') : 'shadow';
+    hand.appendChild(h('button', { class: 'hcard' + (lockedC ? ' locked lf-' + lf : '') + (H.great ? ' great' : '') + (z && lvl ? ' zaura l' + lvl : '') + (fl ? ' faura' : ''), style: '--hc:' + heroColor(hh.k) + (fk ? ';--fc:' + FAMS[fk].col : ''), 'aria-label': H.name, onclick: () => cardSheet(v, hh) },
+      h('img', { src: IMG[hh.k].card, alt: '' }), h('span', { class: 'pw' }, '⚔ ' + pw), z ? h('span', { class: 'zs' }, z) : null, H.faces ? h('span', { class: 'flipb' }, '⇄') : null, !z && FAM_OF[hh.k] ? h('span', { class: 'fs', title: FAMS[FAM_OF[hh.k]].name }) : null, h('span', { class: 'nm' }, H.name), lockedC ? h('span', { class: 'lk ' + lf }, h('b', null, LOCK_ICON[lf] || '🔒'), hh.lock > 0 && hh.lock < 100 ? h('small', null, hh.lock + ' кр.') : null) : null));
   }
   const rollPhase = ctl && s.phase === 'roll';
   const c = cost(s, v);
