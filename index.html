@@ -438,7 +438,7 @@ button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
     <div class="home-in">
       <div class="fan" id="fan"></div>
       <h1 class="disp"><small>Мир цветов</small>Подземелье душ</h1>
-      <p class="lead">160 душ-героев и подземелье до 500 плит. Призывай героев, сжигай их ради сильных способностей и выберись к звёздным вратам раньше других.</p>
+      <p class="lead">160 душ-героев и подземелье до 1500 плит. Призывай героев, сжигай их ради сильных способностей и выберись к звёздным вратам раньше других.</p>
       <div class="invite" id="invite" hidden>
         <div class="inv-t">Тебя позвали в комнату</div>
         <div class="code disp" id="invCode">—</div>
@@ -637,10 +637,12 @@ function worldOn(s, k) { return !!(s.world && s.world.k === k); }
 const PCOLORS = ['#FFC960', '#7FD4FF', '#FF7E9A', '#9BE38F'];
 const START_SOULS = 160, HAND = 4;
 const GAME_VER = 24;
-// Размер поля задаётся партией: 200, 350 или 500 плит. DK — множитель дальности способностей.
-const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' } };
+// Размер поля задаётся партией: 350, 700, 1000 или 1500 плит (200 и 500 остались для старых сохранений). DK — множитель дальности способностей.
+const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' }, 700: { cols: 10, dk: 1.75, label: 'Долгое', time: 'около 3 часов' }, 1000: { cols: 10, dk: 2, label: 'Очень долгое', time: 'около 4 часов' }, 1500: { cols: 10, dk: 2.5, label: 'Эпическое', time: '5–6 часов' } };
+const SIZE_CHOICES = [350, 700, 1000, 1500];
+function sizePref() { const v = +store.get('size', 700); return SIZE_CHOICES.includes(v) ? v : 700; }
 let COLS = 10, CELLS = 500, ROWS = 50, ZROWS = 10, DK = 1.5;
-function setBoard(n) { n = SIZES[n] ? +n : 500; if (n === CELLS) return; CELLS = n; COLS = SIZES[n].cols; ROWS = CELLS / COLS; ZROWS = ROWS / 5; DK = SIZES[n].dk; }
+function setBoard(n) { n = SIZES[n] ? +n : 700; if (n === CELLS) return; CELLS = n; COLS = SIZES[n].cols; ROWS = CELLS / COLS; ZROWS = ROWS / 5; DK = SIZES[n].dk; }
 function km(n) { return Math.max(1, Math.round(n * DK)); }
 function abR(ab) { return ab.r >= 99 ? 99 : km(ab.r); }
 function abDesc(ab) { // числа дальности в описании пересчитываются под длину поля
@@ -4504,15 +4506,15 @@ function resumeLocal(sv) {
 }
 function startLocal(players) {
   resetGameView(); G.mode = 'local'; G.localPlayers = players; show('game');
-  enqueue(newGame(players.map((p, i) => ({ id: 'p' + i, name: p.name, bot: p.bot })), { size: store.get('size', 500) }));
+  enqueue(newGame(players.map((p, i) => ({ id: 'p' + i, name: p.name, bot: p.bot })), { size: sizePref() }));
 }
 function leaveGame() { closeModal(); $('win').classList.remove('on'); if (G.mode === 'online') netLeave(); resetGameView(); G.mode = null; show('home'); }
 let seats = store.get('seats', [{ name: 'Игрок 1', bot: false }, { name: 'Бот Ночи', bot: true }]);
 function sizePicker(box, cur, onPick) {
   box.innerHTML = '';
-  for (const n of [200, 350, 500]) box.appendChild(h('button', { 'aria-pressed': n === cur ? 'true' : 'false', disabled: !onPick, onclick: onPick ? () => onPick(n) : null }, h('b', null, n + ' плит'), h('small', null, SIZES[n].label), h('small', null, SIZES[n].time)));
+  for (const n of SIZE_CHOICES) box.appendChild(h('button', { 'aria-pressed': n === cur ? 'true' : 'false', disabled: !onPick, onclick: onPick ? () => onPick(n) : null }, h('b', null, n + ' плит'), h('small', null, SIZES[n].label), h('small', null, SIZES[n].time)));
 }
-function renderSizeLocal() { sizePicker($('sizeLocal'), store.get('size', 500), n => { store.set('size', n); SFX.click(); renderSizeLocal(); }); }
+function renderSizeLocal() { sizePicker($('sizeLocal'), sizePref(), n => { store.set('size', n); SFX.click(); renderSizeLocal(); }); }
 function renderSeats() {
   const box = $('seats'); box.innerHTML = '';
   seats.forEach((st, i) => {
@@ -4630,7 +4632,7 @@ async function netCreate() {
   $('bCreate').disabled = false; initOnline();
   if (!peer) { toast('Не удалось подобрать код комнаты, попробуй ещё раз.'); return; }
   hostAttach(peer, code);
-  NET.lobby = { hostId: NET.myId, players: [{ id: NET.myId, name: myDefaultName() }], size: store.get('size', 500) };
+  NET.lobby = { hostId: NET.myId, players: [{ id: NET.myId, name: myDefaultName() }], size: sizePref() };
   renderQR();
   G.mode = 'online'; renderLobby(NET.lobby); show('lobby');
 }
