@@ -118,6 +118,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .zov.big{background:color-mix(in srgb,var(--zc) 42%,rgba(0,0,0,.35));place-items:center}
 .zov.big i{font-size:calc(var(--cs) * .62);margin:0}
 .hcard.locked img{filter:grayscale(1) brightness(.55)}
+#darkov{position:fixed;inset:0;z-index:40;background:#000;opacity:0;pointer-events:none;transition:opacity .6s;display:grid;place-items:center;color:#8E7CC3;font-size:1.1rem;text-align:center;padding:20px}
+#darkov.on{opacity:.94}
+.seeh{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap}.seeh img{width:22px;height:22px;border-radius:5px;object-fit:cover;border:1px solid rgba(255,255,255,.35)}
+.pkc{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.pkc button{background:none;border:2px solid transparent;border-radius:10px;padding:2px;color:inherit;font:inherit;width:84px}.pkc button img{width:100%;border-radius:8px;display:block}.pkc button:disabled{opacity:.35}
 .hcard .lk{position:absolute;inset:0;display:grid;place-items:center;font-size:1.4rem;text-shadow:0 0 6px #000}
 .token{position:absolute;left:0;top:0;width:var(--ts);height:var(--ts);margin:calc(var(--ts) / -2) 0 0 calc(var(--ts) / -2);border-radius:50%;border:3px solid var(--pc);background:#1E1638;overflow:hidden;transition:transform .18s ease;z-index:6;box-shadow:0 4px 12px rgba(0,0,0,.7);display:grid;place-items:center;color:#fff;font-weight:700}
 .token img{width:100%;height:100%;object-fit:cover}
@@ -510,6 +514,7 @@ button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 <div id="feed" aria-live="polite"></div>
 <div id="ov"></div>
 <div class="sumov" id="sumov"></div>
+<div id="darkov" aria-hidden="true">Затмение: ты ничего не видишь</div>
 <div id="talk" hidden>
   <div id="reactRing" aria-hidden="true"></div>
   <button class="talkbtn" id="bReact" aria-label="Реакции">😊</button>
@@ -631,7 +636,7 @@ const OMEN_ROUNDS = 3;
 function worldOn(s, k) { return !!(s.world && s.world.k === k); }
 const PCOLORS = ['#FFC960', '#7FD4FF', '#FF7E9A', '#9BE38F'];
 const START_SOULS = 160, HAND = 4;
-const GAME_VER = 23;
+const GAME_VER = 24;
 // Размер поля задаётся партией: 200, 350 или 500 плит. DK — множитель дальности способностей.
 const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' } };
 let COLS = 10, CELLS = 500, ROWS = 50, ZROWS = 10, DK = 1.5;
@@ -804,12 +809,12 @@ function areaReach(s, p, ab) { // null — способность не зави�
   return { r: 0, who: alive(s).filter(q => q.id !== p.id && ab.ops.some(o => fits(o, q))) };
 }
 
-function cardPower(p, h) { return Math.max(1, HEROES[h.k].pw + (h.b || 0) - (p.st && p.st.inCamp ? 1 : 0) + (p.st && p.st.fireBuff && HEROES[h.k].motif === 'fire' ? 2 : 0) + (ZSIGN[h.k] ? auraLevel(p) : 0) + (FAM_OF[h.k] === 'mech' ? famLv(p, 'mech') : 0) + (FAM_OF[h.k] === 'witches' ? [0, 0, 1, 2][famLv(p, 'witches')] : 0) + (FAM_OF[h.k] === 'demons' ? [0, 2, 3][famLv(p, 'demons')] : 0) + (FAM_OF[h.k] === 'firewing' && famLv(p, 'firewing') >= 3 ? 1 : 0) + (FAM_OF[h.k] && famCount(p, FAM_OF[h.k]) >= 4 ? 1 : 0)); }
+function cardPower(p, h) { return Math.max(1, HEROES[h.k].pw + (h.b || 0) - (p.st && p.st.inCamp ? 1 : 0) + (p.st && p.st.fireBuff && HEROES[h.k].motif === 'fire' ? 2 : 0) + (p.st && p.st.aura ? auraPw(p, h) : 0) + (ZSIGN[h.k] ? auraLevel(p) : 0) + (FAM_OF[h.k] === 'mech' ? famLv(p, 'mech') : 0) + (FAM_OF[h.k] === 'witches' ? [0, 0, 1, 2][famLv(p, 'witches')] : 0) + (FAM_OF[h.k] === 'demons' ? [0, 2, 3][famLv(p, 'demons')] : 0) + (FAM_OF[h.k] === 'firewing' && famLv(p, 'firewing') >= 3 ? 1 : 0) + (FAM_OF[h.k] && famCount(p, FAM_OF[h.k]) >= 4 ? 1 : 0)); }
 function handPower(p, skip) { const hs = p.hand.filter(h => !(h.lock > 0) && !(skip && skip(h))); return hs.length ? hs.reduce((a, h) => a + cardPower(p, h), 0) : 1; }
 function cost(s, p) { let c = s.event === 'generous' ? 50 : 80; if (worldOn(s, 'ev_iridon')) c = c / 2; const l = p ? famLv(p, 'east') : 0; if (l) c = Math.max(10, c - [20, 35, 50][l - 1]); return c; }
 function altarCost(s) { const c = s.event === 'freealtar' ? 0 : s.event === 'generous' ? 25 : 40; return worldOn(s, 'ev_iridon') ? Math.round(c / 2) : c; }
 function log(s, m) { s.log.push(m); if (s.log.length > 50) s.log.shift(); }
-function fx(s, e) { s.fx.push(e); }
+function fx(s, e) { s.fx.push(e); if (e.t === 'burnHero' && e.hero) (s.grave = s.grave || []).push(e.hero); }
 function alive(s) { return s.players.filter(p => !p.place); }
 function dist(a, b) { return Math.abs(a.pos - b.pos); }
 let UID = 0;
@@ -848,7 +853,7 @@ function startTurn(s) {
   if (worldOn(s, 'ev_soulweb')) { const n = alive(s).filter(q => q.id !== p.id && Math.abs(q.pos - p.pos) <= km(8)).length * 10; if (n) { p.souls += n; fx(s, { t: 'gain', p: p.id, amount: n }); } }
   if (p.st.regen && p.st.regen.left > 0) { p.souls += p.st.regen.per; p.st.regen.left--; fx(s, { t: 'gain', p: p.id, amount: p.st.regen.per }); if (!p.st.regen.left) p.st.regen = null; }
   if (p.st.poison && p.st.poison.left > 0) {
-    const amt = Math.min(p.st.poison.per, p.souls); p.souls -= amt; p.st.poison.left--;
+    const amt = Math.min(p.st.poison.per, p.souls); p.souls -= amt; p.st.poison.left--; if (p.st.poison.dec) p.st.poison.per = Math.max(0, p.st.poison.per - p.st.poison.dec);
     fx(s, { t: 'poisonTick', p: p.id, amount: amt });
     if (p.st.poison.left <= 0) p.st.poison = null;
   }
@@ -875,7 +880,7 @@ function addStepSouls(s, p, steps) {
 function protectHazard(s, p) { // traps, collapses, losses
   if (p.st.aegis > 0) { fx(s, { t: 'guard', p: p.id, kind: 'shield' }); return true; }
   if (p.st.shield && !(p.st.noShield > 0)) { p.st.shield = false; fx(s, { t: 'guard', p: p.id, kind: 'shield' }); log(s, p.name + ': звёздный щит спас.'); return true; }
-  if (p.st.stone > 0) { p.st.stone--; fx(s, { t: 'guard', p: p.id, kind: 'stone' }); log(s, p.name + ': каменная кожа выдержала.'); return true; }
+  if (p.st.stone > 0 && !(p.st.noShield > 0)) { p.st.stone--; fx(s, { t: 'guard', p: p.id, kind: 'stone' }); log(s, p.name + ': каменная кожа выдержала.'); return true; }
   return false;
 }
 function defend(s, caster, target) { // returns 'ok' | 'blocked' | 'mirror'
@@ -884,7 +889,7 @@ function defend(s, caster, target) { // returns 'ok' | 'blocked' | 'mirror'
   if (target.st.shield && !(target.st.noShield > 0)) { target.st.shield = false; fx(s, { t: 'guard', p: target.id, kind: 'shield' }); log(s, target.name + ': щит погасил способность.'); return 'blocked'; }
   { const l = famLv(target, 'shadows'); if (l) { if (!(target.id in SHADOW_SEEN)) SHADOW_SEEN[target.id] = CUR_RND() < [0.25, 0.4, 0.5][l - 1]; if (SHADOW_SEEN[target.id]) { if (SHADOW_SEEN[target.id] === true) { SHADOW_SEEN[target.id] = 'shown'; fx(s, { t: 'status', p: target.id, msg: 'Тени поглотили удар' }); log(s, target.name + ': способность утонула в тени.'); } return 'blocked'; } } }
   if (famLv(target, 'greymist') >= 2 && !('m' + target.id in SHADOW_SEEN)) { SHADOW_SEEN['m' + target.id] = CUR_RND() < 0.25; if (SHADOW_SEEN['m' + target.id]) { fx(s, { t: 'status', p: target.id, msg: 'Способность потерялась в тумане' }); return 'blocked'; } } else if (SHADOW_SEEN['m' + target.id]) return 'blocked';
-  if (target.st.mirror) { target.st.mirror = false; fx(s, { t: 'mirror', p: target.id, to: caster.id }); log(s, target.name + ': зеркало отразило способность.'); return 'mirror'; }
+  if (target.st.mirror && !(target.st.noShield > 0)) { target.st.mirror = false; fx(s, { t: 'mirror', p: target.id, to: caster.id }); log(s, target.name + ': зеркало отразило способность.'); return 'mirror'; }
   return 'ok';
 }
 
@@ -2224,7 +2229,7 @@ function applyEff(s, q, effs, ctx) { // ctx: { k — тварь, c — клет�
     switch (o.op) {
       case 'lose': loseN(s, q, o.n); break;
       case 'gain': gainN(s, q, o.n); break;
-      case 'poison': if (!noEffect(s, q)) { q.st.poison = { left: o.left, per: o.per }; fx(s, { t: 'status', p: q.id, msg: 'Яд: ' + o.left + ' х. по ' + o.per }); } break;
+      case 'poison': if (!noEffect(s, q)) { q.st.poison = { left: o.left, per: o.per, dec: o.dec || 0 }; fx(s, { t: 'status', p: q.id, msg: 'Яд: ' + o.left + ' х. по ' + o.per }); } break;
       case 'skip': if (o.self ? (q.st.skip += 1, true) : addSkip(q, o.n || 1)) fx(s, { t: 'status', p: q.id, msg: 'Пропуск хода' }); break;
       case 'back': moveTo(s, q, q.pos - km(o.n), 'back'); break;
       case 'fwd': moveTo(s, q, Math.min(CELLS - 2, q.pos + km(o.n)), 'jump'); break;
@@ -2260,6 +2265,10 @@ function applyEff(s, q, effs, ctx) { // ctx: { k — тварь, c — клет�
       case 'buffOne': if (q.hand.length) { const h = q.hand[Math.floor(rnd() * q.hand.length)]; h.b = (h.b || 0) + o.n; fx(s, { t: 'status', p: q.id, msg: HEROES[h.k].name + ' +' + o.n }); } break;
       case 'blind': if (!(q.st.shades > 0) && !noEffect(s, q)) { q.st.blind = Math.max(q.st.blind, o.n + act1); fx(s, { t: 'status', p: q.id, msg: 'Способности молчат' }); } break;
       case 'payFwd': if (q.souls >= o.n) { loseN(s, q, o.n); moveTo(s, q, Math.min(CELLS - 2, q.pos + km(o.fwd)), 'jump'); } else { const b = bxOf(ctx.k, o.alt); fx(s, { t: 'status', p: q.id, msg: b.name }); applyEff(s, q, b.eff, ctx); } break;
+      case 'oneOf': { const opt = o.opts[Math.floor(rnd() * o.opts.length)]; applyEff(s, q, opt, ctx); break; }
+      case 'lockAll': if (!noEffect(s, q)) { q.hand.forEach(h => { h.lock = Math.max(h.lock || 0, o.n + act1); }); fx(s, { t: 'status', p: q.id, msg: 'Карты закрыты' }); } break;
+      case 'bindAfter': q.st.bindAfter = o.n; break;
+      case 'half': if (!noEffect(s, q)) { q.st.gravity = Math.max(q.st.gravity, 1); fx(s, { t: 'status', p: q.id, msg: 'Следующий бросок вдвое короче' }); } break;
       case 'takeEach': alive(s).filter(x => x.id !== q.id).forEach(x => { const y = Math.min(o.n, x.souls); if (y) { x.souls -= y; q.souls += y; fx(s, { t: 'steal', p: q.id, from: x.id, amount: y }); } }); break;
     }
   }
@@ -2353,7 +2362,9 @@ const ZK = {
   boneWall: { icon: '🦴', name: 'костяная стена', wall: true, big: true },
   iceWall: { icon: '🧊', name: 'ледяная стена', wall: true, big: true },
   crystalArea: { icon: '💠', name: 'кристальная область' },
-  moth: { icon: '🦋', name: 'зов моли' }
+  moth: { icon: '🦋', name: 'зов моли' },
+  trap: { icon: '⚠', name: 'ловушка' },
+  portal: { icon: '🌀', name: 'портал' }
 };
 const BONUS_CELLS = new Set(['treasure', 'altar', 'shrine', 'omen']);
 function cellType(s, i) { const B = buildBoard(s.seed, s.event); return s.blank && s.blank[i] ? 'empty' : B.cells[i].type; }
@@ -2366,8 +2377,8 @@ function shapeCells(s, Z, c, rnd) {
     case 'square': for (let dr = -Z.n; dr <= Z.n; dr++) for (let dc = -Z.n; dc <= Z.n; dc++) { const r = rc + dr, x = cc + dc; if (r >= 0 && r < ROWS && x >= 0 && x < COLS) out.add(cellAt(r, x)); } break;
     case 'pathR': for (let i = c + Z.a; i <= c + Z.b; i++) out.add(i); break;
     case 'column': { const f = Math.min(CELLS - 2, c + 1), fr = rowOf(f), fc = colOf(f); for (let r = fr - 1; r <= fr + 1; r++) if (r >= 0 && r < ROWS) out.add(cellAt(r, fc)); break; }
-    case 'scatter': { const pool = []; for (let r = rc + Z.a; r <= rc + Z.b; r++) rowCells(r).forEach(i => { if (i !== c) pool.push(i); });
-      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; } pool.slice(0, Z.n).forEach(i => out.add(i)); break; }
+    case 'scatter': (Z.groups || [{ a: Z.a, b: Z.b, n: Z.n }]).forEach(g => { const pool = []; for (let r = rc + g.a; r <= rc + g.b; r++) rowCells(r).forEach(i => { if (i !== c && !out.has(i)) pool.push(i); });
+      for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; } pool.slice(0, g.n).forEach(i => out.add(i)); }); break;
     case 'bonus': for (let r = rc + Z.a; r <= rc + Z.b; r++) rowCells(r).forEach(i => { if (BONUS_CELLS.has(cellType(s, i))) out.add(i); }); break;
   }
   return [...out].filter(ok).sort((a, b) => a - b);
@@ -2377,6 +2388,7 @@ function placeZone(s, Z, c, owner, hero, rnd) {
   const cells = shapeCells(s, Z, c, rnd);
   if (Z.z === 'camp') { const rows = new Set(cells.map(rowOf)); s.zones = s.zones.filter(z => !(z.z === 'camp' && z.cells.some(i => rows.has(rowOf(i))))); }
   const zone = { id: s.zid, z: Z.z, hero, owner, cells, left: Z.left || null, once: !!(ZK[Z.z] && ZK[Z.z].once) };
+  if (Z.z === 'trap') Object.assign(zone, { eff: Z.eff || [], tax: Z.tax || 0, own: Z.own || null, icon: Z.icon || '⚠', nm: Z.name || 'ловушка', blank: !!Z.blank });
   if (cells.length) s.zones.push(zone);
   fx(s, { t: 'zone', z: Z.z, hero, owner, cells });
   return zone;
@@ -2413,8 +2425,11 @@ function zoneStop(s, p, rnd) { // остановка на клетке с зон
     if (reef) { fx(s, { t: 'status', p: p.id, msg: 'Риф затягивает' }); moveTo(s, p, reef.i, reef.i > p.pos ? 'jump' : 'back'); }
   }
   for (const z of zonesAt(s, p.pos).slice()) {
-    const own = !enemyZone(z, p); const zh = () => fx(s, { t: 'zoneHit', p: p.id, z: z.z, hero: z.hero });
+    const own = !enemyZone(z, p); const zh = () => fx(s, { t: 'zoneHit', p: p.id, z: z.z, hero: z.hero, nm: z.nm });
     switch (z.z) {
+      case 'portal': if (!own) { const to = z.cells.filter(i => i !== p.pos); if (to.length) { const d2 = to[Math.floor(rnd() * to.length)]; fx(s, { t: 'status', p: p.id, msg: 'Портал!' }); moveTo(s, p, d2, d2 > p.pos ? 'jump' : 'back'); res = 'moved'; } } break;
+      case 'trap': if (own) { if (z.own) { const p0 = p.pos; applyEff(s, p, z.own, { k: z.hero, c: p.pos, rnd }); if (p.pos !== p0) res = 'moved'; } break; }
+        { if (z.once) dropZoneCell(s, z, p.pos); if (protectHazard(s, p)) break; zh(); if (z.tax) toOwner(s, z, p, z.tax); const p0 = p.pos; applyEff(s, p, z.eff, { k: z.hero, c: p.pos, rnd }); if (p.pos !== p0) res = 'moved'; } break;
       case 'glow': if (own) { gainN(s, p, 40); p.st.shield = !(p.st.noShield > 0); fx(s, { t: 'status', p: p.id, msg: 'Сияние: +40 и щит' }); } else if (!protectHazard(s, p)) { zh(); toOwner(s, z, p, 40); } dropZoneCell(s, z, p.pos); break;
       case 'camp': if (own) gainN(s, p, 20); else { zh(); toOwner(s, z, p, 20); } break;
       default: {
@@ -2483,6 +2498,8 @@ function effectsStartTurn(s, p, rnd) { // отложенные удары и з�
 }
 function zoneDesc(z) {
   const T = { glow: 'сияющая клетка: хозяин получает 40 и щит, соперник отдаёт ему 40', camp: 'лагерь: соперник платит 20, и пока он здесь, его герои слабее на 1', seal: 'звёздная печать: −40, следующий бросок вдвое короче', crossSeal: 'крестовая печать: −30, следующий бросок назад', rift: 'разлом: −50 и падение на этаж ниже', bloodtrap: 'кровавый капкан: метка охотника, 3 хода по 25', firewall: 'огненная стена: −30 за проход или остановку', firecircle: 'огненный круг: −40 и назад на 3', reef: 'риф: затягивает и держит в пузыре, пока не выпадет 1 или 6', crystalWall: 'кристальная стена: пройти можно с суммой 9 и больше, откупом 60 или перелётом', thorns: 'шипы: пропуск хода и яд', cubes: 'алые кубы: кристаллизация, пока не выпадет 2 или 5', crystalForest: 'аметистовый лес: бонусы молчат, −20 в начале хода, ход вполовину', web: 'паутина: пропуск хода и 20 очков хозяину, огонь её сжигает', webcover: 'паутина над бонусом: вместо бонуса 20 очков хозяину', resin: 'смола: пропуск хода и −20', puddle: 'чёрная слизь: −50', boneWall: 'костяная стена: пройти можно с суммой 8 и больше', iceWall: 'ледяная стена: пройти можно, если выпадет 1 или 5', crystalArea: 'кристальная область: пропуск хода и −30 за вход или проход', moth: 'моль: −30 в начале хода' };
+  if (z.z === 'trap') return z.nm + (z.tax ? ': отдаёшь хозяину ' + z.tax : '') + (z.blank ? ', клетка без свойств' : '') + (z.left != null ? ', ещё ' + z.left + ' кр.' : '');
+  if (z.z === 'portal') return 'портал: переносит в другой портал' + (z.left != null ? ', ещё ' + z.left + ' кр.' : '');
   return (T[z.z] || ZK[z.z].name) + (z.left != null ? ', ещё ' + z.left + ' кр.' : '');
 }
 
@@ -2608,7 +2625,8 @@ function genDesc(ab) { // описание способности по её оп
     const lose = V.filter(x => x.startsWith('теряет ')); let VV = V;
     if (lose.length > 1) { VV = V.filter(x => !x.startsWith('теряет ')); VV.unshift('теряет ' + lose.map(x => x.slice(7)).join(' и ')); }
     const who = (ab.r >= 99 ? 'Любой соперник' : 'Соперник') + (ab.ahead ? ' впереди' : '') + (ab.r >= 99 ? '' : ' ' + rowsPhrase(ab.rows || 1));
-    out.push(who + ' ' + joinRu(VV) + (vDeb ? (VV.length ? ', а ' : '') + vDeb : '') + '.');
+    if (VV.length) out.push(who + ' ' + joinRu(VV) + (vDeb ? ', а ' + vDeb : '') + '.');
+    else out.push('Герои ' + (ab.r >= 99 ? 'любого соперника' : 'соперника' + (ab.ahead ? ' впереди' : '') + ' ' + rowsPhrase(ab.rows || 1)) + ' теряют по ' + vDeb.split('по ')[1] + '.');
   }
   for (let i = 0; i < G.length; i++) { // соседние удары по одной области — одним предложением
     const g = G[i]; if (g.one) { out.push(cap(g.one) + '.'); continue; }
@@ -2679,7 +2697,7 @@ function genDesc(ab) { // описание способности по её оп
 // ---------- случайная встреча с обычной душой ----------
 function abilityHarm(ab) { return ab.t !== 'none' || (ab.ops || []).some(o => HOSTILE_OPS.has(o.op)); }
 function soulMeet(s, p, k, rnd, battle) { // душа применяет одну из своих способностей; false — способности не подошли
-  const H = HEROES[k]; const NO = new Set(['zone', 'copy', 'equalize', 'duel', 'swapHero', 'shuffleHands', 'orbit', 'silence', 'cleanseAll']);
+  const H = HEROES[k]; const NO = new Set(['zone', 'copy', 'equalize', 'duel', 'swapHero', 'shuffleHands', 'orbit', 'silence', 'cleanseAll', 'portals', 'picks', 'summonFam', 'walkTax', 'flyTrail', 'raiseDead', 'forcedBeasts', 'shuffleSouls', 'paradox', 'vision', 'passFx']);
   let pool = H.ab.filter(a => a.ops && a.t !== 'any' && !a.ops.some(o => NO.has(o.op)));
   if (battle) pool = pool.filter(abilityHarm);
   if (!pool.length) return false;
@@ -2701,10 +2719,238 @@ function soulMeet(s, p, k, rnd, battle) { // душа применяет одн�
   return true;
 }
 
+
+// ===================== Бета 24: Великие по правкам владельца, третья способность у известных и безымянных =====================
+HOSTILE_OPS.add('delayHit'); HOSTILE_OPS.add('areaLock'); HOSTILE_OPS.add('bindT');
+function pickN(arr, n, rnd) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a.slice(0, n); }
+function heroName(k) { return HEROES[k] ? HEROES[k].name : ''; }
+function passCells(from, to) { const out = []; const st = to > from ? 1 : -1; for (let i = from + st; st > 0 ? i <= to : i >= to; i += st) out.push(i); return out; }
+function passFxApply(s, p, from, to) { // «мимо кого пролетишь»: отбросить или взять плату
+  const P = p.st.passFx; if (!P) return; p.st.passFx = null;
+  const cells = passCells(from, to);
+  alive(s).filter(q => q.id !== p.id && cells.includes(q.pos)).forEach(q => {
+    if (P.push) { if (protectHazard(s, q)) return; moveTo(s, q, q.pos - km(P.push), 'back'); }
+    if (P.tax) { const x = Math.min(P.tax, q.souls); if (x) { q.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: q.id, amount: x }); } }
+  });
+}
+function auraPw(p, h) { let b = 0; (p.st && p.st.aura || []).forEach(A => { if ((A.fam && FAM_OF[h.k] === A.fam) || (A.motif && HEROES[h.k] && HEROES[h.k].motif === A.motif)) b += A.pw || 0; }); return b; }
+function auraScale(p, ab, heroKey) { // аура усиливает числа в способностях своих героев
+  const A = (p.st && p.st.aura || []).find(x => x.mul && ((x.fam && FAM_OF[heroKey] === x.fam) || (x.motif && HEROES[heroKey] && HEROES[heroKey].motif === x.motif)));
+  if (!A || !ab.ops) return ab;
+  const NUM = new Set(['souls', 'steal', 'drain', 'stealAll', 'drainAll', 'richest', 'perOpp', 'hand15', 'push', 'pushAll', 'fly', 'catchup', 'jumpTax']);
+  return Object.assign({}, ab, { ops: ab.ops.map(o => { const c = Object.assign({}, o);
+    if (NUM.has(o.op) && typeof o.n === 'number') c.n = Math.round(o.n * A.mul);
+    if (o.per) c.per = Math.round(o.per * A.mul); if (o.tax) c.tax = Math.round(o.tax * A.mul); return c; }) });
+}
+const OPS24 = {
+  burnEach({ s, p, o, a, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; for (let i = 0; i < (o.n || 1); i++) burnRandom(s, v, rnd, heroName(a.heroKey)); }); },
+  burnHandAll({ s, p, a, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; let n = v.hand.length + 2; while (v.hand.length && n-- > 0) burnRandom(s, v, rnd, heroName(a.heroKey)); }); },
+  summonFam({ s, p, o, a, rnd }) {
+    const pool = FAMS[o.fam].m.filter(k => HEROES[k] && k !== a.heroKey && !HEROES[k].great);
+    pickN(pool, o.n, rnd).forEach(k => {
+      if (p.hand.length < HAND) { const h = newHero(k); h.b = (h.b || 0) + (o.plus || 0); p.hand.push(h); fx(s, { t: 'status', p: p.id, msg: HEROES[k].name + ' приходит в руку' }); }
+      else gainN(s, p, 40);
+    });
+  },
+  blindOthers({ s, p, o, victim, opps }) { opps().forEach(q => { if (victim && q.id === victim.id) return; const v = hostileTo(s, p, q); if (!v || v === p || v.st.shades > 0 || noEffect(s, v)) return; v.st.blind = Math.max(v.st.blind, o.n); fx(s, { t: 'status', p: v.id, msg: 'Способности молчат' }); }); },
+  vision({ s, p, o }) { p.st.vision = Math.max(p.st.vision || 0, o.n + 1); fx(s, { t: 'status', p: p.id, msg: 'Видишь руки соперников' }); },
+  drainAhead({ s, p, o, opps }) { opps().forEach(q => { if (q.pos <= p.pos || rowOf(q.pos) - rowOf(p.pos) > o.rows) return; const v = hostileTo(s, p, q); if (!v || v === p) return; loseN(s, v, o.n); }); },
+  clonesHalf({ s, p, o, opps }) { opps().forEach(q => { if (Math.abs(rowOf(q.pos) - rowOf(p.pos)) > o.rows) return; const v = hostileTo(s, p, q); if (!v || v === p) return; const x = Math.floor(v.souls / 2); if (x) { v.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: v.id, amount: x }); } }); },
+  darkAll({ s, p, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; if (addSkip(v, 2)) fx(s, { t: 'status', p: v.id, msg: 'Затмение: пропуск 2 ходов' }); if (!(v.st.shades > 0)) v.st.blind = Math.max(v.st.blind, 3); v.st.dark = 2; v.hand.forEach(h => h.b = (h.b || 0) - 1); }); },
+  lockRand({ s, p, o, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; const n = o.lo + Math.floor(rnd() * (o.hi - o.lo + 1)); pickN(v.hand.filter(h => !(h.lock > 0)), n, rnd).forEach(h => { h.lock = o.left; }); fx(s, { t: 'status', p: v.id, msg: 'Карты закрыты' }); }); },
+  lockEach({ s, p, o, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; const free = v.hand.filter(h => !(h.lock > 0)); if (!free.length) return; const h = free[Math.floor(rnd() * free.length)]; h.lock = o.left; fx(s, { t: 'status', p: v.id, msg: HEROES[h.k].name + ' кристаллизован' }); }); },
+  passFx({ p, o }) { p.st.passFx = { push: o.push || 0, tax: o.tax || 0 }; },
+  noShieldAll({ s, p, o, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; v.st.noShield = o.left; v.st.shield = false; v.st.mirror = false; fx(s, { t: 'status', p: v.id, msg: 'Защиты не работают' }); }); },
+  bindAll({ s, p, o, a, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; v.st.bind = { need: o.need, per: o.per || 0, max: o.max || 0, why: heroName(a.heroKey) }; fx(s, { t: 'status', p: v.id, msg: 'Плен: нужно ' + o.need.join(' или ') }); }); },
+  paradox({ s, p, rnd, opps }) {
+    let taken = 0;
+    opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return;
+      v.hand.forEach(h => { if ((h.b || 0) > 0) h.b = 0; });
+      pickN(v.hand, 2, rnd).forEach(h => { h.b = (h.b || 0) - 3; taken += 3; });
+      fx(s, { t: 'status', p: v.id, msg: 'Парадокс: бонусы сняты' }); });
+    if (taken && p.hand.length) { const each = Math.floor(taken / p.hand.length); let rest = taken - each * p.hand.length; p.hand.forEach(h => { h.b = (h.b || 0) + each + (rest-- > 0 ? 1 : 0); }); fx(s, { t: 'status', p: p.id, msg: 'Сила +' + taken }); }
+  },
+  shuffleSouls({ s, rnd }) { const pl = alive(s); const v = pickN(pl.map(q => q.souls), pl.length, rnd); pl.forEach((q, i) => { q.souls = v[i]; }); fx(s, { t: 'status', p: pl[0].id, msg: 'Очки перемешаны' }); },
+  stealRange({ s, p, o, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; const n = o.lo + Math.floor(rnd() * ((o.hi - o.lo) / 10 + 1)) * 10; const x = Math.min(n, v.souls); if (x) { v.souls -= x; p.souls += x; fx(s, { t: 'steal', p: p.id, from: v.id, amount: x }); } }); },
+  raiseDead({ s, p, rnd, opps }) {
+    opps().forEach(q => { if (q.place) return;
+      const grave = (s.grave || []).filter(k => HEROES[k] && HEROES[k].cls !== 'beast');
+      const k = grave.length ? grave[Math.floor(rnd() * grave.length)] : weightedHero(rnd, false);
+      const pool = HEROES[k].ab.filter(x => x.ops && x.ops.some(o2 => HOSTILE_OPS.has(o2.op)) && !x.ops.some(o2 => o2.op === 'zone'));
+      fx(s, { t: 'status', p: q.id, msg: 'Поднят: ' + HEROES[k].name });
+      if (!pool.length) { loseN(s, q, 60); return; }
+      const x = pool[Math.floor(rnd() * pool.length)];
+      runOps(s, p, { t: x.t, ops: x.ops.filter(o2 => HOSTILE_OPS.has(o2.op)), r: 99 }, { target: x.t !== 'none' ? q.id : null, only: q.id, heroKey: k, noLand: true }, rnd);
+    });
+  },
+  forcedBeasts({ s, p, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; const k = pickBeast(rnd, true); const use = HEROES[k].bx.filter(b => b.harm && !b.offer && !b.hidden && !b.forced && !b.pack && !b.chain).map(b => b.id); if (!use.length) return; forcedFight(s, v, k, { plus: 0, use }, rnd, false); }); },
+  picks({ s, p, o, a, rnd, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return;
+    const ok = i => i >= 0 && i < v.hand.length && (!o.maxPw || cardPower(v, v.hand[i]) <= o.maxPw);
+    let idx = a.picks && a.picks[v.id] != null ? a.picks[v.id] | 0 : -1;
+    if (!ok(idx)) { const c = v.hand.map((h, i) => i).filter(ok); if (!c.length) return; idx = c[Math.floor(rnd() * c.length)]; }
+    burnRandom(s, v, rnd, heroName(a.heroKey), idx); }); },
+  muteAll({ s, p, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; v.hand.forEach(h => { h.mute = true; }); fx(s, { t: 'status', p: v.id, msg: 'Карты онемели' }); }); },
+  aura({ s, p, o }) { p.st.aura = (p.st.aura || []).concat([o.aura]); fx(s, { t: 'status', p: p.id, msg: 'Сила семьи до конца партии' }); },
+  famBuff({ s, p, o }) { let n = 0; p.hand.forEach(h => { if (FAM_OF[h.k] === o.fam) { h.b = (h.b || 0) + o.n; n++; } }); if (n) fx(s, { t: 'status', p: p.id, msg: FAMS[o.fam].name + ' +' + o.n }); },
+  portals({ s, p, a, rnd }) {
+    const from = p.pos, r = km(6); const pool = []; for (let i = Math.max(1, from - r); i <= Math.min(CELLS - 2, from + r); i++) if (i !== from) pool.push(i);
+    const cells = pickN(pool, 8, rnd).sort((x, y) => x - y);
+    s.zid = (s.zid || 0) + 1; s.zones.push({ id: s.zid, z: 'portal', hero: a.heroKey, owner: p.id, cells, left: 4, once: false });
+    fx(s, { t: 'zone', z: 'portal', hero: a.heroKey, owner: p.id, cells });
+    const top = Math.max(...cells); if (top > from) moveTo(s, p, top, 'jump');
+  },
+  walkTax({ s, p, o }) { const from = p.pos; p.st.passFx = { tax: o.tax }; moveTo(s, p, Math.min(CELLS - 1, p.pos + km(o.n)), 'walk'); passFxApply(s, p, from, p.pos); return 'moved'; },
+  flyTrail({ s, p, o, a, rnd }) { const from = p.pos; moveTo(s, p, Math.min(CELLS - 1, p.pos + km(o.n)), 'fly');
+    const cells = pickN(passCells(from, p.pos - 1).filter(i => i > 0), o.cells, rnd).sort((x, y) => x - y);
+    if (cells.length) { s.zid = (s.zid || 0) + 1; const z = { id: s.zid, z: 'trap', hero: a.heroKey, owner: p.id, cells, left: o.left || 4, once: false, tax: o.tax, eff: [], icon: '🌋', nm: 'кошмарный пепел' }; s.zones.push(z); fx(s, { t: 'zone', z: 'trap', hero: a.heroKey, owner: p.id, cells }); }
+    return 'moved'; },
+  reverseN({ s, p, o, opps }) { opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p || noEffect(s, v)) return; v.st.reverse = o.n; fx(s, { t: 'status', p: v.id, msg: 'Броски назад: ' + o.n }); }); },
+  delayHit({ s, p, o, victim }) { if (!victim || victim === p) return; victim.st.delay = (victim.st.delay || []).concat([{ left: o.left, op: 'lose', n: o.n }]); fx(s, { t: 'status', p: victim.id, msg: 'Удар вернётся через ' + o.left + ' круга' }); },
+  areaLock({ s, p, o, rnd, opps }) { opps().forEach(q => { if (!inArea(p.pos, q, o.area)) return; const v = hostileTo(s, p, q); if (!v || v === p) return; loseN(s, v, o.n); applyEff(s, v, [{ op: 'lock', n: o.lock }], { k: p.id, c: p.pos, rnd }); }); },
+  bindT({ s, p, o, a, victim }) { if (!victim || victim === p || noEffect(s, victim)) return; victim.st.bind = { need: o.need, per: 0, why: heroName(a.heroKey) }; fx(s, { t: 'status', p: victim.id, msg: 'Плен: нужно ' + o.need.join(' или ') }); }
+};
+
+// ---------- Великие души (правки владельца) ----------
+{
+  const set = (k, i, name, desc, ops, extra) => { const H = HEROES[k]; const old = H.ab[i] || {}; H.ab[i] = Object.assign({ t: 'none', r: 99 }, old.face ? { face: old.face } : {}, { id: (old.id || k + '_a' + i) + (extra && extra.newId ? '24' : ''), name, desc, ops }, extra || {}); delete H.ab[i].newId; };
+  const add = (k, id, name, desc, ops, extra) => { HEROES[k].ab.push(Object.assign({ id, name, desc, ops, t: 'none', r: 99 }, extra || {})); };
+  add('solarion', 'so_call', 'Зов серафима', 'Призывает в руку двух случайных Ангелов, и каждый получает +3 к силе. Если места в руке нет, за каждого ты получаешь 40 очков.', [{ op: 'summonFam', fam: 'angels', n: 2, plus: 3 }]);
+  set('nexarion', 0, 'Сияющая трансформация', 'Все соперники отлетают на 10 клеток назад.', [{ op: 'pushAll', n: 10 }]);
+  set('nexarion', 1, 'Стирание', 'У всех соперников сгорает вся рука.', [{ op: 'burnHandAll' }], { newId: true });
+  set('nexarion', 2, 'Протокол затмения', 'Все герои всех соперников теряют по 4 силы.', [{ op: 'debuffAll', n: 4 }]);
+  add('nexarion', 'nx_fly', 'Полёт киборга', 'Вместо броска ты перелетаешь на 25 клеток вперёд.', [{ op: 'fly', n: 25 }], { move: true });
+  set('astrael', 2, 'Космический резонанс', 'Герои Космосияния в руке получают +4 к силе, и ты получаешь 150 очков.', [{ op: 'famBuff', fam: 'cosmic', n: 4 }, { op: 'souls', n: 150 }], { newId: true });
+  add('astrael', 'as_portals', 'Открытие порталов', '8 порталов открываются в случайных клетках в пределах 6 клеток вперёд и назад, а ты сразу переносишься на самый дальний портал впереди и потом бросаешь кубики как обычно. Порталы держатся четыре круга: соперник, вставший на портал, переносится в другой случайный портал.', [{ op: 'portals' }]);
+  set('velkar', 0, 'Восемь рук', 'У каждого соперника сгорает по два случайных героя.', [{ op: 'burnEach', n: 2 }]);
+  set('velkar', 1, 'Алый ореол', 'Каждый соперник отдаёт тебе 100 очков, а все их герои теряют по 2 силы.', [{ op: 'stealAll', n: 100 }, { op: 'debuffAll', n: 2 }]);
+  set('velkar', 2, 'Пламя восьми рук', 'Все соперники отлетают на 8 клеток назад и теряют по 70 очков.', [{ op: 'pushAll', n: 8 }, { op: 'drainAll', n: 70 }]);
+  add('velkar', 'vk_hunt', 'Тихая охота', 'Выбранный соперник пропускает два хода, а остальные соперники два круга не могут применять способности.', [{ op: 'skip', n: 2 }, { op: 'blindOthers', n: 2 }], { t: 'enemy' });
+  set('eonarch', 1, 'Взгляд вечности', 'Четыре круга ты видишь карты в руках соперников, а соперники впереди в пределах 5 этажей теряют по 40 очков.', [{ op: 'vision', n: 4 }, { op: 'drainAhead', rows: 5, n: 40 }]);
+  add('eonarch', 'eo_clones', 'Вызов клонов', 'Клоны настигают соперников в пределах 3 этажей от тебя, и каждый отдаёт тебе половину своих очков.', [{ op: 'clonesHalf', rows: 3 }]);
+  set('eklipsar', 0, 'Полное затмение', 'Два круга у соперников чёрный экран, и они пропускают ходы. Потом ещё круг они не могут применять способности, а все их герои теряют по 1 силы.', [{ op: 'darkAll' }]);
+  set('eklipsar', 1, 'Тёмная орбита', 'Вместо броска ты перелетаешь на 20 клеток вперёд.', [{ op: 'fly', n: 20 }], { move: true });
+  add('eklipsar', 'ek_ray', 'Луч затмения', 'У каждого соперника сгорает случайная карта.', [{ op: 'burnEach', n: 1 }]);
+  add('veylor', 'vy_aura', 'Сжатая аура', 'У каждого соперника закрываются от 1 до 3 случайных карт на четыре круга: их нельзя применить, и их сила не считается в бою.', [{ op: 'lockRand', lo: 1, hi: 3, left: 4 }]);
+  set('rainbowwarrior', 0, 'Радужный клинок', 'У каждого соперника сгорает по два случайных героя.', [{ op: 'burnEach', n: 2 }]);
+  set('rainbowwarrior', 1, 'Звёздная буря', 'Следующий бросок делается тремя кубиками, тебя защищают щит и зеркало, а все, мимо кого ты пройдёшь этим броском, отлетают на 5 клеток назад.', [{ op: 'dice3' }, { op: 'shield' }, { op: 'mirror' }, { op: 'passFx', push: 5 }]);
+  set('rainbowwarrior', 2, 'Разрез небес', 'Все соперники отлетают на 6 клеток назад, их герои теряют по 1 силы, и три круга у них не работают щиты, зеркала и другие защиты.', [{ op: 'pushAll', n: 6 }, { op: 'debuffAll', n: 1 }, { op: 'noShieldAll', left: 3 }]);
+  set('iceherald', 0, 'Ледяной нимб', 'Все соперники замерзают и стоят, пока на кубике не выпадет 3 или пока эффект не снимут способностью. Дольше трёх кругов заморозка не держится.', [{ op: 'bindAll', need: [3], max: 3 }]);
+  set('iceherald', 1, 'Ветер бездны', 'Два круга соперники не могут применять способности, и следующий бросок каждого соперника ведёт назад.', [{ op: 'blind', n: 2 }, { op: 'reverse' }]);
+  set('iceherald', 2, 'Вечная мерзлота', 'Любой соперник попадает в долгий плен (стоит, пока на кубике не выпадет 6) и четыре своих хода отдаёт тебе по 40 очков.', [{ op: 'bind', need: [6] }, { op: 'mark', per: 40, left: 4 }], { t: 'enemy' });
+  add('iceherald', 'ih_ice', 'Всевидящий лёд', '15 случайных клеток на 6 следующих этажах замерзают на четыре круга: их обычные свойства пропадают. Соперник, остановившийся на такой клетке, замерзает (стоит, пока на кубике не выпадет 3 или 4) и отдаёт тебе 30 очков.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 6, n: 15 }], left: 4, tax: 30, blank: true, icon: '❄', name: 'замёрзшая клетка', eff: [{ op: 'bind', need: [3, 4], why: 'всевидящий лёд' }] }]);
+  set('crownlord', 0, 'Корона порядка', 'Со всех снимаются вредные эффекты, с поля — метки, затмение рассеивается, а за это каждый соперник платит тебе 100 очков.', [{ op: 'cleanseAll' }, { op: 'stealAll', n: 100 }]);
+  add('crownlord', 'cr_paradox', 'Парадокс', 'Все бонусы к силе у героев соперников отменяются, а у двух случайных героев каждого соперника забирается ещё по 3 силы. Вся забранная сила делится поровну между твоими героями.', [{ op: 'paradox' }]);
+  set('abysscrystal', 0, 'Кристальные кости', 'Ты получаешь 100 очков и сам выбираешь, сколько выпадет на кубиках.', [{ op: 'souls', n: 100 }, { op: 'bless' }], { p: 'die' });
+  set('abysscrystal', 2, 'Расколотая удача', 'Каждый соперник отдаёт тебе случайно от 60 до 180 очков.', [{ op: 'stealRange', lo: 60, hi: 180 }]);
+  add('abysscrystal', 'ac_lands', 'Расколотые земли', '12 случайных клеток на 7 следующих этажах кристаллизуются на четыре круга. Соперник, остановившийся на такой клетке, кристаллизуется (стоит, пока на кубике не выпадет 4 или 5), отдаёт тебе 40 очков, и с ним случается одно из трёх: все его герои теряют по 2 силы, или два круга не работают его карты, или, выбравшись, он отступает на 5 клеток.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 7, n: 12 }], left: 4, tax: 40, icon: '💎', name: 'расколотая земля', eff: [{ op: 'bind', need: [4, 5], why: 'расколотые земли' }, { op: 'oneOf', opts: [[{ op: 'debuffAll', n: 2 }], [{ op: 'lockAll', n: 2 }], [{ op: 'bindAfter', n: 5 }]] }] }]);
+  set('divineguard', 2, 'Небесный суд', 'Ты вырываешь случайного героя у одного соперника и забираешь себе, самый богатый соперник отдаёт тебе 120 очков, а все герои всех соперников теряют по 1 силы.', [{ op: 'takeHeroes', n: 1 }, { op: 'richest', n: 120 }, { op: 'debuffAll', n: 1 }]);
+  add('divineguard', 'dg_fall', 'Вызов падения', 'Руки всех игроков, включая твою, перемешиваются, очки всех игроков тоже перемешиваются, а затем каждый соперник отдаёт тебе 50 очков.', [{ op: 'shuffleHands' }, { op: 'shuffleSouls' }, { op: 'stealAll', n: 50 }]);
+  set('neonreaper', 2, 'Зелёное пламя', 'Каждый соперник отдаёт тебе 80 очков, а зелёное пламя занимает 8 случайных клеток на 4 следующих этажах на четыре круга: соперник, остановившийся там, теряет 100 очков.', [{ op: 'stealAll', n: 80 }, { op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 4, n: 8 }], left: 4, icon: '🔥', name: 'зелёное пламя', eff: [{ op: 'lose', n: 100 }] }]);
+  add('neonreaper', 'nr_dead', 'Призыв мёртвых', 'На каждого соперника поднимается случайный герой из сгоревших в этой партии и применяет против него свою способность. Если сгоревших ещё нет, поднимается случайная душа.', [{ op: 'raiseDead' }]);
+  set('astralkeeper', 0, 'Руны времени', 'Все соперники пропускают ход, и два следующих броска каждого из них ведут назад.', [{ op: 'skipNear', r: 999 }, { op: 'reverseN', n: 2 }]);
+  add('astralkeeper', 'ak_marks', 'Метки уничтожения', '13 меток в случайных клетках на 6 следующих этажах на четыре круга. Соперник на метке отдаёт тебе 100 очков, а все его герои теряют по 2 силы.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 6, n: 13 }], left: 4, tax: 100, icon: '☄', name: 'метка уничтожения', eff: [{ op: 'debuffAll', n: 2 }] }]);
+  set('vulkarot', 0, 'Алое затмение', 'Два круга соперники не могут применять способности и теряют по 60 очков, а твои Охотники в руке получают +2 к силе.', [{ op: 'blind', n: 2 }, { op: 'drainAll', n: 60 }, { op: 'famBuff', fam: 'hunters', n: 2 }]);
+  add('vulkarot', 'vu_ash', 'Пепельный полёт', 'Вместо броска ты перелетаешь на 17 клеток вперёд и оставляешь за собой 4 клетки кошмарного пепла на четыре круга: соперник на пепле отдаёт тебе 60 очков.', [{ op: 'flyTrail', n: 17, cells: 4, tax: 60, left: 4 }], { move: true });
+  set('nightmareangel', 0, 'Крик двух ликов', 'Два круга соперники не могут применять способности, и каждый теряет 100 очков.', [{ op: 'blind', n: 2 }, { op: 'drainAll', n: 100 }]);
+  add('nightmareangel', 'na_scream', 'Крик смерти', 'Все карты, которые сейчас в руках соперников, навсегда теряют способности: в бою их сила считается, но применить их нельзя.', [{ op: 'muteAll' }]);
+  set('emeraldabyss', 1, 'Корни бездны', 'Каждый соперник отдаёт тебе 100 очков, а все их герои теряют по 2 силы.', [{ op: 'stealAll', n: 100 }, { op: 'debuffAll', n: 2 }]);
+  add('emeraldabyss', 'ea_vines', 'Изумрудные лозы', '14 лоз в случайных клетках на четыре круга: 7 на 4 этажа вверх и 7 на 4 этажа вниз. Соперник на лозе отдаёт тебе 60 очков, а потом четыре своих хода теряет ещё по 40, 30, 20 и 10.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 4, n: 7 }, { a: -4, b: -1, n: 7 }], left: 4, tax: 60, icon: '🌿', name: 'изумрудная лоза', eff: [{ op: 'poison', per: 40, left: 4, dec: 10 }] }]);
+  HEROES.divineeye.seeHands = true;
+  HEROES.divineeye.ab[0].desc = 'Пока эта карта у тебя в руке, ты видишь руки всех соперников. Если применить её, два круга соперники не могут применять способности, и каждый отдаёт тебе 60 очков.';
+  add('divineeye', 'de_ruin', 'Око разрушений', 'У каждого соперника ты сам выбираешь одну карту из его руки, и она сгорает.', [{ op: 'picks' }], { p: 'picks' });
+  set('eldritchserpent', 0, 'Лунный туман', 'Все соперники пропускают ход и отлетают на 5–10 клеток назад.', [{ op: 'skipNear', r: 999 }, { op: 'pushAll', n: [5, 10] }]);
+  add('eldritchserpent', 'es_dread', 'Вестник ужаса', 'Каждый соперник обязан сразиться со случайной тварью подземелья. Победил — отбился. Проиграл — тварь бьёт его одной из своих способностей.', [{ op: 'forcedBeasts' }]);
+  set('thousandeyegod', 0, 'Тысяча взглядов', 'У каждого соперника сгорает случайный герой, и каждый теряет 88 очков.', [{ op: 'burnAll' }, { op: 'drainAll', n: 88 }]);
+  add('thousandeyegod', 'te_rays', 'Сияющие лучи', 'У каждого соперника ты сам выбираешь одного героя с силой не больше 6, и он сгорает.', [{ op: 'picks', maxPw: 6 }], { p: 'picks', maxPw: 6 });
+  set('infernallord', 2, 'Пылающий нимб', 'Тебя защищает щит, все герои в руке получают +2 к силе, и 4 ловушки или встречи тебя не тронут.', [{ op: 'shield' }, { op: 'buff', n: 2 }, { op: 'stone', n: 4 }]);
+  add('infernallord', 'il_rain', 'Огненный дождь', '14 огненных клеток на четыре круга: 7 случайных на 3 этажа вперёд и 7 на 3 этажа назад. Соперник на такой клетке теряет 50 очков, и у него сгорает случайная карта.', [{ op: 'zone', z: 'trap', shape: 'scatter', groups: [{ a: 1, b: 3, n: 7 }, { a: -3, b: -1, n: 7 }], left: 4, icon: '🔥', name: 'огненный дождь', eff: [{ op: 'lose', n: 50 }, { op: 'burn' }] }]);
+  set('livingmountain', 2, 'Шаг великана', 'Вместо броска ты проходишь 18 клеток пешком: ловушки и стены по пути действуют, а каждый соперник, мимо которого ты прошёл, отдаёт тебе 120 очков.', [{ op: 'walkTax', n: 18, tax: 120 }], { move: true });
+  add('livingmountain', 'lm_forest', 'Сердце леса', 'До конца партии твои Лесные хранители сильнее на 3: и те, что в руке, и те, что придут потом. Все герои всех соперников теряют по 2 силы.', [{ op: 'aura', aura: { fam: 'forest', pw: 3 } }, { op: 'debuffAll', n: 2 }]);
+  set('crystallord', 2, 'Кристаллизация', 'У каждого соперника случайная карта кристаллизуется и становится бесполезной: её не применить, и её сила не считается в бою. Снять это может только очищение.', [{ op: 'lockEach', left: 999 }]);
+  add('crystallord', 'cl_shine', 'Кристальное сияние', 'До конца партии твои кристальные герои сильнее на 2, а все числа в их способностях больше в полтора раза.', [{ op: 'aura', aura: { motif: 'crystal', pw: 2, mul: 1.5 } }]);
+  add('cosmictitan', 'ct_freeze', 'Замерзающее дыхание', 'Все соперники сразу теряют 70 очков и замерзают: стоят, пока на кубике не выпадет 4 или 5, и каждый круг в заморозке теряют ещё по 70.', [{ op: 'drainAll', n: 70 }, { op: 'bindAll', need: [4, 5], per: 70 }]);
+  add('astrolabeguard', 'ag_sphere', 'Сфера созвездий', 'До конца партии твои герои Космосияния сильнее на 3, а числа в их способностях больше в полтора раза. Все герои всех соперников теряют по 2 силы.', [{ op: 'aura', aura: { fam: 'cosmic', pw: 3, mul: 1.5 } }, { op: 'debuffAll', n: 2 }]);
+}
+
+// ---------- известные и безымянные: правки, показанные владельцу ----------
+{
+  const H = HEROES;
+  const trap = (name, rows, n, eff, opts) => Object.assign({ op: 'zone', z: 'trap', shape: 'scatter', groups: rows.map(g => ({ a: g[0], b: g[1], n: g[2] || n })), left: 4, eff, name }, opts || {});
+  H.zefir.ab[0].desc = 'Сдвигает любого игрока на 2–6 клеток вперёд или назад.';
+  H.zefir.ab[1].ops = [{ op: 'souls', n: 85 }, { op: 'shield' }]; H.zefir.ab[1].desc = genDesc(H.zefir.ab[1]);
+  H.zefir.ab.push({ id: 'zf_winds', name: 'Ветряные потоки', t: 'none', r: 99, desc: '6 клеток с ветром ложатся случайно по 2 следующим этажам на четыре круга. Встанешь на такую сам — ветер несёт тебя на 5 клеток вперёд. Встанет соперник — отбрасывает его на 5 клеток назад.', ops: [trap('ветряной поток', [[1, 2]], 6, [{ op: 'back', n: 5 }], { own: [{ op: 'fwd', n: 5 }], icon: '🌬' })] });
+  H.rak.ab[0].ops = [{ op: 'skip' }, { op: 'drain', n: 40 }]; H.rak.ab[0].desc = genDesc(H.rak.ab[0]);
+  H.rak.ab[1].desc = 'Вместо броска вперёд кубик бросается, и ты идёшь назад, но каждый соперник, мимо которого прошёл, отдаёт тебе 40 очков.';
+  H.rak.ab[2].ops = [{ op: 'shield' }, { op: 'stone', n: 2 }]; H.rak.ab[2].desc = genDesc(H.rak.ab[2]);
+  H.arkarion.ab[0].ops = [{ op: 'gallop' }, { op: 'passFx', tax: 30 }]; H.arkarion.ab[0].desc = 'Следующий бросок удваивается, и каждый соперник, мимо которого проскачешь, отдаёт тебе 30 очков.';
+  H.arkarion.ab.push({ id: 'ak_spear', name: 'Копьё кочевника', t: 'enemy', r: 3, rows: 2, ops: [{ op: 'push', n: 6 }, { op: 'drain', n: 40 }] }); H.arkarion.ab[2].desc = genDesc(H.arkarion.ab[2]);
+  H.nairel.ab.push({ id: 'nr_rain', name: 'Дождь стрел', t: 'none', r: 99, desc: '5 клеток со стрелами ложатся случайно по 3 следующим этажам на четыре круга. Соперник, остановившийся на такой клетке, отлетает на 6 клеток назад и теряет 30 очков.', ops: [trap('лунная стрела', [[1, 3]], 5, [{ op: 'lose', n: 30 }, { op: 'back', n: 6 }], { icon: '🏹' })] });
+  H.moonwitch.ab[0].ops = [{ op: 'debuff', n: 2 }, { op: 'poison', per: 20, left: 2 }, { op: 'souls', n: 40 }]; H.moonwitch.ab[0].desc = 'Герои любого соперника теряют по 2 силы, он два своих хода теряет по 20 очков, а ты получаешь 40.';
+  H.moonwitch.ab.push({ id: 'mw_circles', name: 'Ведьмины круги', t: 'none', r: 99, desc: '4 светящихся круга ложатся случайно на твоём этаже и соседних на четыре круга. Соперник, вставший в такой круг, два круга не может применять способности.', ops: [trap('ведьмин круг', [[-1, 1]], 4, [{ op: 'blind', n: 2 }], { icon: '◎' })] });
+  H.demonshade.ab.push({ id: 'ds_trail', name: 'Теневой след', t: 'none', r: 99, desc: '4 клетки тени ложатся случайно на твоём этаже и этаже ниже на четыре круга. Соперник на тени пропускает ход и отдаёт тебе 30 очков.', ops: [trap('теневой след', [[-1, 0]], 4, [{ op: 'skip' }], { tax: 30, icon: '🌑' })] });
+  H.cosmicreaper.ab.push({ id: 'cr_late', name: 'Отложенная жатва', t: 'enemy', r: 9, rows: 2, desc: 'Соперник в пределах двух этажей от тебя через два круга теряет 80 очков, и это не снять щитом.', ops: [{ op: 'delayHit', left: 2, n: 80 }] });
+  H.waterwarden.ab.push({ id: 'ww_bubble', name: 'Звёздный пузырь', t: 'enemy', r: 4, rows: 1, desc: 'Соперник на твоём этаже или соседних попадает в водяной пузырь и стоит, пока на кубике не выпадет 1 или 6.', ops: [{ op: 'bindT', need: [1, 6] }] });
+  HEROES.__done24 = { zefir: 1, rak: 1, arkarion: 1, nairel: 1, moonwitch: 1, demonshade: 1, cosmicreaper: 1, waterwarden: 1 };
+}
+
+// ---------- остальные известные и безымянные: третья способность по своему мотиву (вызывается после раздачи мотивов) ----------
+function b24Templates() {
+  const done = HEROES.__done24; delete HEROES.__done24;
+  const TRAP = { // мотив → [эффект на сопернике, текст, значок, названия]
+    fire: [[{ op: 'lose', n: 40 }, { op: 'lock', n: 1 }], 'теряет 40 очков, и одна его карта круг не работает', '🔥', ['Тлеющие угли', 'Огненные следы', 'Искры пепла', 'Жаркие метки']],
+    water: [[{ op: 'bind', need: [1, 6], why: 'водоворот' }], 'попадает в пузырь и стоит, пока на кубике не выпадет 1 или 6', '🫧', ['Водовороты', 'Омуты', 'Пузыри глубин', 'Течения']],
+    crystal: [[{ op: 'bind', need: [2, 5], per: 15, why: 'кристаллы' }], 'кристаллизуется: стоит и теряет по 15 очков за ход, пока на кубике не выпадет 2 или 5', '💠', ['Кристальные иглы', 'Осколки', 'Хрустальные капканы', 'Друзы']],
+    claw: [[{ op: 'lose', n: 40 }, { op: 'back', n: 4 }], 'теряет 40 очков и отлетает на 4 клетки назад', '🐾', ['Капканы', 'Когтистые ловушки', 'Звериные следы', 'Засечки когтей']],
+    blood: [[{ op: 'poison', per: 25, left: 3 }], 'три своих хода теряет по 25 очков', '🩸', ['Кровавые знаки', 'Багровые капли', 'Алые печати', 'Следы крови']],
+    smoke: [[{ op: 'blind', n: 2 }], 'два круга не может применять способности', '🌫', ['Дымные завесы', 'Туманные пятна', 'Морок', 'Чадящие метки']],
+    void: [[{ op: 'back', n: 6 }], 'проваливается на 6 клеток назад', '🕳', ['Пустотные прорехи', 'Чёрные дыры', 'Разрывы', 'Провалы']],
+    star: [[{ op: 'lose', n: 40 }, { op: 'half' }], 'теряет 40 очков, и его следующий бросок вдвое короче', '✶', ['Звёздные метки', 'Осколки звёзд', 'Созвездия', 'Падучие звёзды']],
+    feather: [[{ op: 'back', n: 5 }], 'отлетает на 5 клеток назад', '🪶', ['Перья ветра', 'Вихри', 'Ветряные петли', 'Пух бури']],
+    petal: [[{ op: 'skip' }, { op: 'poison', per: 15, left: 2 }], 'пропускает ход и два своих хода теряет по 15 очков', '🌸', ['Шипы роз', 'Цветочные путы', 'Пыльца', 'Лепестковые ловушки']],
+    rock: [[{ op: 'skip' }, { op: 'lose', n: 30 }], 'пропускает ход и теряет 30 очков', '🪨', ['Каменные ловушки', 'Осыпи', 'Валуны', 'Трещины']],
+    eye: [[{ op: 'lock', n: 2 }], 'на два круга лишается одной карты: её не применить, и сила не считается', '👁', ['Очи стражи', 'Следящие знаки', 'Взгляды', 'Глаза-ловушки']],
+    card: [[{ op: 'debuffOne', n: 2 }], 'теряет 2 силы у случайного героя', '🃏', ['Фальшивые тузы', 'Ловушки фокусника', 'Масти', 'Карточные капканы']]
+  };
+  const DELAY = { fire: 'Тлеющая рана', water: 'Прилив беды', crystal: 'Трещина', claw: 'Глубокая рана', blood: 'Кровоточащая метка', smoke: 'Ядовитый дым', void: 'Зов пустоты', star: 'Падающая звезда', feather: 'Буря издалека', petal: 'Отравленный бутон', rock: 'Камнепад', eye: 'Дурной глаз', card: 'Отложенный фокус' };
+  const BIND = { fire: 'Огненные оковы', water: 'Пузырь', crystal: 'Кристальная клетка', claw: 'Хватка', blood: 'Кровавые путы', smoke: 'Дымные путы', void: 'Пустотные оковы', star: 'Звёздная клетка', feather: 'Вихрь-ловушка', petal: 'Лианы', rock: 'Каменный плен', eye: 'Оцепенение', card: 'Запертый фокус' };
+  const LOCKN = { fire: 'Вспышка', water: 'Волна', crystal: 'Звон кристаллов', claw: 'Рёв', blood: 'Кровавый всплеск', smoke: 'Дымовой удар', void: 'Выдох пустоты', star: 'Звёздный всплеск', feather: 'Порыв', petal: 'Облако пыльцы', rock: 'Удар оземь', eye: 'Ослепляющий взгляд', card: 'Тасовка' };
+  const PAIRS = [[1, 6], [2, 5], [3, 4], [1, 5], [2, 6]];
+  const ROWS = [[[1, 2]], [[1, 3]], [[-1, 1]]], ROWT = ['по 2 следующим этажам', 'по 3 следующим этажам', 'на твоём этаже и соседних'];
+  const AREAS = [{ k: 'cross', n: 3 }, { k: 'square', n: 2 }, { k: 'row' }];
+  Object.keys(HEROES).forEach(k => {
+    const H = HEROES[k]; if (H.great || ['beast', 'boss'].includes(H.cls) || done[k]) return;
+    // небольшие усиления: голый толчок или пропуск — плюс урон, голые очки — плюс щит
+    H.ab.forEach(ab => { if (!ab.ops || ab.ops.some(o => o.op === 'zone')) return;
+      if (ab.t !== 'none' && ab.ops.length === 1 && ['push', 'skip'].includes(ab.ops[0].op)) { ab.ops.push({ op: 'drain', n: 40 }); ab.desc = genDesc(ab); }
+      else if (ab.t === 'none' && ab.ops.length === 1 && ab.ops[0].op === 'souls') { ab.ops.push({ op: 'shield' }); ab.desc = genDesc(ab); } });
+    if (H.ab.length >= 3) return;
+    const m = TRAP[H.motif] ? H.motif : 'claw'; const hs = strHash(k + ':24'); const fam = FAM_OF[k];
+    let kind = hs % 20; kind = kind < 10 ? 'trap' : kind < 13 ? 'delay' : kind < 16 ? 'bind' : kind < 18 && fam ? 'aura' : 'lock';
+    if (kind === 'trap') {
+      const T = TRAP[m], ri = hs % 3, n = 4 + (hs >>> 3) % 4, tax = (hs >>> 5) % 2 ? 30 : 0;
+      const own = m === 'feather' ? [{ op: 'fwd', n: 5 }] : null;
+      H.ab.push({ id: k + '_t24', name: T[3][(hs >>> 7) % 4], t: 'none', r: 99,
+        desc: n + ' ' + (n < 5 ? 'клетки' : 'клеток') + ' с ловушками ложатся случайно ' + ROWT[ri] + ' на четыре круга. Соперник, остановившийся на такой клетке, ' + T[1] + '.' + (tax ? ' Ещё он отдаёт тебе ' + tax + ' очков.' : '') + (own ? ' Тебя самого такая клетка несёт на 5 клеток вперёд.' : ''),
+        ops: [{ op: 'zone', z: 'trap', shape: 'scatter', groups: ROWS[ri].map(g => ({ a: g[0], b: g[1], n })), left: 4, eff: T[0], tax, own, icon: T[2], name: T[3][(hs >>> 7) % 4].toLowerCase() }] });
+    } else if (kind === 'delay') {
+      H.ab.push({ id: k + '_d24', name: DELAY[m], t: 'enemy', r: 9, rows: 2, desc: 'Соперник в пределах двух этажей от тебя через два круга теряет 80 очков, и это не снять щитом.', ops: [{ op: 'delayHit', left: 2, n: 80 }] });
+    } else if (kind === 'bind') {
+      const pr = PAIRS[hs % PAIRS.length];
+      H.ab.push({ id: k + '_b24', name: BIND[m], t: 'enemy', r: 4, rows: 1, desc: 'Соперник на твоём этаже или соседних попадает в плен и стоит, пока на кубике не выпадет ' + pr.join(' или ') + ', а ты получаешь 30 очков.', ops: [{ op: 'bindT', need: pr }, { op: 'souls', n: 30 }] });
+    } else if (kind === 'aura') {
+      H.ab.push({ id: k + '_a24', name: 'Зов семьи', t: 'none', r: 99, desc: 'До конца партии герои семьи «' + FAMS[fam].name + '» в твоей руке сильнее на 1, и те, что придут потом, тоже. Ты получаешь 40 очков.', ops: [{ op: 'aura', aura: { fam, pw: 1 } }, { op: 'souls', n: 40 }] });
+    } else {
+      const A = AREAS[hs % AREAS.length];
+      H.ab.push({ id: k + '_l24', name: LOCKN[m], t: 'none', r: 99, desc: 'Соперники ' + areaPhrase(A) + ' теряют по 30 очков, и у каждого одна случайная карта круг не работает.', ops: [{ op: 'areaLock', area: A, n: 30, lock: 1 }] });
+    }
+  });
+}
+
 // Великих стало 11, поэтому каждая выпадает реже: вместе они дают около 3% призывов
 Object.keys(HEROES).forEach(k => { if (HEROES[k].great) HEROES[k].w = 1.2; });
 const MOTIF = { zefir: 'feather', rak: 'water', arkarion: 'rock', nairel: 'star', lilia: 'petal', grombor: 'rock', noktis: 'star', kaisei: 'claw', mirazh: 'crystal', erevion: 'fire', verdan: 'petal', eiriya: 'feather', soleria: 'feather', solarion: 'feather', nexarion: 'void', astrael: 'star' };
 for (const k in MOTIF) HEROES[k].motif = MOTIF[k];
+b24Templates(); // бета 24: третья способность по мотиву героя
 Object.assign(WILD, {
   emerion: { skip: 1, msg: 'запирает в кристалл' }, auriella: { back: 3, msg: 'сбивает крыльями' }, elian: { back: 4, msg: 'отбрасывает судом' },
   nerissa: { souls: 40, msg: 'крадёт очки в тени' }, veyron: { souls: 40, msg: 'выкачивает энергию' }, kardein: { burn: 1, msg: 'сжигает героя кровавым пламенем' },
@@ -2740,6 +2986,7 @@ function applyWild(s, victim, foe, rnd) {
 }
 function hostileTo(s, p, q) { const r = defend(s, p, q); if (r === 'blocked') return null; return r === 'mirror' ? p : q; }
 function runOps(s, p, ab, a, rnd, viaCopy) {
+  if (p.st && p.st.aura) ab = auraScale(p, ab, a.heroKey);
   const tgt0 = a.target ? s.players.find(q => q.id === a.target) : null;
   let victim = tgt0;
   if (tgt0 && tgt0.id !== p.id) { victim = hostileTo(s, p, tgt0); if (!victim) return 'done'; }
@@ -2761,7 +3008,7 @@ function runOps(s, p, ab, a, rnd, viaCopy) {
       case 'up': moveTo(s, p, cellAbove(p.pos), 'fly'); moved = true; break;
       case 'catchup': { const ahead = opps().filter(q => q.pos > p.pos).sort((x, y) => x.pos - y.pos)[0]; const to = ahead ? Math.min(ahead.pos, p.pos + km(o.n)) : p.pos + km(4); moveTo(s, p, to, 'fly'); moved = true; break; }
       case 'push': moveTo(s, victim, victim.pos - km(o.n) - famPush(p), 'back'); break;
-      case 'pushAll': opps().forEach(q => { if (out(o, q)) return; const v = hostileTo(s, p, q); if (!v) return; moveTo(s, v, v.pos - km(o.n === 'd6' ? d(6, rnd) : o.n) - famPush(p), 'back'); }); break;
+      case 'pushAll': opps().forEach(q => { if (out(o, q)) return; const v = hostileTo(s, p, q); if (!v) return; moveTo(s, v, v.pos - km(Array.isArray(o.n) ? o.n[0] + Math.floor(rnd() * (o.n[1] - o.n[0] + 1)) : o.n === 'd6' ? d(6, rnd) : o.n) - famPush(p), 'back'); }); break;
       case 'pull': { if (victim === p) break; moveTo(s, victim, p.pos, 'back'); break; }
       case 'skip': if (addSkip(victim, o.n || 1)) fx(s, { t: 'status', p: victim.id, msg: (o.n || 1) > 1 ? 'Пропуск ' + o.n + ' ходов' : 'Пропуск хода' }); else fx(s, { t: 'status', p: victim.id, msg: 'Тёмные очки!' }); break;
       case 'skipNear': opps().forEach(q => { if (out(o, q)) return; const v = hostileTo(s, p, q); if (!v) return; if (addSkip(v, 1)) fx(s, { t: 'status', p: v.id, msg: 'Пропуск хода' }); }); break;
@@ -2785,6 +3032,7 @@ function runOps(s, p, ab, a, rnd, viaCopy) {
       case 'poisonAll': opps().forEach(q => { if (out(o, q)) return; const v = hostileTo(s, p, q); if (!v || v === p) return; v.st.poison = { left: o.left + famLv(p, 'bloodcathedral'), per: o.per + [0, 0, 10, 15][famLv(p, 'bloodcathedral')] }; fx(s, { t: 'status', p: v.id, msg: 'Яд' }); }); break;
       case 'place': if (p.pos > 0) s.marks[p.pos] = { type: o.mark, owner: p.id }; break;
       case 'zone': placeZone(s, o, p.pos, p.id, a.heroKey, rnd); break;
+      default: if (OPS24[o.op]) { if (OPS24[o.op]({ s, p, o, a, rnd, victim, opps }) === 'moved') moved = true; } break;
       case 'equalize': { if (victim === p) break; const sum = p.souls + victim.souls; const half = Math.floor(sum / 2); fx(s, { t: 'equalize', a: p.id, b: victim.id, from: [p.souls, victim.souls], to: half }); p.souls = sum - half; victim.souls = half; break; }
       case 'swapHero': { if (victim === p || !p.hand.length || !victim.hand.length) break; const i = Math.floor(rnd() * p.hand.length), j = Math.floor(rnd() * victim.hand.length); const t = p.hand[i]; p.hand[i] = victim.hand[j]; victim.hand[j] = t; fx(s, { t: 'heroSwap', a: p.id, b: victim.id, ga: p.hand[i].k, gb: victim.hand[j].k }); break; }
       case 'cleanseSelf': clearBad(p); break;
@@ -2846,6 +3094,7 @@ function land(s, p, rnd, depth) {
   syncZoneFlags(s);
   if (s.zones && s.zones.length) { const zr = zoneStop(s, p, rnd); if (zr === 'moved' || p.place) { afterLand(s, p); return; } c = B.cells[p.pos]; }
   if (s.blank && s.blank[p.pos]) c = { id: p.pos, type: 'empty' };
+  if (s.zones && s.zones.some(z => z.blank && z.cells.includes(p.pos))) c = { id: p.pos, type: 'empty' };
   if (s.zones && s.zones.length && zoneBonusBlock(s, p, c.type)) c = { id: p.pos, type: 'empty' };
   const mk = s.marks[p.pos];
   if (mk && mk.owner !== p.id) {
@@ -2958,7 +3207,7 @@ function finish(s, p) {
 
 function tickOwn(q) { // свои таймеры игрока убывают в конце его хода (или пропуска)
   if (q.st.slow && --q.st.slow.left <= 0) q.st.slow = null;
-  if (q.st.noShield > 0) q.st.noShield--; if (q.st.immune > 0) q.st.immune--; if (q.st.aegis > 0) q.st.aegis--;
+  if (q.st.noShield > 0) q.st.noShield--; if (q.st.immune > 0) q.st.immune--; if (q.st.aegis > 0) q.st.aegis--; if (q.st.vision > 0) q.st.vision--; if (q.st.dark > 0) q.st.dark--;
   (q.hand || []).forEach(h => { if (h.lock > 0) h.lock--; });
 }
 function endTurn(s) {
@@ -3013,8 +3262,8 @@ function runAbility(s, p, ab, a, rnd, viaCopy) {
   }
   const others = () => alive(s).filter(q => q.id !== p.id);
   switch (ab.id) {
-    case 'gust': { const n = Math.max(1, Math.min(3, Math.abs(a.amount | 0) || 1)) * (a.dir === -1 ? -1 : 1); moveTo(s, victim, victim.pos + n, n > 0 ? 'jump' : 'back'); if (victim.pos >= CELLS - 1) finish(s, victim); break; }
-    case 'sidestep': { const v = d(6, rnd); fx(s, { t: 'dice', p: p.id, value: v, dice: [v], steps: v }); moveTo(s, p, p.pos - v, 'back'); land(s, p, rnd); return 'moved'; }
+    case 'gust': { const n = Math.max(2, Math.min(6, Math.abs(a.amount | 0) || 2)) * (a.dir === -1 ? -1 : 1); moveTo(s, victim, victim.pos + n, n > 0 ? 'jump' : 'back'); if (victim.pos >= CELLS - 1) finish(s, victim); break; }
+    case 'sidestep': { const v = d(6, rnd); fx(s, { t: 'dice', p: p.id, value: v, dice: [v], steps: v }); const from = p.pos; p.st.passFx = { tax: 40 }; moveTo(s, p, p.pos - v, 'back'); passFxApply(s, p, from, p.pos); land(s, p, rnd); return 'moved'; }
     case 'revive': { if (p.lastBurned && p.hand.length < HAND) { const k = p.lastBurned; p.hand.push(newHero(k)); p.lastBurned = null; fx(s, { t: 'revive', p: p.id, hero: k }); } else { p.souls += 40; fx(s, { t: 'gain', p: p.id, amount: 40 }); } break; }
     case 'copy': {
       const la = s.lastAb; if (!la || la.by === p.id || la.ab === 'copy' || viaCopy) { p.souls += 40; fx(s, { t: 'gain', p: p.id, amount: 40 }); break; }
@@ -3035,7 +3284,7 @@ function useAbility(s, p, a, rnd) {
   if (abilityBlocked(s, p)) return false;
   const idx = p.hand.findIndex(h => h.u === a.u); if (idx < 0) return false;
   const h = p.hand[idx]; const H = HEROES[h.k]; const ab = H.ab.find(x => x.id === a.ab); if (!ab) return false;
-  if (h.lock > 0 || (p.st.shadowMark && FAM_OF[h.k] === 'shadows')) return false;
+  if (h.lock > 0 || h.mute || (p.st.shadowMark && FAM_OF[h.k] === 'shadows')) return false;
   if (ab.t !== 'none') { const ts = validTargets(s, p, ab); if (!a.target || !ts.some(q => q.id === a.target)) return false; }
   { const ar = areaReach(s, p, ab); if (ar && !ar.who.length) return false; }
   const prevBurned = p.lastBurned; const fallenLv = famLv(p, 'fallen'), broLv = famLv(p, 'brotherhood');
@@ -3093,12 +3342,13 @@ function act(state, action, rnd) {
       if (p.st.gravity > 0) steps = Math.ceil(steps / 2);
       if (p.st.slow && p.st.slow.left > 0) steps = Math.max(1, steps - p.st.slow.n);
       if (inZoneKind(s, p, 'crystalForest')) steps = Math.ceil(steps / 2);
-      const rev = p.st.reverse; p.st.reverse = false;
+      const rev = +p.st.reverse > 0; p.st.reverse = Math.max(0, (+p.st.reverse || 0) - 1);
       fx(s, { t: 'dice', p: p.id, value: v, dice, steps, reverse: rev });
       if (p.st.bind) { // плен: выбраться можно, только если выпадет нужное число
         const Bd = p.st.bind; Bd.tries = (Bd.tries || 0) + 1;
         const need = s.event === 'fog' ? Bd.need.map(x => x > 4 ? x - 2 : x) : Bd.need; // в тумане кубики до 4
-        if (dice.some(x => need.includes(x)) || Bd.tries >= 6) { p.st.bind = null; fx(s, { t: 'status', p: p.id, msg: 'Вырвался!' }); log(s, p.name + ' вырывается из плена.'); }
+        if (dice.some(x => need.includes(x)) || Bd.tries >= 6 || (Bd.max && Bd.tries >= Bd.max)) {
+          if (p.st.bindAfter) { const nb = p.st.bindAfter; p.st.bindAfter = 0; moveTo(s, p, p.pos - km(nb), 'back'); fx(s, { t: 'status', p: p.id, msg: 'Отступил после плена' }); } p.st.bind = null; fx(s, { t: 'status', p: p.id, msg: 'Вырвался!' }); log(s, p.name + ' вырывается из плена.'); }
         else { fx(s, { t: 'status', p: p.id, msg: 'Не вырвался: нужно ' + need.join(' или ') }); if (Bd.per) loseN(s, p, Bd.per); log(s, p.name + ' не может вырваться (' + Bd.why + ').'); endTurn(s); s.seq = (state.seq || 0) + 1; return s; }
       }
       if (!rev) { const W = wallAhead(s, p, p.pos, p.pos + steps); if (W) { let ok = wallPass(W.z, dice, s.event === 'fog');
@@ -3108,7 +3358,7 @@ function act(state, action, rnd) {
         else if (ok) fx(s, { t: 'status', p: p.id, msg: 'Прошёл стену' });
         else if (W.z.z === 'crystalWall' && p.souls >= 60) { s.phase = 'offer'; s.pending = { kind: 'wallPay', dest: p.pos + steps, stop: Math.max(p.pos, W.at - 1) }; fx(s, { t: 'status', p: p.id, msg: 'Кристальная стена' }); s.seq = (state.seq || 0) + 1; return s; }
         else { fx(s, { t: 'status', p: p.id, msg: 'Стена!' }); log(s, p.name + ' упирается в стену.'); steps = Math.max(0, W.at - 1 - p.pos); if (!steps) { endTurn(s); s.seq = (state.seq || 0) + 1; return s; } } } }
-      moveTo(s, p, p.pos + (rev ? -steps : steps), rev ? 'back' : 'walk');
+      { const from0 = p.pos; moveTo(s, p, p.pos + (rev ? -steps : steps), rev ? 'back' : 'walk'); if (p.st.passFx) passFxApply(s, p, from0, p.pos); }
       if (worldOn(s, 'ev_checkervoid') && dice.length === 2 && dice[0] === dice[1] && !rev && p.pos < CELLS - 1) { fx(s, { t: 'status', p: p.id, msg: 'Дубль: лабиринт поднимает выше' }); moveTo(s, p, cellAbove(p.pos), 'fly'); }
       land(s, p, rnd);
     } else return null;
@@ -3431,7 +3681,8 @@ function renderMarks() {
 function renderZones() {
   if (!G.s) return;
   document.querySelectorAll('.zov').forEach(m => m.remove());
-  (G.s.zones || []).forEach(z => { const col = heroColor(z.hero); const K = ZK[z.z] || {}; z.cells.forEach(i => { const t = MAP.tiles[i]; if (!t) return; t.firstChild.appendChild(h('span', { class: 'zov' + (K.big ? ' big' : ''), style: '--zc:' + col }, h('i', null, K.icon || '·'))); }); });
+  (G.s.zones || []).forEach(z => { const col = heroColor(z.hero); const K = ZK[z.z] || {}; z.cells.forEach(i => { const t = MAP.tiles[i]; if (!t) return; t.firstChild.appendChild(h('span', { class: 'zov' + (K.big ? ' big' : ''), style: '--zc:' + col }, h('i', null, z.icon || K.icon || '·'))); }); });
+  const me = G.s.players.find(x => x.id === meId()); const dk = $('darkov'); if (dk) dk.classList.toggle('on', !!(me && me.st.dark > 0 && !me.place));
   if (G.s.blank) Object.keys(G.s.blank).forEach(i => { const t = MAP.tiles[i]; if (t) { t.className = 'tile empty'; const ic = t.firstChild.firstChild; if (ic && ic.nodeType === 3) ic.textContent = ''; } });
 }
 function renderTokens() {
@@ -3559,7 +3810,7 @@ function feedState(ns) {
       case 'meet': { const b = bxOf(e.foe, e.ab) || (HEROES[e.foe] && HEROES[e.foe].ab.find(x => x.id === e.ab)); start((e.battle ? hn(e.foe) + ' после боя: ' : (e.help ? 'Добрая встреча: ' : 'Встреча: ') + hn(e.foe) + ', ') + '«' + (b ? b.name : '') + '»' + (e.battle ? '' : ' — ' + (isMe(e.p) ? 'тебе' : N(e.p))), heroColor(e.foe), e.p); if ((e.hit || []).some(isMe)) g.mine = true; break; }
       case 'offer': solo(V(e.p, e.yes ? 'соглашается' : 'отказывается', e.yes ? 'соглашаешься' : 'отказываешься') + ': ' + hn(e.foe), heroColor(e.foe), e.p); break;
       case 'loseHero': add(e.p, 'лишается героя ' + hn(e.hero)); break;
-      case 'zoneHit': add(e.p, ZK[e.z] ? ZK[e.z].name : 'ловушка'); break;
+      case 'zoneHit': add(e.p, e.nm || (ZK[e.z] ? ZK[e.z].name : 'ловушка')); break;
       case 'battlePass': solo(V(e.p, 'проходит', 'проходишь') + ' мимо: ' + hn(e.foe) + ' остаётся в подземелье', col, e.p); break;
       case 'ambush': start('Встреча: ' + hn(e.foe) + ' нападает на ' + (isMe(e.p) ? 'тебя' : N(e.p)), col, e.p); break;
       case 'horde': start('Орда! ' + HORDES[e.k].name + ' накатывает на ' + (isMe(e.p) ? 'тебя' : N(e.p)), COLORS[HORDES[e.k].col].hex, e.p); if ((e.hit || []).some(isMe) || (e.dodged || []).some(isMe)) g.mine = true; break;
@@ -4003,7 +4254,8 @@ function renderTop() {
   $('bSound').textContent = SND.on ? '🔊' : '🔇';
 }
 function setDockVar() { requestAnimationFrame(() => document.documentElement.style.setProperty('--dockh', (DESK() ? 0 : $('dock').offsetHeight) + 'px')); }
-function stIcons(p) { const t = p.st; let o = ''; if (t.bind) o += ' ⛓'; if (t.slow) o += ' 🐢'; if (t.poison) o += ' ☠'; if (t.frost) o += ' ❄'; if (t.shadowMark) o += ' 🌑'; if (t.noShield > 0) o += ' ⛔'; if (t.immune > 0 || t.aegis > 0) o += ' ✦'; return o; }
+function seesHands(s) { const me = s.players.find(x => x.id === meId()); return !!(me && (me.st.vision > 0 || me.hand.some(x => HEROES[x.k] && HEROES[x.k].seeHands))); }
+function stIcons(p) { const t = p.st; let o = ''; if (t.aura && t.aura.length) o += ' ⬆'; if (t.vision > 0) o += ' 👁'; if (t.dark > 0) o += ' 🌑'; if (t.bind) o += ' ⛓'; if (t.slow) o += ' 🐢'; if (t.poison) o += ' ☠'; if (t.frost) o += ' ❄'; if (t.shadowMark) o += ' 🌑'; if (t.noShield > 0) o += ' ⛔'; if (t.immune > 0 || t.aegis > 0) o += ' ✦'; return o; }
 function renderDock() {
   const s = G.s; if (!s) return;
   const a = activeP(s); const v = viewer(); const ctl = canControl();
@@ -4012,7 +4264,7 @@ function renderDock() {
     const p = s.players[i]; const pos = G.disp[p.id] ?? p.pos; const pct = Math.round(pos / (CELLS - 1) * 100);
     strip.appendChild(h('div', { class: 'pchip' + (p.id === a.id && s.status === 'playing' ? ' act' : ''), style: '--pc:' + p.color, 'data-pid': p.id },
       avatarEl(p), h('div', null, h('b', null, p.name + (G.mode === 'online' && p.id === NET.myId ? ' (ты)' : '')),
-        h('div', { class: 'pst' }, p.place ? '🏁 ' + p.place + ' место' : '◈ ' + p.souls + ' · кл. ' + (pos + 1) + (p.st.skip ? ' · пропуск' : '') + stIcons(p)),
+        h('div', { class: 'pst' }, p.place ? '🏁 ' + p.place + ' место' : '◈ ' + p.souls + ' · кл. ' + (pos + 1) + (p.st.skip ? ' · пропуск' : '') + stIcons(p)), seesHands(s) && p.id !== meId() && p.hand.length ? h('div', { class: 'seeh' }, p.hand.map(x => h('img', { src: IMG[x.k].av, alt: HEROES[x.k].name, title: HEROES[x.k].name + ', сила ' + cardPower(p, x) }))) : null,
         h('div', { class: 'bar' }, h('i', { style: 'width:' + pct + '%' })))));
   });
   const who = $('who'); who.innerHTML = '';
@@ -4033,9 +4285,9 @@ function renderDock() {
     if (!hh) { hand.appendChild(h('div', { class: 'hslot' }, i === 0 && !v.hand.length ? 'Призови первого героя' : 'Пусто')); continue; }
     const H = HEROES[hh.k]; const pw = cardPower(v, hh); const z = ZSIGN[hh.k];
     const fk = FAM_OF[hh.k]; const fl = fk ? famLv(v, fk) : 0;
-    const lockedC = hh.lock > 0 || (v.st.shadowMark && FAM_OF[hh.k] === 'shadows');
+    const lockedC = hh.lock > 0 || hh.mute || (v.st.shadowMark && FAM_OF[hh.k] === 'shadows');
     hand.appendChild(h('button', { class: 'hcard' + (lockedC ? ' locked' : '') + (H.great ? ' great' : '') + (z && lvl ? ' zaura l' + lvl : '') + (fl ? ' faura' : ''), style: '--hc:' + heroColor(hh.k) + (fk ? ';--fc:' + FAMS[fk].col : ''), 'aria-label': H.name, onclick: () => cardSheet(v, hh) },
-      h('img', { src: IMG[hh.k].card, alt: '' }), h('span', { class: 'pw' }, '⚔ ' + pw), z ? h('span', { class: 'zs' }, z) : null, H.faces ? h('span', { class: 'flipb' }, '⇄') : null, !z && FAM_OF[hh.k] ? h('span', { class: 'fs', title: FAMS[FAM_OF[hh.k]].name }) : null, h('span', { class: 'nm' }, H.name), lockedC ? h('span', { class: 'lk' }, hh.lock > 0 ? '🔒' : '🌑') : null));
+      h('img', { src: IMG[hh.k].card, alt: '' }), h('span', { class: 'pw' }, '⚔ ' + pw), z ? h('span', { class: 'zs' }, z) : null, H.faces ? h('span', { class: 'flipb' }, '⇄') : null, !z && FAM_OF[hh.k] ? h('span', { class: 'fs', title: FAMS[FAM_OF[hh.k]].name }) : null, h('span', { class: 'nm' }, H.name), lockedC ? h('span', { class: 'lk' }, hh.lock > 0 ? '🔒' : hh.mute ? '🔇' : '🌑') : null));
   }
   const rollPhase = ctl && s.phase === 'roll';
   const c = cost(s, v);
@@ -4083,7 +4335,7 @@ function cardSheet(owner, hh, face) {
   const s = G.s; const H = HEROES[hh.k]; const pw = cardPower(owner, hh);
   const F = H.faces ? H.faces.find(f => f.id === (face || H.faces[0].id)) : null;
   const mineNow = canControl() && s.phase === 'roll' && activeP(s).id === owner.id;
-  const blocked = mineNow ? (hh.lock > 0 ? 'Карта закрыта ещё ' + hh.lock + ' кр.: её нельзя применить, и её сила не считается в бою.' : owner.st.shadowMark && FAM_OF[hh.k] === 'shadows' ? 'Метка тени: способности Теней не работают, пока её не снимут.' : abilityBlocked(s, owner)) : null;
+  const blocked = mineNow ? (hh.mute ? 'Карта онемела: её способности больше не работают, но сила в бою считается.' : hh.lock > 0 ? (hh.lock > 100 ? 'Карта кристаллизована: её не применить, и её сила не считается, пока её не очистят.' : 'Карта закрыта ещё ' + hh.lock + ' кр.: её нельзя применить, и её сила не считается в бою.') : owner.st.shadowMark && FAM_OF[hh.k] === 'shadows' ? 'Метка тени: способности Теней не работают, пока её не снимут.' : abilityBlocked(s, owner)) : null;
   const list = h('div', { class: 'abl' });
   H.ab.filter(ab => !F || ab.face === F.id).forEach(ab => {
     const ar = areaReach(s, owner, ab);
@@ -4121,13 +4373,23 @@ function pickAbility(p, hh, ab) {
       list.appendChild(targetOption(q, sub, () => {
         if (ab.p === 'push') {
           const g = h('div', { class: 'num11' });
-          [-3, -2, -1, 1, 2, 3].forEach(n => g.appendChild(h('button', { onclick: () => doAct(Object.assign({}, base, { target: q.id, dir: n < 0 ? -1 : 1, amount: Math.abs(n) })) }, (n > 0 ? '+' : '−') + Math.abs(n))));
+          [-6, -5, -4, -3, -2, 2, 3, 4, 5, 6].forEach(n => g.appendChild(h('button', { onclick: () => doAct(Object.assign({}, base, { target: q.id, dir: n < 0 ? -1 : 1, amount: Math.abs(n) })) }, (n > 0 ? '+' : '−') + Math.abs(n))));
           openModal('Куда сдуть ' + q.name + '?', 'Минус — назад, плюс — вперёд.', h('div', null, g, h('div', { class: 'mact' }, h('button', { class: 'abtn alt', onclick: closeModal }, 'Отмена'))), { center: true });
         } else doAct(Object.assign({}, base, { target: q.id }));
       }));
     });
     list.appendChild(h('button', { class: 'abtn alt', onclick: closeModal }, 'Отмена'));
     openModal(ab.name, 'Выбери цель.', list);
+  } else if (ab.p === 'picks') {
+    const opp = alive(s).filter(q => q.id !== p.id && q.hand.length); const picks = {}; let i = 0;
+    const next = () => {
+      while (i < opp.length && !opp[i].hand.some(x => !ab.maxPw || cardPower(opp[i], x) <= ab.maxPw)) i++;
+      if (i >= opp.length) { closeModal(); doAct(Object.assign({}, base, { picks })); return; }
+      const q = opp[i]; const g = h('div', { class: 'pkc' });
+      q.hand.forEach((x, j) => { const okc = !ab.maxPw || cardPower(q, x) <= ab.maxPw; g.appendChild(h('button', { disabled: !okc, onclick: () => { picks[q.id] = j; i++; next(); } }, h('img', { src: IMG[x.k].card, alt: '' }), HEROES[x.k].name + ' · ' + cardPower(q, x))); });
+      openModal(ab.name + ': ' + q.name, 'Выбери карту, которая сгорит' + (ab.maxPw ? ' (сила не больше ' + ab.maxPw + ')' : '') + '.', h('div', null, g, h('div', { class: 'mact' }, h('button', { class: 'abtn alt', onclick: closeModal }, 'Отмена'))), { center: true });
+    };
+    next();
   } else if (ab.p === 'die') {
     const g = h('div', { class: 'num11' });
     for (let i = 2; i <= 12; i++) g.appendChild(h('button', { onclick: () => doAct(Object.assign({}, base, { value: i })) }, String(i)));
