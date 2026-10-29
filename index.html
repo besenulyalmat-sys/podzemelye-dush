@@ -118,6 +118,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .zov.big{background:color-mix(in srgb,var(--zc) 42%,rgba(0,0,0,.35));place-items:center}
 .zov.big i{font-size:calc(var(--cs) * .62);margin:0}
 .hcard.locked img{filter:grayscale(1) brightness(.55)}
+#hand.h6{grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}
+#hand.h6 .hcard,#hand.h6 .hslot{aspect-ratio:2/3}
+#hand.h6 .nm{font-size:.52rem;padding:8px 2px 3px}
+#hand.h6 .pw{font-size:.58rem;padding:1px 4px}
+#hand.h6 .hslot{font-size:.6rem}
+#hand.h8{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#hand.h8 .hcard,#hand.h8 .hslot{aspect-ratio:5/4}
+#hand.h8 .nm{font-size:.58rem;padding:8px 2px 3px}
+@media (min-width:980px) and (min-height:560px){#hand.h6,#hand.h8{grid-template-columns:repeat(3,minmax(0,min(120px,calc((100vh - 340px) / 4))))}#hand.h6 .hcard,#hand.h6 .hslot,#hand.h8 .hcard,#hand.h8 .hslot{aspect-ratio:3/4}#hand.h6 .nm,#hand.h8 .nm{font-size:.62rem}}
 #darkov{position:fixed;inset:0;z-index:40;background:#000;opacity:0;pointer-events:none;transition:opacity .6s;display:grid;place-items:center;color:#8E7CC3;font-size:1.1rem;text-align:center;padding:20px}
 #darkov.on{opacity:.94}
 .seeh{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap}.seeh img{width:22px;height:22px;border-radius:5px;object-fit:cover;border:1px solid rgba(255,255,255,.35)}
@@ -511,6 +520,8 @@ button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
       <div class="row" style="margin:10px 0 16px"><button class="sbtn" id="addSeat">Добавить игрока</button></div>
       <h3 class="sizeh">Длина подземелья</h3>
       <div class="sizes" id="sizeLocal"></div>
+      <h3 class="sizeh">Карт в руке</h3>
+      <div class="sizes" id="handLocal"></div>
       <div class="row"><button class="sbtn" id="setupBack">Назад</button><button class="pbtn" id="setupGo">Войти в подземелье</button></div>
     </div>
   </section>
@@ -527,6 +538,8 @@ button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
       <div class="row" style="margin:8px 0 14px"><button class="sbtn" id="addBot" hidden>Добавить бота</button></div>
       <h3 class="sizeh">Длина подземелья</h3>
       <div class="sizes" id="sizeLobby"></div>
+      <h3 class="sizeh">Карт в руке</h3>
+      <div class="sizes" id="handLobby"></div>
       <div class="row" style="margin-top:14px"><button class="sbtn" id="lobbyLeave">Выйти</button><button class="pbtn" id="lobbyStart">Начать игру</button></div>
       <p class="note" id="lobbyNote"></p>
     </div>
@@ -679,8 +692,12 @@ if (typeof IMG !== 'undefined' && IMG.irisoracle) IMG.ev_irisoracle = IMG.irisor
 const OMEN_ROUNDS = 3;
 function worldOn(s, k) { return !!(s.world && s.world.k === k); }
 const PCOLORS = ['#FFC960', '#7FD4FF', '#FF7E9A', '#9BE38F'];
-const START_SOULS = 160, HAND = 4;
-const GAME_VER = 25;
+const START_SOULS = 160; let HAND = 4; // бета 26: размер руки выбирается перед партией — 4, 6 или 8
+const HAND_CHOICES = [4, 6, 8];
+const BATTLE_MUL = { 4: 2.0, 6: 2.5, 8: 3.2 }; // сила противника в бою растёт с размером руки
+function setHand(n) { HAND = HAND_CHOICES.includes(+n) ? +n : 4; }
+function battlePow(base) { return Math.round(base * (BATTLE_MUL[HAND] || 1)); }
+const GAME_VER = 26;
 // Размер поля задаётся партией: 350, 700, 1000 или 1500 плит (200 и 500 остались для старых сохранений). DK — множитель дальности способностей.
 const SIZES = { 200: { cols: 8, dk: 1, label: 'Короткое', time: '45–60 минут' }, 350: { cols: 10, dk: 1.25, label: 'Среднее', time: 'около 1,5 часа' }, 500: { cols: 10, dk: 1.5, label: 'Долгое', time: '2–2,5 часа' }, 700: { cols: 10, dk: 1.75, label: 'Долгое', time: 'около 3 часов' }, 1000: { cols: 10, dk: 2, label: 'Очень долгое', time: 'около 4 часов' }, 1500: { cols: 10, dk: 2.5, label: 'Эпическое', time: '5–6 часов' } };
 const SIZE_CHOICES = [350, 700, 1000, 1500];
@@ -867,12 +884,12 @@ let UID = 0;
 function newHero(k) { return { k, b: 0, u: Date.now().toString(36) + (UID++) + Math.floor(Math.random() * 1e4) }; }
 
 function newGame(players, opts) {
-  setBoard(opts.size);
+  setBoard(opts.size); setHand(opts.hand);
   const seed = opts.seed || Math.floor(Math.random() * 1e9);
   const order = players.map((_, i) => i);
   for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
   const ev = EVENTS[Math.floor(Math.random() * EVENTS.length)].id;
-  const s = { v: GAME_VER, size: CELLS, status: 'playing', seed, event: ev, order, turn: 0, round: 1, phase: 'roll', pending: null,
+  const s = { v: GAME_VER, size: CELLS, handMax: HAND, status: 'playing', seed, event: ev, order, turn: 0, round: 1, phase: 'roll', pending: null,
     places: [], log: [], fx: [], seq: (opts.seq || 0) + 1, hostId: opts.hostId || null, marks: {}, zones: [], lastAb: null, eclipse: null,
     players: players.map((p, i) => ({ id: p.id, name: p.name, bot: !!p.bot, color: PCOLORS[i % 4], pos: 0, souls: START_SOULS, hand: [],
       st: { skip: 0, shield: false, stone: 0, mirror: false, mark: null, poison: null, blind: 0, gravity: 0, strike: false, gallop: false, bless: 0, dice3: false, boost: null, reverse: false, regen: null, shades: 0 }, lastBurned: null, place: 0 })) };
@@ -2348,7 +2365,7 @@ function chainHit(s, p, k, steps, battle) {
 }
 function forcedFight(s, q, k, F, rnd, battle) {
   if (battle) { const b = bxOf(k, F.use[Math.floor(rnd() * F.use.length)]); applyEff(s, q, b.eff, { k, c: q.pos, rnd }); return; }
-  const power = HEROES[k].pw + Math.floor(8 * q.pos / (CELLS - 1)) + F.plus;
+  const power = battlePow(HEROES[k].pw + Math.floor(8 * q.pos / (CELLS - 1)) + F.plus);
   const r = fight(q, power, rnd);
   fx(s, { t: 'battle', p: q.id, foe: k, foePow: power, foeRoll: r.b, myPow: r.myPow, myRoll: r.a, auto: !!r.auto, win: r.win, tie: !!r.tie, reward: 0, lost: 0, forced: true });
   if (!r.win && !r.tie) { const b = bxOf(k, F.use[Math.floor(rnd() * F.use.length)]); fx(s, { t: 'status', p: q.id, msg: b.name }); applyEff(s, q, b.eff, { k, c: q.pos, rnd }); }
@@ -3090,7 +3107,7 @@ function runOps(s, p, ab, a, rnd, viaCopy) {
       case 'ambushTarget': { if (victim === p) break; const k = foeHero(rnd, victim.pos); if (HEROES[k].cls === 'beast') { beastBattleHit(s, victim, k, rnd); break; } fx(s, { t: 'ambush', p: victim.id, foe: k }); applyWild(s, victim, k, rnd); break; }
       case 'ambushAll': opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; const k = foeHero(rnd, v.pos); if (HEROES[k].cls === 'beast') { beastBattleHit(s, v, k, rnd); return; } fx(s, { t: 'ambush', p: v.id, foe: k }); applyWild(s, v, k, rnd); }); break;
       case 'giftSkip': { if (victim === p) break; victim.souls += o.n; fx(s, { t: 'gain', p: victim.id, amount: o.n }); if (addSkip(victim, o.skip)) fx(s, { t: 'status', p: victim.id, msg: 'Пропуск ' + o.skip + ' ходов' }); break; }
-      case 'hand15': opps().forEach(q => { const v = hostileTo(s, p, q); if (!v) return; const x = Math.min(v.souls, o.n * v.hand.length); v.souls -= x; if (x) fx(s, { t: 'lose', p: v.id, amount: x }); }); break;
+      case 'hand15': opps().forEach(q => { const v = hostileTo(s, p, q); if (!v) return; const x = Math.min(v.souls, Math.round(o.n * 4 / HAND / 5) * 5 * v.hand.length); v.souls -= x; if (x) fx(s, { t: 'lose', p: v.id, amount: x }); }); break;
       case 'silence': s.eclipse = { by: p.id, left: alive(s).length }; break;
       case 'pullAll': opps().forEach(q => { const v = hostileTo(s, p, q); if (!v || v === p) return; const dir = v.pos > p.pos ? -1 : 1; const n = Math.min(km(o.n) + famPush(p), Math.abs(v.pos - p.pos)); if (n) moveTo(s, v, v.pos + dir * n, dir < 0 ? 'back' : 'jump'); }); break;
       case 'buffOne': if (p.hand.length) { const h = p.hand[Math.floor(rnd() * p.hand.length)]; h.b = (h.b || 0) + o.n; fx(s, { t: 'status', p: p.id, msg: HEROES[h.k].name + ' +' + o.n }); } break;
@@ -3180,8 +3197,8 @@ function land(s, p, rnd, depth) {
     hordeStrike(s, p, pickHorde(rnd), rnd);
   } else if (c.type === 'battle') {
     const k = foeHero(rnd, p.pos, true); // босс может встретиться только в бою
-    const fp = HEROES[k].pw + Math.floor(8 * p.pos / (CELLS - 1)) + (s.event === 'bloodmoon' ? 2 : 0) + (HEROES[k].cls === 'boss' ? 12 : HEROES[k].cls === 'horde' ? 4 : 0); // боссы и орды сильнее обычного
-    s.phase = 'battle'; s.pending = { foe: k, power: fp }; return;
+    const base = HEROES[k].pw + Math.floor(8 * p.pos / (CELLS - 1)) + (s.event === 'bloodmoon' ? 2 : 0) + (HEROES[k].cls === 'boss' ? 12 : HEROES[k].cls === 'horde' ? 4 : 0); // боссы и орды сильнее обычного
+    s.phase = 'battle'; s.pending = { foe: k, power: battlePow(base), base }; return;
   } else if (c.type === 'altar') {
     s.phase = 'altar'; s.pending = { cost: altarCost(s) }; return;
   }
@@ -3213,11 +3230,11 @@ function drawOmen(s, p, rnd) {
   if (k === 'ev_iridon') alive(s).forEach(q => { q.souls += 30; fx(s, { t: 'gain', p: q.id, amount: 30 }); });
 }
 function resolveBattle(s, p, rnd) {
-  const { foe, power } = s.pending; s.pending = null; s.phase = 'roll';
+  const { foe, power, base } = s.pending; s.pending = null; s.phase = 'roll';
   const isBeast = HEROES[foe].cls === 'beast';
   const skipH = foe === 'crystalgolem' ? (h => HEROES[h.k].motif === 'crystal' || FAM_OF[h.k] === 'cosmic') : null;
   const dgl = famLv(p, 'dragons'), dgb = [0, 6, 8, 12][dgl]; const r = fight(p, power - dgb, rnd, skipH); if (dgb && !r.auto) r.myPow += dgb; let reward = 0, lost = 0, recruit = false, guarded = false;
-  if (r.win) { reward = 30 + power * 4; if (s.event === 'bloodmoon') reward = Math.round(reward * 1.5); p.souls += reward; recruit = !isBeast; if (dgl) { const x = [0, 40, 60, 80][dgl]; reward += x; p.souls += x; } }
+  if (r.win) { reward = 30 + (base != null ? base : power) * 4; if (s.event === 'bloodmoon') reward = Math.round(reward * 1.5); p.souls += reward; recruit = !isBeast; if (dgl) { const x = [0, 40, 60, 80][dgl]; reward += x; p.souls += x; } }
   else if (!r.tie) { lost = Math.min(30, p.souls); p.souls -= lost; }
   fx(s, { t: 'battle', p: p.id, foe, foePow: power, foeRoll: r.b, myPow: r.myPow, myRoll: r.a, auto: !!r.auto, win: r.win, tie: !!r.tie, reward, lost, recruit, beast: isBeast });
   log(s, p.name + (r.win ? ' побеждает ' + HEROES[foe].name + (isBeast ? '.' : ' и забирает его душу.') : r.tie ? ' расходится вничью с ' + HEROES[foe].name + '.' : ' проигрывает ' + HEROES[foe].name + ', и душа обрушивает силу на него.'));
@@ -3351,7 +3368,7 @@ function useAbility(s, p, a, rnd) {
 function act(state, action, rnd) {
   rnd = rnd || Math.random; CUR_RND = rnd; SHADOW_SEEN = {};
   if (!state || state.status !== 'playing') return null;
-  setBoard(state.size);
+  setBoard(state.size); setHand(state.handMax);
   const s = clone(state); s.fx = []; s.zones = s.zones || [];
   s.players.forEach(q => { if (q.st.zoneHit) q.st.zoneHit = null; });
   const p = activeP(s);
@@ -3445,7 +3462,7 @@ function act(state, action, rnd) {
 
 // ---------- Bot ----------
 function botAction(s) {
-  setBoard(s.size);
+  setBoard(s.size); setHand(s.handMax);
   const p = activeP(s);
   if (s.phase === 'battle') { // бот сражается, если шансы не слишком плохие
     const my = p.st.strike ? 99 : handPower(p);
@@ -3472,7 +3489,7 @@ function botAction(s) {
   return { by: p.id, type: 'roll' };
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = { genDesc, soulMeet, BEASTS, pickBeast, placeZone, zoneDesc, HORDES, hordeDesc, FAMS, FAM_OF, famLv, OMENS, setBoard, foeHero, abDesc, auraLevel, ZSIGN, WILD, HEROES, EVENTS, buildBoard, newGame, act, botAction, activeP, handPower, validTargets, cost, CELLS, COLS, rowOf, colOf };
+if (typeof module !== 'undefined' && module.exports) module.exports = { setHand, battlePow, genDesc, soulMeet, BEASTS, pickBeast, placeZone, zoneDesc, HORDES, hordeDesc, FAMS, FAM_OF, famLv, OMENS, setBoard, foeHero, abDesc, auraLevel, ZSIGN, WILD, HEROES, EVENTS, buildBoard, newGame, act, botAction, activeP, handPower, validTargets, cost, CELLS, COLS, rowOf, colOf };
 
 // ===================== Utilities =====================
 const $ = id => document.getElementById(id);
@@ -3890,7 +3907,7 @@ async function runQueue() {
   G.playing = true; renderDock();
   while (G.queue.length) {
     const ns = G.queue.shift();
-    setBoard(ns.size);
+    setBoard(ns.size); setHand(ns.handMax);
     if (MAP.key !== ns.seed + ':' + ns.event + ':' + CELLS) {
       $('win').classList.remove('on'); closeModal();
       G.s = ns; renderBoard(ns.seed, ns.event); G.disp = {}; ns.players.forEach(p => G.disp[p.id] = 0); renderTop(); focusCell(0, true);
@@ -4427,7 +4444,7 @@ function renderDock() {
   if (lvl) au.appendChild(h('div', { class: 'auraline l' + lvl }, h('b', null, '✦ ' + AURA[lvl].name + ': ' + zc + ' ' + (zc >= 4 && zc % 10 >= 5 || zc % 10 === 0 ? 'знаков' : 'знака')), h('span', null, AURA[lvl].desc)));
   else if (zc === 1) au.appendChild(h('div', { class: 'auraline l0' }, h('span', null, 'Собери в руке второй знак зодиака, чтобы зажечь созвездие.')));
   famActive(v).forEach(f => { const F = FAMS[f], l = famLv(v, f), n = famCount(v, f); au.appendChild(h('div', { class: 'auraline fam f' + l, style: '--fc:' + F.col }, h('b', null, '⚜ ' + F.name + ': ' + n + ' души'), h('span', null, scl(F.lv[l - 1])))); });
-  const hand = $('hand'); hand.innerHTML = '';
+  const hand = $('hand'); hand.innerHTML = ''; hand.className = HAND > 4 ? 'h' + HAND : '';
   for (let i = 0; i < HAND; i++) {
     const hh = v.hand[i];
     if (!hh) { hand.appendChild(h('div', { class: 'hslot' }, i === 0 && !v.hand.length ? 'Призови первого героя' : 'Пусто')); continue; }
@@ -4653,7 +4670,7 @@ function resumeLocal(sv) {
 }
 function startLocal(players) {
   resetGameView(); G.mode = 'local'; G.localPlayers = players; show('game');
-  enqueue(newGame(players.map((p, i) => ({ id: 'p' + i, name: p.name, bot: p.bot })), { size: sizePref() }));
+  enqueue(newGame(players.map((p, i) => ({ id: 'p' + i, name: p.name, bot: p.bot })), { size: sizePref(), hand: handPref() }));
 }
 function leaveGame() { closeModal(); $('win').classList.remove('on'); if (G.mode === 'online') netLeave(); resetGameView(); G.mode = null; show('home'); }
 let seats = store.get('seats', [{ name: 'Игрок 1', bot: false }, { name: 'Бот Ночи', bot: true }]);
@@ -4661,7 +4678,10 @@ function sizePicker(box, cur, onPick) {
   box.innerHTML = '';
   for (const n of SIZE_CHOICES) box.appendChild(h('button', { 'aria-pressed': n === cur ? 'true' : 'false', disabled: !onPick, onclick: onPick ? () => onPick(n) : null }, h('b', null, n + ' плит'), h('small', null, SIZES[n].label), h('small', null, SIZES[n].time)));
 }
-function renderSizeLocal() { sizePicker($('sizeLocal'), sizePref(), n => { store.set('size', n); SFX.click(); renderSizeLocal(); }); }
+function handPref() { const v = +store.get('hand', 4); return HAND_CHOICES.includes(v) ? v : 4; }
+const HAND_INFO = { 4: ['Классика', 'компактно'], 6: ['Больше тактики', 'противники сильнее'], 8: ['Большие руки', 'противники сильнее всех'] };
+function handPicker(box, cur, onPick) { box.innerHTML = ''; for (const n of HAND_CHOICES) box.appendChild(h('button', { 'aria-pressed': n === cur ? 'true' : 'false', disabled: !onPick, onclick: onPick ? () => onPick(n) : null }, h('b', null, n + ' карт' + (n === 4 ? 'ы' : '')), h('small', null, HAND_INFO[n][0]), h('small', null, HAND_INFO[n][1]))); }
+function renderSizeLocal() { sizePicker($('sizeLocal'), sizePref(), n => { store.set('size', n); SFX.click(); renderSizeLocal(); }); handPicker($('handLocal'), handPref(), n => { store.set('hand', n); SFX.click(); renderSizeLocal(); }); }
 function renderSeats() {
   const box = $('seats'); box.innerHTML = '';
   seats.forEach((st, i) => {
@@ -4779,7 +4799,7 @@ async function netCreate() {
   $('bCreate').disabled = false; initOnline();
   if (!peer) { toast('Не удалось подобрать код комнаты, попробуй ещё раз.'); return; }
   hostAttach(peer, code);
-  NET.lobby = { hostId: NET.myId, players: [{ id: NET.myId, name: myDefaultName() }], size: sizePref() };
+  NET.lobby = { hostId: NET.myId, players: [{ id: NET.myId, name: myDefaultName() }], size: sizePref(), hand: handPref() };
   renderQR();
   G.mode = 'online'; renderLobby(NET.lobby); show('lobby');
 }
@@ -4846,7 +4866,7 @@ function hostOnClose(conn) {
   else if (NET.state) toast(playerName(pid) + ' отключился. Если он не вернётся, пропусти его ход.');
 }
 function hostStart(players) {
-  NET.state = newGame(players.map(p => ({ id: p.id, name: p.name, bot: !!p.bot })), { hostId: NET.myId, seq: NET.state ? NET.state.seq : 0, size: NET.state ? NET.state.size : NET.lobby.size });
+  NET.state = newGame(players.map(p => ({ id: p.id, name: p.name, bot: !!p.bot })), { hostId: NET.myId, seq: NET.state ? NET.state.seq : 0, size: NET.state ? NET.state.size : NET.lobby.size, hand: NET.state ? NET.state.handMax : NET.lobby.hand });
   broadcast({ t: 'state', s: NET.state });
   show('game'); enqueue(NET.state);
 }
@@ -4895,7 +4915,8 @@ function renderLobby(d) {
     p.id === d.hostId ? h('span', { class: 'tog' }, 'Создатель') : p.bot ? h('span', { class: 'tog', 'aria-pressed': 'true' }, 'Бот') : null,
     p.bot && host ? h('button', { class: 'rm', 'aria-label': 'Убрать бота', onclick: () => { NET.lobby.players = NET.lobby.players.filter(x => x.id !== p.id); SFX.click(); broadcastLobby(); } }, '×') : null)));
   $('addBot').hidden = !host; $('addBot').disabled = d.players.length >= 4;
-  sizePicker($('sizeLobby'), d.size || 500, host ? n => { NET.lobby.size = n; store.set('size', n); SFX.click(); broadcastLobby(); } : null);
+  sizePicker($('sizeLobby'), d.size || 700, host ? n => { NET.lobby.size = n; store.set('size', n); SFX.click(); broadcastLobby(); } : null);
+  handPicker($('handLobby'), d.hand || 4, host ? n => { NET.lobby.hand = n; store.set('hand', n); SFX.click(); broadcastLobby(); } : null);
   $('lobbyStart').hidden = !host; $('lobbyStart').disabled = d.players.length < 2;
   $('lobbyNote').textContent = host ? (d.players.length < 2 ? 'Ждём хотя бы одного друга или добавь бота.' : 'Можно начинать. Друзья могут подключиться, пока есть свободные места.') : 'Ждём, пока создатель комнаты начнёт игру.';
 }
